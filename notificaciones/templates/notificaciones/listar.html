@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Notificaciones - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Notificaciones</h1>
+            {% if no_leidas %}
+            <a href="{% url 'notificaciones:marcar_todas_leidas' %}" 
+               class="text-blue-600 hover:text-blue-700 font-semibold text-sm">
+                <i class="fas fa-check-double mr-1"></i> Marcar todas como leídas
+            </a>
+            {% endif %}
+        </div>
+        
+        <!-- Notificaciones No Leídas -->
+        {% if no_leidas %}
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                <i class="fas fa-bell text-yellow-500 mr-2"></i>
+                Nuevas ({{ no_leidas.count }})
+            </h2>
+            <div class="space-y-3">
+                {% for notificacion in no_leidas %}
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4 hover:shadow-md transition">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    {% if notificacion.tipo == 'contacto' %}bg-blue-100 text-blue-800
+                                    {% elif notificacion.tipo == 'favorito' %}bg-red-100 text-red-800
+                                    {% elif notificacion.tipo == 'valoracion' %}bg-yellow-100 text-yellow-800
+                                    {% elif notificacion.tipo == 'suscripcion' %}bg-purple-100 text-purple-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {% if notificacion.tipo == 'contacto' %}
+                                        <i class="fas fa-envelope mr-1"></i>
+                                    {% elif notificacion.tipo == 'favorito' %}
+                                        <i class="fas fa-heart mr-1"></i>
+                                    {% elif notificacion.tipo == 'valoracion' %}
+                                        <i class="fas fa-star mr-1"></i>
+                                    {% elif notificacion.tipo == 'suscripcion' %}
+                                        <i class="fas fa-crown mr-1"></i>
+                                    {% else %}
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                    {% endif %}
+                                    {{ notificacion.get_tipo_display }}
+                                </span>
+                                <span class="text-xs text-gray-500">
+                                    {{ notificacion.fecha_creacion|timesince }} atrás
+                                </span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-1">{{ notificacion.titulo }}</h3>
+                            <p class="text-gray-700 text-sm">{{ notificacion.mensaje }}</p>
+                        </div>
+                        <div class="flex flex-col gap-2 ml-4">
+                            {% if notificacion.url %}
+                            <a href="{% url 'notificaciones:marcar_leida' notificacion.pk %}" 
+                               class="text-blue-600 hover:text-blue-700 text-sm font-semibold">
+                                <i class="fas fa-eye mr-1"></i> Ver
+                            </a>
+                            {% else %}
+                            <a href="{% url 'notificaciones:marcar_leida' notificacion.pk %}" 
+                               class="text-green-600 hover:text-green-700 text-sm font-semibold">
+                                <i class="fas fa-check mr-1"></i> Marcar leída
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'notificaciones:eliminar' notificacion.pk %}" 
+                               class="text-red-600 hover:text-red-700 text-sm font-semibold">
+                                <i class="fas fa-trash mr-1"></i> Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Notificaciones Leídas -->
+        {% if leidas %}
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                <i class="fas fa-check-circle text-gray-400 mr-2"></i>
+                Anteriores
+            </h2>
+            <div class="space-y-3">
+                {% for notificacion in leidas %}
+                <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition opacity-75">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                    {% if notificacion.tipo == 'contacto' %}bg-blue-100 text-blue-800
+                                    {% elif notificacion.tipo == 'favorito' %}bg-red-100 text-red-800
+                                    {% elif notificacion.tipo == 'valoracion' %}bg-yellow-100 text-yellow-800
+                                    {% elif notificacion.tipo == 'suscripcion' %}bg-purple-100 text-purple-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {% if notificacion.tipo == 'contacto' %}
+                                        <i class="fas fa-envelope mr-1"></i>
+                                    {% elif notificacion.tipo == 'favorito' %}
+                                        <i class="fas fa-heart mr-1"></i>
+                                    {% elif notificacion.tipo == 'valoracion' %}
+                                        <i class="fas fa-star mr-1"></i>
+                                    {% elif notificacion.tipo == 'suscripcion' %}
+                                        <i class="fas fa-crown mr-1"></i>
+                                    {% else %}
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                    {% endif %}
+                                    {{ notificacion.get_tipo_display }}
+                                </span>
+                                <span class="text-xs text-gray-500">
+                                    {{ notificacion.fecha_creacion|date:"d/m/Y H:i" }}
+                                </span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-1">{{ notificacion.titulo }}</h3>
+                            <p class="text-gray-600 text-sm">{{ notificacion.mensaje }}</p>
+                        </div>
+                        <div class="flex flex-col gap-2 ml-4">
+                            {% if notificacion.url %}
+                            <a href="{{ notificacion.url }}" 
+                               class="text-blue-600 hover:text-blue-700 text-sm font-semibold">
+                                <i class="fas fa-external-link-alt mr-1"></i> Ir
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'notificaciones:eliminar' notificacion.pk %}" 
+                               class="text-red-600 hover:text-red-700 text-sm font-semibold">
+                                <i class="fas fa-trash mr-1"></i> Eliminar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Sin notificaciones -->
+        {% if not no_leidas and not leidas %}
+        <div class="bg-white rounded-xl shadow-md p-12 text-center">
+            <div class="mb-6">
+                <i class="fas fa-bell-slash text-gray-300 text-6xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">No tienes notificaciones</h3>
+            <p class="text-gray-600 mb-6">Aquí aparecerán tus notificaciones cuando tengas alguna</p>
+            <a href="{% url 'propiedades:inicio' %}" 
+               class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition">
+                <i class="fas fa-home mr-2"></i> Ir al Inicio
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

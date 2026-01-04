@@ -1,0 +1,146 @@
+/* Archivo CSS de entrada para Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos personalizados */
+@layer components {
+    .btn-primary {
+        @apply bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition duration-200;
+    }
+    
+    .btn-secondary {
+        @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg transition duration-200;
+    }
+    
+    .card {
+        @apply bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-200;
+    }
+    
+    .input-field {
+        @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent;
+    }
+    
+    .badge {
+        @apply inline-block px-3 py-1 text-sm font-semibold rounded-full;
+    }
+    
+    .badge-primary {
+        @apply badge bg-yellow-100 text-yellow-800;
+    }
+    
+    .badge-success {
+        @apply badge bg-green-100 text-green-800;
+    }
+    
+    .badge-danger {
+        @apply badge bg-red-100 text-red-800;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+/* Patrón hexagonal de abeja profesional */
+.honeycomb-hero {
+    background: linear-gradient(135deg, #fff8e1 0%, #ffffff 50%, #fffbf0 100%);
+    position: relative;
+}
+
+.honeycomb-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 50px,
+            rgba(251, 192, 45, 0.03) 50px,
+            rgba(251, 192, 45, 0.03) 100px
+        ),
+        repeating-linear-gradient(
+            180deg,
+            transparent,
+            transparent 50px,
+            rgba(251, 192, 45, 0.03) 50px,
+            rgba(251, 192, 45, 0.03) 100px
+        );
+    opacity: 0.6;
+}
+
+.honeycomb-hero::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(251, 192, 45, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(50px, -30px) rotate(90deg);
+    }
+    50% {
+        transform: translate(100px, 0) rotate(180deg);
+    }
+    75% {
+        transform: translate(50px, 30px) rotate(270deg);
+    }
+}
+
+/* Patrón hexagonal alternativo con hexágonos */
+.honeycomb-pattern-alt {
+    background-color: #fffef7;
+    background-image: 
+        radial-gradient(circle at 25px 25px, rgba(251, 192, 45, 0.05) 2%, transparent 3%),
+        radial-gradient(circle at 75px 75px, rgba(251, 192, 45, 0.05) 2%, transparent 3%);
+    background-size: 100px 100px;
+    background-position: 0 0, 50px 50px;
+}
+
+/* Camino de abeja - línea decorativa */
+.bee-path {
+    position: relative;
+    padding: 2rem 0;
+}
+
+.bee-path::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(251, 192, 45, 0.3) 10%,
+        rgba(251, 192, 45, 0.5) 50%,
+        rgba(251, 192, 45, 0.3) 90%,
+        transparent 100%
+    );
+    background-size: 50px 2px;
+}

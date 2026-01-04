@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Propiedad - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-xl shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Editar Propiedad</h1>
+            
+            <!-- Mostrar errores del formulario -->
+            {% if form.errors %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+                <div class="flex items-start">
+                    <i class="fas fa-exclamation-circle text-red-500 mr-2 mt-1"></i>
+                    <div>
+                        <p class="font-semibold mb-2">Por favor, corrige los siguientes errores:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Información Básica -->
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Información Básica</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Título de la publicación</label>
+                            {{ form.titulo }}
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                            {{ form.descripcion }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de propiedad</label>
+                            {{ form.tipo }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Operación</label>
+                            {{ form.operacion }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Precio mensual ($)</label>
+                            {{ form.precio }}
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.incluye_expensas }}
+                            <label for="{{ form.incluye_expensas.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Incluye gastos de expensas
+                            </label>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de contacto</label>
+                            {{ form.tipo_contacto }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ubicación -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Ubicación</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
+                            {{ form.ciudad }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Distrito</label>
+                            {{ form.distrito }}
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+                            {{ form.direccion }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Características -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Características</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Área (m²)</label>
+                            {{ form.area }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Habitaciones</label>
+                            {{ form.habitaciones }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Baños</label>
+                            {{ form.banos }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center">
+                            {{ form.estacionamiento }}
+                            <label for="{{ form.estacionamiento.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Tiene estacionamiento
+                                <i class="fas fa-car text-blue-800 ml-2"></i>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.amoblado }}
+                            <label for="{{ form.amoblado.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Amoblado
+                                <i class="fas fa-couch text-green-800 ml-2"></i>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.mascotas }}
+                            <label for="{{ form.mascotas.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Acepta mascotas
+                                <i class="fas fa-paw text-purple-800 ml-2"></i>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.especial_estudiantes }}
+                            <label for="{{ form.especial_estudiantes.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Especial para estudiantes
+                                <i class="fas fa-graduation-cap text-purple-800 ml-2"></i>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Imágenes existentes -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Imágenes Actuales</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        {% for imagen in propiedad.imagenes.all %}
+                        <div class="relative">
+                            <img src="{{ imagen.imagen.url }}" alt="Imagen {{ forloop.counter }}" 
+                                 class="w-full h-32 object-cover rounded-lg">
+                            {% if forloop.first %}
+                            <span class="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded">
+                                Principal
+                            </span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Agregar nuevas imágenes (opcional)
+                        </label>
+                        <input type="file" name="imagenes" multiple accept="image/*"
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                        <p class="mt-2 text-sm text-gray-500">
+                            Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB por imagen.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Botones -->
+                <div class="border-t border-gray-200 pt-6 flex justify-end space-x-4">
+                    <a href="{% url 'propiedades:detalle' propiedad.pk %}" 
+                       class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg transition">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition">
+                        <i class="fas fa-save mr-2"></i> Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

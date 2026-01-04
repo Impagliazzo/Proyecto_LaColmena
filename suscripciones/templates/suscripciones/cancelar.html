@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancelar Suscripción - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-16">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <div class="text-center mb-8">
+                <i class="fas fa-exclamation-triangle text-red-500 text-6xl mb-4"></i>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">¿Cancelar Suscripción?</h1>
+                <p class="text-gray-600">Estás a punto de cancelar tu suscripción al plan <strong>{{ suscripcion.plan.nombre }}</strong></p>
+            </div>
+
+            <!-- Información del Plan Actual -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                <h3 class="font-semibold text-gray-900 mb-3">Plan Actual</h3>
+                <div class="space-y-2 text-sm">
+                    <p><span class="text-gray-600">Plan:</span> <span class="font-semibold">{{ suscripcion.plan.nombre }}</span></p>
+                    <p><span class="text-gray-600">Precio:</span> <span class="font-semibold">S/ {{ suscripcion.plan.precio }}/mes</span></p>
+                    <p><span class="text-gray-600">Publicaciones:</span> <span class="font-semibold">Hasta {{ suscripcion.plan.max_publicaciones|add:1 }} activas</span></p>
+                </div>
+            </div>
+
+            <!-- Advertencias -->
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <div class="flex">
+                    <i class="fas fa-exclamation-circle text-red-500 mt-1 mr-3"></i>
+                    <div>
+                        <h4 class="text-sm font-semibold text-red-800 mb-2">¿Qué sucederá al cancelar?</h4>
+                        <ul class="text-sm text-red-700 space-y-1">
+                            <li><i class="fas fa-check mr-2"></i>Tu primera publicación permanecerá activa (gratis permanente)</li>
+                            <li><i class="fas fa-pause mr-2"></i>Las publicaciones adicionales se suspenderán automáticamente</li>
+                            <li><i class="fas fa-times mr-2"></i>Perderás acceso a estadísticas avanzadas</li>
+                            <li><i class="fas fa-times mr-2"></i>Perderás beneficios del plan (destacadas, soporte prioritario, etc.)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                <div class="flex">
+                    <i class="fas fa-lightbulb text-blue-500 mt-1 mr-3"></i>
+                    <div>
+                        <p class="text-sm text-blue-700">
+                            <strong>Tip:</strong> En lugar de cancelar, puedes cambiar a un plan más económico que se ajuste mejor a tus necesidades.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de Cancelación -->
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="flex gap-4">
+                    <a href="{% url 'suscripciones:mi_suscripcion' %}" 
+                       class="flex-1 text-center bg-gray-300 hover:bg-gray-400 text-gray-700 font-semibold py-3 px-6 rounded-lg transition">
+                        <i class="fas fa-arrow-left mr-2"></i> No, mantener mi plan
+                    </a>
+                    <button type="submit" 
+                            class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+                        <i class="fas fa-times-circle mr-2"></i> Sí, cancelar suscripción
+                    </button>
+                </div>
+            </form>
+
+            <!-- Alternativa: Cambiar de Plan -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600 mb-2">¿Prefieres un plan más económico?</p>
+                <a href="{% url 'suscripciones:planes' %}" 
+                   class="text-blue-600 hover:text-blue-700 font-semibold text-sm">
+                    <i class="fas fa-exchange-alt mr-1"></i> Ver otros planes disponibles
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

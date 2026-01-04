@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Buscar Compañero/a - LaColmena{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="honeycomb-pattern py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">
+            🤝 Encuentra tu compañero/a ideal
+        </h1>
+        <p class="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
+            Divide gastos, comparte experiencias y vive mejor.<br>
+            Conecta con personas que buscan lo mismo que tú.
+        </p>
+    </div>
+</div>
+
+<!-- Cómo Funciona -->
+<div class="bg-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">¿Cómo funciona?</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center p-6">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-blue-600">
+                    1
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Crea tu Perfil</h3>
+                <p class="text-gray-600">Cuéntanos sobre ti, tus intereses, horarios y preferencias para vivir.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-yellow-600">
+                    2
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Explora Perfiles</h3>
+                <p class="text-gray-600">Navega entre estudiantes y profesionales que buscan compartir vivienda.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-green-600">
+                    3
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Conéctate</h3>
+                <p class="text-gray-600">Contacta, conoce a tus posibles compañeros y encuentren juntos su hogar.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Próximamente -->
+<div class="bg-gradient-to-r from-yellow-50 to-orange-50 py-20">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="bg-white p-12 rounded-2xl shadow-xl">
+            <i class="fas fa-rocket text-6xl text-yellow-500 mb-6"></i>
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">¡Próximamente!</h2>
+            <p class="text-xl text-gray-700 mb-8">
+                Estamos trabajando en esta increíble funcionalidad para que encuentres<br> 
+                al compañero/a de departamento perfecto para ti.
+            </p>
+            <div class="bg-gray-50 p-6 rounded-lg mb-8">
+                <h3 class="font-semibold text-lg mb-4">¿Qué podrás hacer?</h3>
+                <ul class="text-left max-w-md mx-auto space-y-2 text-gray-700">
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                        <span>Crear un perfil detallado con tus preferencias de convivencia</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                        <span>Filtrar por edad, ocupación, estilo de vida y más</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                        <span>Chatear directamente con candidatos compatibles</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                        <span>Ver perfiles verificados con valoraciones de la comunidad</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-green-500 mr-3 mt-1"></i>
+                        <span>Buscar departamentos juntos y dividir gastos</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="bg-yellow-50 border-2 border-yellow-200 p-6 rounded-lg">
+                <h3 class="font-semibold text-lg mb-3">📧 ¿Quieres ser de los primeros en probarlo?</h3>
+                <p class="text-gray-700 mb-4">Déjanos tu correo y te avisaremos cuando lancemos esta función.</p>
+                <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                    <input type="email" placeholder="tu@email.com" class="flex-1 px-4 py-3 rounded-lg border-2 border-gray-300 focus:border-yellow-500 focus:outline-none">
+                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg transition shadow-md">
+                        Notificarme
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mientras Tanto -->
+<div class="bg-white py-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Mientras tanto...</h2>
+        <p class="text-lg text-gray-700 mb-8">
+            Puedes empezar a buscar tu departamento ideal y luego invitar a tus amigos o conocidos a unirse.
+        </p>
+        <div class="flex justify-center space-x-4">
+            <a href="{% url 'propiedades:estudiantes' %}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg">
+                Ver Departamentos para Estudiantes
+            </a>
+            <a href="{% url 'propiedades:listado' %}" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-8 rounded-lg transition shadow-lg border-2 border-gray-300">
+                Explorar Todas las Propiedades
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Consejos -->
+<div class="bg-gray-50 py-16">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Consejos para vivir en comunidad</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-semibold text-lg mb-3 flex items-center">
+                    <i class="fas fa-comments text-yellow-500 mr-3"></i>
+                    Comunicación Clara
+                </h3>
+                <p class="text-gray-600">Establece reglas desde el principio sobre limpieza, horarios, visitas y gastos compartidos.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-semibold text-lg mb-3 flex items-center">
+                    <i class="fas fa-handshake text-blue-500 mr-3"></i>
+                    Respeto Mutuo
+                </h3>
+                <p class="text-gray-600">Respeta los espacios personales, horarios de estudio/trabajo y preferencias de cada uno.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-semibold text-lg mb-3 flex items-center">
+                    <i class="fas fa-calculator text-green-500 mr-3"></i>
+                    División Justa de Gastos
+                </h3>
+                <p class="text-gray-600">Usa apps para dividir gastos de alquiler, servicios, comida y compras comunes.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="font-semibold text-lg mb-3 flex items-center">
+                    <i class="fas fa-broom text-purple-500 mr-3"></i>
+                    Orden y Limpieza
+                </h3>
+                <p class="text-gray-600">Crea un calendario de limpieza rotativo para mantener los espacios comunes ordenados.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

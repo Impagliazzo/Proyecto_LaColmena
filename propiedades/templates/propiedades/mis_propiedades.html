@@ -1,0 +1,412 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Alquileres - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Mis Alquileres</h1>
+            <a href="{% url 'propiedades:crear' %}" 
+               class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition">
+                <i class="fas fa-plus mr-2"></i> Nueva Publicación
+            </a>
+        </div>
+        
+        <!-- Estadísticas -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">Publicaciones Activas</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">{{ activas }}</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full relative group cursor-pointer">
+                        <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+                        <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-50">
+                            <div class="bg-gray-800 text-white text-sm rounded-lg py-2.5 px-4 whitespace-nowrap shadow-xl font-medium">
+                                Propiedades visibles y disponibles para alquilar
+                                <div class="absolute top-full right-4 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if puede_destacar %}
+            <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl shadow-md p-6 border-2 border-yellow-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-yellow-800 text-sm font-semibold">Destacados Disponibles</p>
+                        <p class="text-3xl font-bold text-yellow-600 mt-2">{{ destacados_disponibles }}</p>
+                        <p class="text-xs text-yellow-700 mt-1">Este mes</p>
+                    </div>
+                    <div class="bg-yellow-200 p-3 rounded-full relative group cursor-pointer">
+                        <i class="fas fa-star text-yellow-600 text-2xl"></i>
+                        {% if suscripcion and suscripcion.plan %}
+                        <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-50">
+                            <div class="bg-gray-800 text-white text-sm rounded-lg py-2.5 px-4 whitespace-nowrap shadow-xl font-medium">
+                                Tenés {{ suscripcion.plan.destacados_incluidos_mes }} destacado{{ suscripcion.plan.destacados_incluidos_mes|pluralize }} incluido{{ suscripcion.plan.destacados_incluidos_mes|pluralize }} por mes
+                                <div class="absolute top-full right-4 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">Total de Vistas</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">{{ total_vistas }}</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full relative group cursor-pointer">
+                        <i class="fas fa-eye text-blue-600 text-2xl"></i>
+                        <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-50">
+                            <div class="bg-gray-800 text-white text-sm rounded-lg py-2.5 px-4 whitespace-nowrap shadow-xl font-medium">
+                                Cantidad de personas que vieron tus propiedades
+                                <div class="absolute top-full right-4 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">Favoritos</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">{{ total_favoritos }}</p>
+                    </div>
+                    <div class="bg-red-100 p-3 rounded-full relative group cursor-pointer">
+                        <i class="fas fa-heart text-red-600 text-2xl"></i>
+                        <div class="absolute bottom-full right-0 mb-2 hidden group-hover:block z-50">
+                            <div class="bg-gray-800 text-white text-sm rounded-lg py-2.5 px-4 whitespace-nowrap shadow-xl font-medium">
+                                Usuarios que guardaron tus propiedades como favoritas
+                                <div class="absolute top-full right-4 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Listado de Propiedades -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Tus Publicaciones</h2>
+                
+                {% if propiedades %}
+                <div class="space-y-4">
+                    {% for propiedad in propiedades %}
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <!-- Imagen -->
+                            <div class="flex-shrink-0">
+                                {% if propiedad.imagen_principal %}
+                                <img src="{{ propiedad.imagen_principal.imagen.url }}" 
+                                     alt="{{ propiedad.titulo }}" 
+                                     class="w-full md:w-48 h-32 object-cover rounded-lg">
+                                {% else %}
+                                <div class="w-full md:w-48 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-home text-white text-4xl opacity-50"></i>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Información -->
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <a href="{% url 'propiedades:detalle' propiedad.pk %}" 
+                                           class="text-xl font-bold text-gray-900 hover:text-yellow-600">
+                                            {{ propiedad.titulo }}
+                                        </a>
+                                        <p class="text-gray-600 text-sm mt-1">
+                                            <i class="fas fa-map-marker-alt mr-1"></i>
+                                            {{ propiedad.distrito }}, {{ propiedad.ciudad }}
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-2xl font-bold text-gray-900">
+                                            ${{ propiedad.precio|floatformat:0 }}
+                                        </p>
+                                        <p class="text-sm text-gray-600">/mes</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Estado y Estadísticas -->
+                                <div class="flex flex-wrap items-center gap-4 mb-3">
+                                    {% if propiedad.estado == 'suspendida' and propiedad.motivo_suspension %}
+                                    <span class="relative group bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold cursor-help">
+                                        {{ propiedad.get_estado_display }}
+                                        <!-- Tooltip -->
+                                        <span class="invisible group-hover:visible absolute z-10 w-64 p-3 bg-gray-900 text-white text-xs rounded-lg shadow-lg -bottom-2 left-0 transform translate-y-full">
+                                            <i class="fas fa-info-circle mr-1"></i>
+                                            {{ propiedad.motivo_suspension }}
+                                        </span>
+                                    </span>
+                                    {% else %}
+                                    <span class="relative group {% if propiedad.estado == 'activa' %}bg-green-100 text-green-800{% elif propiedad.estado == 'suspendida' %}bg-yellow-100 text-yellow-800{% else %}bg-gray-100 text-gray-800{% endif %} px-3 py-1 rounded-full text-sm font-semibold cursor-help">
+                                        {{ propiedad.get_estado_display }}
+                                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                            <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl">
+                                                {% if propiedad.estado == 'activa' %}La propiedad está publicada y visible para todos{% elif propiedad.estado == 'suspendida' %}La propiedad está pausada y no aparece en búsquedas{% else %}La propiedad no está disponible{% endif %}
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if propiedad.tiene_destacado_activo %}
+                                    <span class="relative group bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold border border-yellow-400 cursor-help">
+                                        <i class="fas fa-star mr-1"></i>DESTACADA
+                                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                            <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl">
+                                                Esta propiedad tiene prioridad y aparece primero en búsquedas
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
+                                    </span>
+                                    {% endif %}
+                                    
+                                    <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                        <span class="relative group cursor-help">
+                                            <i class="fas fa-eye mr-1"></i> {{ propiedad.vistas }} vistas
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl">
+                                                    Cantidad de personas que vieron esta propiedad
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                        <span class="relative group cursor-help">
+                                            <i class="fas fa-heart mr-1"></i> {{ propiedad.favoritos.count }} favoritos
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl">
+                                                    Usuarios que guardaron esta propiedad como favorita
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                        {% if propiedad.total_valoraciones %}
+                                        <span class="relative group cursor-help">
+                                            <i class="fas fa-star mr-1 text-yellow-500"></i> {{ propiedad.puntuacion_promedio|floatformat:1 }} ({{ propiedad.total_valoraciones }})
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl">
+                                                    Puntuación promedio basada en {{ propiedad.total_valoraciones }} valoración{{ propiedad.total_valoraciones|pluralize:"es" }}
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                                </div>
+                                            </div>
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Acciones -->
+                                <div class="flex flex-wrap gap-2">
+                                    {% if propiedad.estado == 'activa' %}
+                                        {% if puede_destacar %}
+                                        <form method="POST" action="{% url 'propiedades:toggle_destacado' propiedad.pk %}" class="inline relative group">
+                                            {% csrf_token %}
+                                            <button type="submit" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all {% if propiedad.tiene_destacado_activo %}bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-lg shadow-yellow-500/50 hover:shadow-yellow-500/70{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}" {% if not propiedad.tiene_destacado_activo and destacados_disponibles <= 0 %}disabled{% endif %}>
+                                                <i class="{% if propiedad.tiene_destacado_activo %}fas{% else %}far{% endif %} fa-star mr-1"></i>Destacada
+                                            </button>
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                    {% if propiedad.tiene_destacado_activo %}Desactivar prioridad para esta propiedad{% else %}{% if destacados_disponibles <= 0 %}No tienes destacados disponibles{% else %}Activar prioridad para aparecer primero en búsquedas{% endif %}{% endif %}
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        {% else %}
+                                        <a href="{% url 'suscripciones:planes' %}" class="bg-gray-300 text-gray-600 text-sm font-semibold py-2 px-4 rounded-lg transition cursor-not-allowed inline-block relative group">
+                                            <i class="fas fa-lock mr-1"></i> Destacar
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                    Mejora tu plan para destacar propiedades
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        {% endif %}
+                                    {% elif propiedad.estado == 'suspendida' %}
+                                        {% if propiedad.tiene_destacado_activo %}
+                                        <div class="relative group inline-flex items-center gap-2">
+                                            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm bg-gradient-to-r from-yellow-400 to-yellow-500 text-white opacity-60 cursor-help">
+                                                <i class="fas fa-star"></i>
+                                                DESTACADA
+                                            </div>
+                                            <i class="fas fa-info-circle text-yellow-600 text-sm"></i>
+                                            <div class="absolute left-0 bottom-full mb-2 w-64 bg-gray-900 text-white text-xs rounded-lg px-3 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                                                Esta propiedad está suspendida pero mantiene su prioridad. Reactivala para que se muestre en los resultados de búsqueda.
+                                                <div class="absolute left-4 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    {% endif %}
+                                    
+                                    {% if propiedad.estado == 'activa' %}
+                                    <form method="POST" action="{% url 'propiedades:toggle_especial_estudiantes' propiedad.pk %}" class="inline relative group">
+                                        {% csrf_token %}
+                                        {% if propiedad.especial_estudiantes %}
+                                        <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition">
+                                            <i class="fas fa-graduation-cap mr-1"></i>Estudiantes
+                                        </button>
+                                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                            <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                Desmarcar como especial para estudiantes
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                        <button type="submit" class="bg-gray-300 hover:bg-gray-400 text-gray-700 text-sm font-semibold py-2 px-4 rounded-lg transition">
+                                            <i class="far fa-graduation-cap mr-1"></i>Estudiantes
+                                        </button>
+                                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                            <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                Marcar como especial para estudiantes
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </form>
+                                    {% endif %}
+                                    
+                                    <a href="{% url 'propiedades:detalle' propiedad.pk %}?preview=1" 
+                                       class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition relative group">
+                                        <i class="fas fa-eye mr-1"></i> Ver
+                                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                            <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                Ver cómo se visualiza tu propiedad
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a href="{% url 'propiedades:editar' propiedad.pk %}" 
+                                       class="bg-gray-500 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition relative group">
+                                        <i class="fas fa-edit mr-1"></i> Editar
+                                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                            <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                Editar detalles, fotos y precio de la propiedad
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    
+                                    {% comment %}
+                                    Lógica de botón Suspender/Reactivar:
+                                    - Si está activa: puede suspender (suspensión manual)
+                                    - Si está suspendida SIN motivo: puede reactivar (era suspensión manual)
+                                    - Si está suspendida CON motivo: no puede reactivar manualmente (debe contratar plan)
+                                    {% endcomment %}
+                                    {% if propiedad.estado == 'activa' %}
+                                    <a href="{% url 'propiedades:suspender' propiedad.pk %}" 
+                                       class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition relative group">
+                                        <i class="fas fa-pause mr-1"></i> Suspender
+                                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                            <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                Suspender temporalmente esta publicación (no será visible)
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    {% elif propiedad.estado == 'suspendida' %}
+                                        {% if propiedad.motivo_suspension %}
+                                        <!-- Suspendida automáticamente por sistema -->
+                                        <a href="{% url 'suscripciones:planes' %}" 
+                                           class="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition relative group">
+                                            <i class="fas fa-crown mr-1"></i> Contratar Plan
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                    Contratar un plan para reactivar esta propiedad
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        {% else %}
+                                        <!-- Suspendida manualmente, puede reactivar si tiene espacio -->
+                                        <a href="{% url 'propiedades:suspender' propiedad.pk %}" 
+                                           class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition relative group">
+                                            <i class="fas fa-play mr-1"></i> Reactivar
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                                <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                    Reactivar esta publicación (volverá a ser visible)
+                                                    <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        {% endif %}
+                                    {% endif %}
+                                    
+                                    <a href="{% url 'propiedades:eliminar' propiedad.pk %}" 
+                                       class="bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition relative group">
+                                        <i class="fas fa-trash mr-1"></i> Eliminar
+                                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
+                                            <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
+                                                Eliminar permanentemente esta propiedad
+                                                <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-800"></div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <!-- Paginación -->
+                    {% if propiedades.has_other_pages %}
+                    <div class="mt-8 flex justify-center">
+                        <nav class="flex items-center gap-2">
+                            {% if propiedades.has_previous %}
+                            <a href="?page={{ propiedades.previous_page_number }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition text-gray-700 font-medium">
+                                <i class="fas fa-chevron-left mr-1"></i> Anterior
+                            </a>
+                            {% else %}
+                            <span class="px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-400 font-medium cursor-not-allowed">
+                                <i class="fas fa-chevron-left mr-1"></i> Anterior
+                            </span>
+                            {% endif %}
+                            
+                            <div class="flex items-center gap-1">
+                                {% for num in propiedades.paginator.page_range %}
+                                    {% if propiedades.number == num %}
+                                    <span class="px-4 py-2 bg-yellow-500 text-white rounded-lg font-semibold">{{ num }}</span>
+                                    {% elif num > propiedades.number|add:'-3' and num < propiedades.number|add:'3' %}
+                                    <a href="?page={{ num }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition text-gray-700 font-medium">{{ num }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            
+                            {% if propiedades.has_next %}
+                            <a href="?page={{ propiedades.next_page_number }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition text-gray-700 font-medium">
+                                Siguiente <i class="fas fa-chevron-right ml-1"></i>
+                            </a>
+                            {% else %}
+                            <span class="px-4 py-2 bg-gray-100 border border-gray-200 rounded-lg text-gray-400 font-medium cursor-not-allowed">
+                                Siguiente <i class="fas fa-chevron-right ml-1"></i>
+                            </span>
+                            {% endif %}
+                        </nav>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-home text-gray-300 text-6xl mb-4"></i>
+                    <p class="text-gray-500 text-lg mb-4">Aún no tienes publicaciones</p>
+                    <a href="{% url 'propiedades:crear' %}" 
+                       class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition inline-block">
+                        <i class="fas fa-plus mr-2"></i> Crear Primera Publicación
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

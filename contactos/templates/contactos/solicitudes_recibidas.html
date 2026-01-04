@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Solicitudes Recibidas - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Solicitudes de Contacto Recibidas</h1>
+            <p class="text-gray-600 mt-2">Personas interesadas en tus propiedades</p>
+        </div>
+        
+        {% if solicitudes %}
+        <div class="space-y-4">
+            {% for solicitud in solicitudes %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <!-- Imagen de la propiedad -->
+                        <div class="flex-shrink-0">
+                            <a href="{% url 'propiedades:detalle' solicitud.propiedad.pk %}">
+                                {% if solicitud.propiedad.imagen_principal %}
+                                <img src="{{ solicitud.propiedad.imagen_principal.imagen.url }}" 
+                                     alt="{{ solicitud.propiedad.titulo }}" 
+                                     class="w-full md:w-48 h-32 object-cover rounded-lg">
+                                {% else %}
+                                <div class="w-full md:w-48 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-home text-white text-4xl opacity-50"></i>
+                                </div>
+                                {% endif %}
+                            </a>
+                        </div>
+                        
+                        <!-- Información -->
+                        <div class="flex-1">
+                            <!-- Header de la solicitud -->
+                            <div class="flex items-start justify-between mb-3">
+                                <div>
+                                    <h3 class="text-xl font-semibold text-gray-900 mb-1">
+                                        {{ solicitud.propiedad.titulo }}
+                                    </h3>
+                                    <p class="text-gray-600 text-sm">
+                                        <i class="fas fa-calendar mr-1"></i>
+                                        Solicitud recibida el {{ solicitud.fecha_solicitud|date:"d/m/Y H:i" }}
+                                    </p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-sm font-semibold
+                                    {% if solicitud.estado == 'pendiente' %}bg-yellow-100 text-yellow-800
+                                    {% elif solicitud.estado == 'contactado' %}bg-blue-100 text-blue-800
+                                    {% elif solicitud.estado == 'cerrada' %}bg-gray-100 text-gray-800
+                                    {% endif %}">
+                                    {% if solicitud.estado == 'pendiente' %}Pendiente
+                                    {% elif solicitud.estado == 'contactado' %}Contactado
+                                    {% elif solicitud.estado == 'cerrada' %}Cerrada
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            <!-- Información del interesado -->
+                            <div class="bg-gray-50 rounded-lg p-4 mb-3">
+                                <div class="flex items-start gap-3 mb-3">
+                                    {% if solicitud.usuario.foto_perfil %}
+                                    <img src="{{ solicitud.usuario.foto_perfil.url }}" 
+                                         alt="{{ solicitud.usuario.username }}" 
+                                         class="w-12 h-12 rounded-full object-cover">
+                                    {% else %}
+                                    <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-semibold text-lg">
+                                        {{ solicitud.usuario.username.0|upper }}
+                                    </div>
+                                    {% endif %}
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-gray-900">
+                                            {{ solicitud.usuario.get_full_name|default:solicitud.usuario.username }}
+                                        </p>
+                                        <p class="text-gray-600 text-sm">
+                                            <i class="fas fa-envelope mr-1"></i>
+                                            <a href="mailto:{{ solicitud.email }}" class="text-blue-600 hover:underline">
+                                                {{ solicitud.email }}
+                                            </a>
+                                        </p>
+                                        {% if solicitud.telefono %}
+                                        <p class="text-gray-600 text-sm">
+                                            <i class="fas fa-phone mr-1"></i>
+                                            <a href="tel:{{ solicitud.telefono }}" class="text-blue-600 hover:underline">
+                                                {{ solicitud.telefono }}
+                                            </a>
+                                        </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Mensaje -->
+                                <div class="border-t border-gray-200 pt-3 mt-3">
+                                    <p class="text-gray-700 text-sm">
+                                        <strong>Mensaje:</strong><br>
+                                        {{ solicitud.mensaje }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Acciones -->
+                            <div class="flex flex-wrap gap-2">
+                                {% if solicitud.estado == 'pendiente' %}
+                                <a href="{% url 'contactos:cambiar_estado' solicitud.pk 'contactado' %}" 
+                                   class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition">
+                                    <i class="fas fa-check mr-1"></i> Marcar como Contactado
+                                </a>
+                                {% endif %}
+                                
+                                {% if solicitud.estado != 'cerrada' %}
+                                <a href="{% url 'contactos:cambiar_estado' solicitud.pk 'cerrada' %}" 
+                                   class="bg-gray-500 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition">
+                                    <i class="fas fa-times mr-1"></i> Cerrar Solicitud
+                                </a>
+                                {% endif %}
+                                
+                                <a href="mailto:{{ solicitud.email }}" 
+                                   class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition">
+                                    <i class="fas fa-envelope mr-1"></i> Enviar Email
+                                </a>
+                                
+                                <a href="{% url 'propiedades:detalle' solicitud.propiedad.pk %}" 
+                                   class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold py-2 px-4 rounded-lg transition">
+                                    <i class="fas fa-home mr-1"></i> Ver Propiedad
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-xl shadow-md p-12 text-center">
+            <div class="mb-6">
+                <i class="fas fa-inbox text-gray-300 text-6xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">No tienes solicitudes de contacto</h3>
+            <p class="text-gray-600 mb-6">Aquí aparecerán las personas interesadas en tus propiedades</p>
+            <a href="{% url 'propiedades:mis_propiedades' %}" 
+               class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition">
+                <i class="fas fa-home mr-2"></i> Ver Mis Propiedades
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

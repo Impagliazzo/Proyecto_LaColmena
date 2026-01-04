@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportar Valoración{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-xl shadow-lg p-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">Reportar Valoración</h1>
+            <p class="text-gray-600">¿Crees que esta valoración es inapropiada o injusta? Ayúdanos a mantener la comunidad segura reportándola.</p>
+        </div>
+
+        <!-- Valoración a reportar -->
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3 flex-1">
+                    <p class="text-sm text-yellow-700 font-medium">Valoración de {{ valoracion.usuario.get_full_name|default:valoracion.usuario.username }}</p>
+                    <div class="mt-2 text-sm text-yellow-600">
+                        <p><strong>Propiedad:</strong> {{ valoracion.propiedad.titulo }}</p>
+                        <p><strong>Fecha:</strong> {{ valoracion.fecha_creacion|date:"d/m/Y" }}</p>
+                        {% if valoracion.comentario %}
+                        <p class="mt-2 italic">"{{ valoracion.comentario|truncatewords:20 }}"</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de reporte -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Motivo -->
+            <div>
+                <label for="motivo" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Motivo del reporte *
+                </label>
+                <select name="motivo" id="motivo" required 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                    <option value="">Selecciona un motivo...</option>
+                    {% for value, label in motivos %}
+                    <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Descripción -->
+            <div>
+                <label for="descripcion" class="block text-sm font-semibold text-gray-700 mb-2">
+                    Descripción adicional (opcional)
+                </label>
+                <textarea name="descripcion" id="descripcion" rows="5"
+                          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                          placeholder="Proporciona más detalles sobre por qué consideras que esta valoración es inapropiada..."></textarea>
+                <p class="mt-1 text-sm text-gray-500">Cuantos más detalles proporciones, más rápido podremos revisar el reporte.</p>
+            </div>
+
+            <!-- Información importante -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="text-sm font-semibold text-blue-800 mb-2">Información importante:</h3>
+                <ul class="text-sm text-blue-700 space-y-1 list-disc list-inside">
+                    <li>Los reportes son revisados por nuestro equipo</li>
+                    <li>Solo puedes reportar una vez cada valoración</li>
+                    <li>El abuso del sistema de reportes puede resultar en la suspensión de tu cuenta</li>
+                    <li>Serás notificado si se toma alguna acción sobre tu reporte</li>
+                </ul>
+            </div>
+
+            <!-- Botones -->
+            <div class="flex items-center gap-4 pt-4">
+                <button type="submit" 
+                        class="flex-1 bg-red-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors duration-200 shadow-md">
+                    Enviar Reporte
+                </button>
+                <a href="{% url 'propiedades:detalle' valoracion.propiedad.pk %}" 
+                   class="flex-1 text-center bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Convertirse en Propietario - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gradient-to-br from-yellow-400 to-orange-500 min-h-screen py-16">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+            <div class="text-center mb-8">
+                <div class="inline-block bg-yellow-500 p-4 rounded-full mb-4">
+                    <i class="fas fa-star text-white text-4xl"></i>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                    ¿Listo para publicar tu propiedad?
+                </h1>
+                <p class="text-lg text-gray-600">
+                    Conviértete en propietario y comienza a publicar tus inmuebles de forma gratuita
+                </p>
+            </div>
+            
+            <!-- Beneficios -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-green-100 p-3 rounded-full">
+                            <i class="fas fa-check text-green-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 mb-1">Primera publicación gratis</h3>
+                        <p class="text-gray-600 text-sm">Publica tu primera propiedad sin costo alguno</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-blue-100 p-3 rounded-full">
+                            <i class="fas fa-users text-blue-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 mb-1">Miles de usuarios</h3>
+                        <p class="text-gray-600 text-sm">Conecta con personas buscando alquilar</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-purple-100 p-3 rounded-full">
+                            <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 mb-1">Estadísticas detalladas</h3>
+                        <p class="text-gray-600 text-sm">Ve cuántas personas visitan tus publicaciones</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <div class="bg-yellow-100 p-3 rounded-full">
+                            <i class="fas fa-envelope text-yellow-600 text-xl"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-900 mb-1">Contacto directo</h3>
+                        <p class="text-gray-600 text-sm">Recibe solicitudes de contacto inmediatamente</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Formulario -->
+            <form method="POST" class="border-t border-gray-200 pt-8">
+                {% csrf_token %}
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-yellow-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-yellow-700">
+                                Al convertirte en propietario, podrás publicar y gestionar tus inmuebles. 
+                                La primera publicación es completamente gratuita.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center space-x-4">
+                    <a href="{% url 'propiedades:inicio' %}" 
+                       class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-8 rounded-lg transition">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-8 rounded-lg transition">
+                        <i class="fas fa-star mr-2"></i> Convertirme en Propietario
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

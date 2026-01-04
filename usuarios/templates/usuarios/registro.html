@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Registro - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="flex justify-center">
+                <div class="bg-yellow-500 p-4 rounded-full">
+                    <i class="fas fa-user-plus text-white text-4xl"></i>
+                </div>
+            </div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Crear cuenta
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                O
+                <a href="{% url 'usuarios:login' %}" class="font-medium text-yellow-600 hover:text-yellow-500">
+                    inicia sesión si ya tienes cuenta
+                </a>
+            </p>
+        </div>
+        
+        <form class="mt-8 space-y-6" method="POST">
+            {% csrf_token %}
+            
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Nombre
+                        </label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Apellido
+                        </label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <p class="mt-2 text-sm text-red-600">{{ form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Usuario
+                    </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.telefono.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Teléfono (opcional)
+                    </label>
+                    {{ form.telefono }}
+                    {% if form.telefono.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.telefono.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Contraseña
+                    </label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.password1.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Confirmar contraseña
+                    </label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <p class="mt-2 text-sm text-red-600">{{ form.password2.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" 
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <i class="fas fa-user-plus text-yellow-500 group-hover:text-yellow-400"></i>
+                    </span>
+                    Crear Cuenta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

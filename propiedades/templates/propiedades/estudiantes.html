@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Estudiantes - LaColmena{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="py-20" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="inline-block bg-white bg-opacity-90 px-6 py-2 rounded-full mb-6">
+            <span class="text-purple-700 font-bold">Especial Estudiantes</span>
+        </div>
+        <h1 class="text-5xl font-bold text-white mb-6">
+            🎓 Un espacio pensado para estudiantes
+        </h1>
+        <p class="text-xl text-white max-w-3xl mx-auto mb-8">
+            Alquileres accesibles, departamentos compartidos<br>
+            y una comunidad para dividir gastos.
+        </p>
+        <div class="flex justify-center space-x-4">
+            <a href="#propiedades" class="bg-white hover:bg-gray-100 text-purple-700 font-semibold py-3 px-8 rounded-lg transition shadow-lg">
+                Ver Departamentos
+            </a>
+            <a href="{% url 'propiedades:buscar_companero' %}" class="bg-transparent hover:bg-white hover:bg-opacity-20 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg border-2 border-white">
+                Buscar Compañero/a
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Beneficios -->
+<div class="bg-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">¿Por qué elegir LaColmena?</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center p-6">
+                <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-tag text-3xl text-purple-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Precios Accesibles</h3>
+                <p class="text-gray-600">Encuentra alquileres dentro de tu presupuesto estudiantil, sin comprometer calidad.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="bg-indigo-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-users text-3xl text-indigo-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Comparte Gastos</h3>
+                <p class="text-gray-600">Conecta con otros estudiantes y divide el alquiler para ahorrar más.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-graduation-cap text-3xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Comunidad Estudiantil</h3>
+                <p class="text-gray-600">Únete a una red de estudiantes que entienden tus necesidades.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Propiedades para Estudiantes -->
+<div id="propiedades" class="bg-gray-50 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Departamentos Disponibles</h2>
+        
+        {% if propiedades_estudiantes %}
+            <div class="grid md:grid-cols-3 gap-6">
+                {% for propiedad in propiedades_estudiantes %}
+                    <a href="{% url 'propiedades:detalle' propiedad.pk %}" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                        {% if propiedad.imagen_principal %}
+                            <img src="{{ propiedad.imagen_principal.imagen.url }}" alt="{{ propiedad.titulo }}" class="w-full h-48 object-cover">
+                        {% else %}
+                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                                <i class="fas fa-home text-4xl text-gray-400"></i>
+                            </div>
+                        {% endif %}
+                        <div class="p-4">
+                            <h3 class="font-semibold text-lg mb-2">{{ propiedad.titulo }}</h3>
+                            <p class="text-gray-600 text-sm mb-2">{{ propiedad.distrito }}, {{ propiedad.ciudad }}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-purple-600">S/ {{ propiedad.precio }}</span>
+                                <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">Para estudiantes</span>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600 py-8">No hay propiedades disponibles en este momento.</p>
+        {% endif %}
+        
+        <div class="text-center mt-8">
+            <a href="{% url 'propiedades:listado' %}?especial_estudiantes=1" class="text-purple-600 hover:text-purple-700 font-semibold">
+                Ver todas las propiedades para estudiantes →
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Banner CTA Estudiantes -->
+<div class="py-20" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-left">
+            <div class="inline-block bg-white bg-opacity-90 px-6 py-2 rounded-full mb-6">
+                <span class="text-purple-700 font-bold">Especial Estudiantes</span>
+            </div>
+            <h2 class="text-4xl font-bold text-white mb-6">¿Sos estudiante?</h2>
+            <p class="text-xl text-white mb-8 max-w-2xl">
+                Conoce espacios exclusivos, amoblados y bien ubicados cerca de tu universidad!
+            </p>
+            <div class="flex space-x-4">
+                <a href="{% url 'propiedades:listado' %}?especial_estudiantes=1" class="bg-white hover:bg-gray-100 text-purple-700 font-semibold py-3 px-8 rounded-lg transition shadow-lg">
+                    Ver Propiedades Estudiantes
+                </a>
+                <a href="{% url 'propiedades:buscar_companero' %}" class="bg-transparent hover:bg-white hover:bg-opacity-20 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg border-2 border-white">
+                    Más información
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

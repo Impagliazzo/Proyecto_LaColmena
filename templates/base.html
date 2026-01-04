@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LaColmena - Encuentra tu próximo hogar{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom, #fffbc3 0%, #fdd766 100%) !important;
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        
+        /* Patrón profesional de panales de abeja */
+        .honeycomb-pattern {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #FCD34D 0%, #FBBF24 50%, #F59E0B 100%);
+        }
+        
+        /* Grupo de 3 hexágonos (lado superior izquierdo) */
+        .honeycomb-pattern::before {
+            content: '';
+            position: absolute;
+            top: 50px;
+            left: 100px;
+            width: 200px;
+            height: 200px;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='80' height='92' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='40,8 66,24 66,56 40,72 14,56 14,24' fill='none' stroke='%23F59E0B' stroke-width='2.5' opacity='0.35'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='80' height='92' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='40,8 66,24 66,56 40,72 14,56 14,24' fill='none' stroke='%23FBBF24' stroke-width='2' opacity='0.3'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='80' height='92' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='40,8 66,24 66,56 40,72 14,56 14,24' fill='none' stroke='%23FCD34D' stroke-width='2' opacity='0.25'/%3E%3C/svg%3E");
+            background-size: 80px 92px;
+            background-position: 0 0, 40px 46px, 80px 0;
+            background-repeat: no-repeat;
+            z-index: 0;
+            opacity: 0.8;
+        }
+        
+        /* Grupo de 5 hexágonos (lado inferior derecho) */
+        .honeycomb-pattern::after {
+            content: '';
+            position: absolute;
+            bottom: 40px;
+            right: 80px;
+            width: 280px;
+            height: 200px;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='70' height='81' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='35,7 58,21 58,49 35,63 12,49 12,21' fill='none' stroke='%23F59E0B' stroke-width='2.5' opacity='0.4'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='70' height='81' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='35,7 58,21 58,49 35,63 12,49 12,21' fill='none' stroke='%23FBBF24' stroke-width='2' opacity='0.35'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='70' height='81' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='35,7 58,21 58,49 35,63 12,49 12,21' fill='none' stroke='%23FCD34D' stroke-width='2' opacity='0.3'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='70' height='81' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='35,7 58,21 58,49 35,63 12,49 12,21' fill='none' stroke='%23FBBF24' stroke-width='2.5' opacity='0.35'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='70' height='81' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='35,7 58,21 58,49 35,63 12,49 12,21' fill='none' stroke='%23F59E0B' stroke-width='2' opacity='0.3'/%3E%3C/svg%3E");
+            background-size: 70px 81px;
+            background-position: 
+                0 0,
+                70px 0,
+                140px 0,
+                35px 40.5px,
+                105px 40.5px;
+            background-repeat: no-repeat;
+            z-index: 0;
+            opacity: 0.85;
+        }
+        
+        .honeycomb-pattern > * {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+        <div class="w-full px-0">
+            <div class="flex justify-between items-center h-16 px-4">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="{% url 'propiedades:inicio' %}" class="flex items-center space-x-2">
+                        <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Hexágono superior amarillo claro -->
+                            <polygon points="50,8 73,21 73,47 50,60 27,47 27,21" fill="#FCD34D" />
+                            <!-- Hexágono inferior izquierdo amarillo -->
+                            <polygon points="27,47 50,60 50,86 27,99 4,86 4,60" fill="#FBBF24" />
+                            <!-- Hexágono inferior derecho naranja -->
+                            <polygon points="73,47 96,60 96,86 73,99 50,86 50,60" fill="#F59E0B" />
+                        </svg>
+                        <span class="text-xl font-bold text-gray-800">LaColmena</span>
+                    </a>
+                </div>
+                
+                <!-- Menu Desktop -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <!-- Dropdown Explorar -->
+                    <div class="relative group">
+                        <a href="{% url 'propiedades:listado' %}" class="flex items-center space-x-1 text-gray-700 hover:text-yellow-500 transition">
+                            <span>Explorar</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </a>
+                        <div class="absolute left-0 mt-0 w-48 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-50 before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2">
+                            <a href="{% url 'propiedades:listado' %}?operacion=alquiler" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Alquilar
+                            </a>
+                            <a href="{% url 'propiedades:listado' %}?operacion=venta" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Comprar
+                            </a>
+                            <a href="{% url 'propiedades:crear' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Publicar propiedad
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Estudiantes -->
+                    <div class="relative group">
+                        <a href="{% url 'propiedades:estudiantes' %}" class="flex items-center space-x-1 text-gray-700 hover:text-yellow-500 transition">
+                            <span>Estudiantes</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </a>
+                        <div class="absolute left-0 mt-0 w-56 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-50 before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2">
+                            <a href="{% url 'propiedades:estudiantes' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Deptos para estudiantes
+                            </a>
+                            <a href="{% url 'propiedades:buscar_companero' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Buscar compañero/a
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Inversiones -->
+                    <a href="{% url 'propiedades:inversiones' %}" class="text-gray-700 hover:text-yellow-500 transition">Inversiones</a>
+
+                    <!-- Quiénes somos -->
+                    <a href="{% url 'propiedades:quienes_somos' %}" class="text-gray-700 hover:text-yellow-500 transition">Quiénes somos</a>
+
+                    {% if user.is_authenticated %}
+                        <!-- Dropdown Usuario Autenticado -->
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 text-gray-700 hover:text-yellow-500 transition">
+                                {% if user.foto_perfil %}
+                                    <div class="relative w-10 h-10" style="clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);">
+                                        <img src="{{ user.foto_perfil.url }}" alt="{{ user.username }}" class="w-full h-full object-cover">
+                                        {% with total_notificaciones=user.notificaciones_no_leidas %}
+                                            {% if not user.perfil.perfil_completo %}
+                                                {% with total_notificaciones=total_notificaciones|add:1 %}
+                                                    {% if total_notificaciones > 0 %}
+                                                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
+                                                            {{ total_notificaciones }}
+                                                        </span>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% elif total_notificaciones > 0 %}
+                                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
+                                                    {{ total_notificaciones }}
+                                                </span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                {% else %}
+                                    <div class="relative w-10 h-10">
+                                        <div class="w-10 h-10 flex items-center justify-center text-white font-semibold" style="clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); background-color: #fdd734;">
+                                            {{ user.username.0|upper }}
+                                        </div>
+                                        {% with total_notificaciones=user.notificaciones_no_leidas %}
+                                            {% if not user.perfil.perfil_completo %}
+                                                {% with total_notificaciones=total_notificaciones|add:1 %}
+                                                    {% if total_notificaciones > 0 %}
+                                                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
+                                                            {{ total_notificaciones }}
+                                                        </span>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% elif total_notificaciones > 0 %}
+                                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
+                                                    {{ total_notificaciones }}
+                                                </span>
+                                            {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                {% endif %}
+                                <span>{{ user.first_name|default:user.username }}</span>
+                                <i class="fas fa-chevron-down text-sm"></i>
+                            </button>
+                            
+                            <div class="absolute right-0 mt-0 w-56 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-50 before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2">
+                                <a href="{% url 'usuarios:perfil' user.username %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 relative">
+                                    <i class="fas fa-user mr-2"></i> Mi Perfil
+                                    {% if not user.perfil.perfil_completo %}
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">1</span>
+                                    {% endif %}
+                                </a>
+                                <a href="{% url 'propiedades:favoritos' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                    <i class="fas fa-heart mr-2"></i> Favoritos
+                                </a>
+                                <a href="{% url 'notificaciones:listar' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 relative">
+                                    <i class="fas fa-bell mr-2"></i> Notificaciones
+                                    {% if user.notificaciones_no_leidas > 0 %}
+                                        <span class="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                                            {{ user.notificaciones_no_leidas }}
+                                        </span>
+                                    {% endif %}
+                                </a>
+                                <a href="{% url 'suscripciones:mi_suscripcion' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                    <i class="fas fa-credit-card mr-2"></i> Mi Suscripción
+                                </a>
+                                {% if user.es_propietario and user.publicaciones.exists %}
+                                    <a href="{% url 'propiedades:mis_propiedades' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                        <i class="fas fa-home mr-2"></i> Mis Propiedades
+                                    </a>
+                                {% endif %}
+                                {% if not user.es_propietario %}
+                                    <a href="{% url 'usuarios:convertir_propietario' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                        <i class="fas fa-star mr-2"></i> Ser Propietario
+                                    </a>
+                                {% endif %}
+                                <hr class="my-2">
+                                <a href="{% url 'usuarios:logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Cerrar Sesión
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <!-- Dropdown Iniciar sesión (No autenticado) -->
+                        <div class="relative group">
+                            <button class="flex items-center space-x-1 text-gray-700 hover:text-yellow-500 transition">
+                                <span>Iniciar sesión</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            <div class="absolute right-0 mt-0 w-48 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-50 before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2">
+                                <a href="{% url 'usuarios:login' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                    Ingresar
+                                </a>
+                                <a href="{% url 'usuarios:registro' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                    Crear cuenta
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="text-gray-700 hover:text-yellow-500" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <!-- Explorar -->
+                <div class="px-3 py-2 text-gray-600 font-semibold text-sm">Explorar</div>
+                <a href="{% url 'propiedades:listado' %}?operacion=alquiler" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Alquilar</a>
+                <a href="{% url 'propiedades:listado' %}?operacion=venta" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Comprar</a>
+                <a href="{% url 'propiedades:crear' %}" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Publicar propiedad</a>
+                
+                <!-- Estudiantes -->
+                <div class="px-3 py-2 text-gray-600 font-semibold text-sm mt-2">Estudiantes</div>
+                <a href="{% url 'propiedades:estudiantes' %}" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Deptos para estudiantes</a>
+                <a href="{% url 'propiedades:buscar_companero' %}" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Buscar compañero/a</a>
+                
+                <!-- Otros enlaces -->
+                <a href="{% url 'propiedades:inversiones' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded mt-2">Inversiones</a>
+                <a href="{% url 'propiedades:quienes_somos' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Quiénes somos</a>
+                
+                {% if user.is_authenticated %}
+                    <hr class="my-2">
+                    <a href="{% url 'usuarios:perfil' user.username %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                        <i class="fas fa-user mr-2"></i> Mi Perfil
+                    </a>
+                    <a href="{% url 'propiedades:favoritos' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                        <i class="fas fa-heart mr-2"></i> Favoritos
+                    </a>
+                    <a href="{% url 'notificaciones:listar' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded relative">
+                        <i class="fas fa-bell mr-2"></i> Notificaciones
+                        {% if user.notificaciones_no_leidas > 0 %}
+                            <span class="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                                {{ user.notificaciones_no_leidas }}
+                            </span>
+                        {% endif %}
+                    </a>
+                    <a href="{% url 'suscripciones:mi_suscripcion' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                        <i class="fas fa-credit-card mr-2"></i> Mi Suscripción
+                    </a>
+                    {% if user.es_propietario and user.publicaciones.exists %}
+                        <a href="{% url 'propiedades:mis_propiedades' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                            <i class="fas fa-home mr-2"></i> Mis Propiedades
+                        </a>
+                    {% endif %}
+                    {% if not user.es_propietario %}
+                        <a href="{% url 'usuarios:convertir_propietario' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                            <i class="fas fa-star mr-2"></i> Ser Propietario
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'usuarios:logout' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Cerrar Sesión
+                    </a>
+                {% else %}
+                    <hr class="my-2">
+                    <a href="{% url 'usuarios:login' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Ingresar</a>
+                    <a href="{% url 'usuarios:registro' %}" class="block px-3 py-2 bg-yellow-500 text-white rounded">Crear cuenta</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Mensajes Flash -->
+    {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            {% for message in messages %}
+                <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-800{% else %}bg-blue-100 text-blue-800{% endif %} fade-in">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-2"></i>
+                            {{ message }}
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-gray-600 hover:text-gray-800">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <!-- Contenido Principal -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                <!-- Columna 1: Logo y descripción - Más ancho -->
+                <div class="md:col-span-4">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <svg width="22" height="22" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="50,8 73,21 73,47 50,60 27,47 27,21" fill="#FCD34D" />
+                            <polygon points="27,47 50,60 50,86 27,99 4,86 4,60" fill="#FBBF24" />
+                            <polygon points="73,47 96,60 96,86 73,99 50,86 50,60" fill="#F59E0B" />
+                        </svg>
+                        <span class="text-sm font-bold">LaColmena</span>
+                    </div>
+                    <p class="text-gray-400 text-xs leading-relaxed pr-4">
+                        Plataforma de inmuebles creada para conectar propietarios e inquilinos de manera fácil y transparente.
+                    </p>
+                </div>
+                
+                <!-- Columna 2: Buscar -->
+                <div class="md:col-span-2">
+                    <h3 class="font-semibold mb-2 text-xs text-white">Buscar</h3>
+                    <ul class="space-y-1 text-gray-400 text-xs">
+                        <li><a href="{% url 'propiedades:listado' %}" class="hover:text-yellow-400 transition-colors">Oportunidades</a></li>
+                        <li><a href="{% url 'propiedades:listado' %}?tipo=casa" class="hover:text-yellow-400 transition-colors">Casas</a></li>
+                        <li><a href="{% url 'propiedades:listado' %}?tipo=departamento" class="hover:text-yellow-400 transition-colors">Locales</a></li>
+                        <li><a href="{% url 'suscripciones:planes' %}" class="hover:text-yellow-400 transition-colors">Ayuda</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Columna 3: Publicar -->
+                <div class="md:col-span-3">
+                    <h3 class="font-semibold mb-2 text-xs text-white">Publicar</h3>
+                    <ul class="space-y-1 text-gray-400 text-xs">
+                        <li><a href="{% url 'propiedades:crear' %}" class="hover:text-yellow-400 transition-colors">Publicar Gratis</a></li>
+                        <li><a href="{% url 'suscripciones:planes' %}" class="hover:text-yellow-400 transition-colors">Paquetes</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Preguntas</a></li>
+                        <li><a href="#" class="hover:text-yellow-400 transition-colors">Ayuda</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Columna 4: Contacto -->
+                <div class="md:col-span-3">
+                    <h3 class="font-semibold mb-2 text-xs text-white">Contacto</h3>
+                    <ul class="space-y-1 text-gray-400 text-xs">
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope w-4 text-yellow-500"></i>
+                            <span class="ml-2">contacto@lacolmena.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone w-4 text-yellow-500"></i>
+                            <span class="ml-2">+51 123-4567</span>  
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt w-4 text-yellow-500"></i>
+                            <span class="ml-2">Lima, Perú</span>
+                        </li>
+                    </ul>
+                    <div class="flex space-x-3 mt-2">
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-facebook text-sm"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-instagram text-sm"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-yellow-400 transition-colors">
+                            <i class="fab fa-twitter text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="border-gray-700 my-3">
+            
+            <div class="text-center text-gray-500 text-xs">
+                © 2024 LaColmena. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+        
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.fade-in');
+            messages.forEach(msg => {
+                msg.style.transition = 'opacity 0.5s';
+                msg.style.opacity = '0';
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 5000);
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block title %}Propiedades - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Filtros -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <form method="GET" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div>
+                        {{ form.busqueda }}
+                    </div>
+                    <div>
+                        {{ form.tipo }}
+                    </div>
+                    <div>
+                        {{ form.ciudad }}
+                    </div>
+                    <div>
+                        {{ form.precio_min }}
+                    </div>
+                    <div>
+                        {{ form.precio_max }}
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <button type="submit" 
+                            class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-8 rounded-lg transition">
+                        <i class="fas fa-search mr-2"></i> Buscar
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Filtros rápidos por tipo -->
+        <div class="flex overflow-x-auto space-x-4 mb-8 pb-2">
+            <a href="{% url 'propiedades:listado' %}" 
+               class="flex-shrink-0 px-6 py-3 {% if not request.GET.tipo %}bg-yellow-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                Todas
+            </a>
+            <a href="{% url 'propiedades:listado' %}?tipo=departamento" 
+               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'departamento' %}bg-blue-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                Departamentos
+            </a>
+            <a href="{% url 'propiedades:listado' %}?tipo=casa" 
+               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'casa' %}bg-green-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                Casas
+            </a>
+            <a href="{% url 'propiedades:listado' %}?tipo=cuarto" 
+               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'cuarto' %}bg-purple-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                Cuartos
+            </a>
+            <a href="{% url 'propiedades:listado' %}?tipo=local" 
+               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'local' %}bg-pink-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                Locales
+            </a>
+            <a href="{% url 'propiedades:listado' %}?tipo=oficina" 
+               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'oficina' %}bg-orange-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                Oficinas
+            </a>
+            <a href="{% url 'propiedades:listado' %}?tipo=terreno" 
+               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'terreno' %}bg-yellow-600 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                Terrenos
+            </a>
+        </div>
+        
+        <!-- Resultados -->
+        <div class="mb-4">
+            <p class="text-gray-600">
+                Se encontraron <span class="font-semibold">{{ page_obj.paginator.count }}</span> propiedades
+            </p>
+        </div>
+        
+        <!-- Grid de Propiedades -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {% for propiedad in page_obj %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
+                <div class="relative">
+                    <div class="absolute top-4 left-4 flex gap-2 z-10">
+                        <span class="{% if propiedad.tipo == 'departamento' %}bg-blue-500{% elif propiedad.tipo == 'casa' %}bg-green-500{% elif propiedad.tipo == 'local' %}bg-purple-500{% elif propiedad.tipo == 'oficina' %}bg-orange-500{% elif propiedad.tipo == 'terreno' %}bg-yellow-600{% else %}bg-pink-500{% endif %} text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            {{ propiedad.get_tipo_display }}
+                        </span>
+                        <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            {% if propiedad.operacion == 'venta' %}En venta{% else %}En alquiler{% endif %}
+                        </span>
+                    </div>
+                    <a href="{% url 'propiedades:detalle' propiedad.pk %}">
+                        {% if propiedad.imagen_principal %}
+                        <img src="{{ propiedad.imagen_principal.imagen.url }}" 
+                             alt="{{ propiedad.titulo }}" 
+                             class="w-full h-48 object-cover">
+                        {% else %}
+                        <div class="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
+                            <i class="fas fa-home text-white text-6xl opacity-50"></i>
+                        </div>
+                        {% endif %}
+                    </a>
+                </div>
+                
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-2xl font-bold text-gray-900">
+                            ${{ propiedad.precio|floatformat:0 }}
+                        </h3>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'propiedades:toggle_favorito' propiedad.pk %}" 
+                           class="text-gray-400 hover:text-red-500 transition">
+                            <i class="fas fa-heart"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    <a href="{% url 'propiedades:detalle' propiedad.pk %}">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2 hover:text-yellow-600 transition">
+                            {{ propiedad.get_tipo_display }} en {{ propiedad.ciudad }}
+                        </h4>
+                    </a>
+                    
+                    <p class="text-gray-600 text-sm mb-3 flex items-center">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        {{ propiedad.distrito }}, {{ propiedad.ciudad }}
+                    </p>
+                    
+                    <div class="flex items-center flex-wrap gap-3 text-gray-600 text-sm">
+                        <span class="flex items-center">
+                            <i class="fas fa-ruler-combined text-yellow-500 mr-1"></i>
+                            {{ propiedad.area }}m²
+                        </span>
+                        <span class="flex items-center">
+                            <i class="fas fa-bed text-yellow-500 mr-1"></i>
+                            {{ propiedad.habitaciones }}
+                        </span>
+                        <span class="flex items-center">
+                            <i class="fas fa-bath text-yellow-500 mr-1"></i>
+                            {{ propiedad.banos }}
+                        </span>
+                        {% if propiedad.mascotas %}
+                        <span class="flex items-center" title="Acepta mascotas">
+                            <i class="fas fa-paw text-purple-800 mr-1"></i>
+                        </span>
+                        {% endif %}
+                        {% if propiedad.amoblado %}
+                        <span class="flex items-center" title="Amoblado">
+                            <i class="fas fa-couch text-green-800 mr-1"></i>
+                        </span>
+                        {% endif %}
+                        {% if propiedad.estacionamiento %}
+                        <span class="flex items-center" title="Tiene estacionamiento">
+                            <i class="fas fa-car text-blue-800 mr-1"></i>
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-3 text-center py-16">
+                <i class="fas fa-search text-gray-300 text-6xl mb-4"></i>
+                <p class="text-gray-500 text-lg mb-4">No se encontraron propiedades con los filtros seleccionados</p>
+                <a href="{% url 'propiedades:listado' %}" 
+                   class="text-yellow-600 hover:text-yellow-700 font-semibold">
+                    Ver todas las propiedades
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Paginación -->
+        {% if page_obj.has_other_pages %}
+        <div class="flex justify-center">
+            <nav class="flex space-x-2">
+                {% if page_obj.has_previous %}
+                <a href="?page=1" 
+                   class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                    Primera
+                </a>
+                <a href="?page={{ page_obj.previous_page_number }}" 
+                   class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                    Anterior
+                </a>
+                {% endif %}
+                
+                <span class="px-4 py-2 bg-yellow-500 text-white rounded-lg">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+                
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" 
+                   class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                    Siguiente
+                </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" 
+                   class="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                    Última
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

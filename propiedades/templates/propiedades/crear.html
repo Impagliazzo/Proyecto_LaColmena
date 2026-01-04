@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Publicar Propiedad - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-12">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-xl shadow-md p-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-8">Publicar Nueva Propiedad</h1>
+            
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Información Básica -->
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Información Básica</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Título de la publicación</label>
+                            {{ form.titulo }}
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                            {{ form.descripcion }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de propiedad</label>
+                            {{ form.tipo }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Operación</label>
+                            {{ form.operacion }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Precio mensual ($)</label>
+                            {{ form.precio }}
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.incluye_expensas }}
+                            <label for="{{ form.incluye_expensas.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Incluye gastos de expensas
+                            </label>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de contacto</label>
+                            {{ form.tipo_contacto }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ubicación -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Ubicación</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
+                            {{ form.ciudad }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Distrito</label>
+                            {{ form.distrito }}
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
+                            {{ form.direccion }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Características -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Características</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Área (m²)</label>
+                            {{ form.area }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Habitaciones</label>
+                            {{ form.habitaciones }}
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Baños</label>
+                            {{ form.banos }}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 space-y-2">
+                        <div class="flex items-center">
+                            {{ form.estacionamiento }}
+                            <label for="{{ form.estacionamiento.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Tiene estacionamiento
+                                <i class="fas fa-car text-blue-800 ml-2"></i>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.amoblado }}
+                            <label for="{{ form.amoblado.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Amoblado
+                                <i class="fas fa-couch text-green-800 ml-2"></i>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.mascotas }}
+                            <label for="{{ form.mascotas.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Acepta mascotas
+                                <i class="fas fa-paw text-purple-800 ml-2"></i>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.especial_estudiantes }}
+                            <label for="{{ form.especial_estudiantes.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                                Especial para estudiantes
+                                <i class="fas fa-graduation-cap text-purple-800 ml-2"></i>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Imágenes -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Imágenes</h3>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Subir imágenes (máximo 10, la primera será la principal)
+                        </label>
+                        <input type="file" name="imagenes" multiple accept="image/*" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                        <p class="mt-2 text-sm text-gray-500">
+                            Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB por imagen.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Botones -->
+                <div class="border-t border-gray-200 pt-6 flex justify-end space-x-4">
+                    <a href="{% url 'propiedades:inicio' %}" 
+                       class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-lg transition">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+                        <i class="fas fa-check mr-2"></i> Publicar Propiedad
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

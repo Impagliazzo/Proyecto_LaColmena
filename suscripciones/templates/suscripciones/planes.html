@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Planes de Suscripción - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Planes de Suscripción</h1>
+            <p class="text-lg text-gray-600">Elige el plan que mejor se adapte a tus necesidades</p>
+            {% if suscripcion_activa %}
+            <p class="text-sm text-gray-500 mt-2">Tu plan actual: <span class="font-semibold">{{ suscripcion_activa.plan.nombre }}</span></p>
+            {% endif %}
+        </div>
+        
+        <!-- Planes -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+            {% for plan in planes %}
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition flex flex-col {% if plan.nombre == 'Intermedio' %}border-4 border-yellow-500 transform scale-105 z-10{% endif %}">
+                {% if plan.nombre == 'Intermedio' %}
+                <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white text-center py-2 font-semibold">
+                    ⭐ Recomendado
+                </div>
+                {% endif %}
+                
+                <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-1">{{ plan.nombre }}</h3>
+                    <p class="text-xs text-gray-500 mb-4">{{ plan.descripcion|truncatewords:6 }}</p>
+                    
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-gray-900">S/ {{ plan.precio|floatformat:2 }}</span>
+                        <span class="text-gray-600 text-sm">/mes</span>
+                    </div>
+                    
+                    <ul class="space-y-2 mb-6 text-sm flex-grow">
+                        {% if plan.nombre == 'Gratis' %}
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>1 publicación permanente</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Visibilidad estándar</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Contacto básico</span>
+                        </li>
+                        <li class="flex items-start text-gray-400">
+                            <i class="fas fa-times text-gray-400 mr-2 mt-1"></i>
+                            <span>Sin destacar publicación</span>
+                        </li>
+                        <li class="flex items-start text-gray-400">
+                            <i class="fas fa-times text-gray-400 mr-2 mt-1"></i>
+                            <span>Sin estadísticas</span>
+                        </li>
+                        
+                        {% elif plan.nombre == 'Básico' %}
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span><strong>Hasta {{ plan.max_publicaciones }} publicaciones</strong> (+ 1 gratis)</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Renovación automática</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Estadísticas simples</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Soporte básico</span>
+                        </li>
+                        <li class="flex items-start text-gray-400">
+                            <i class="fas fa-times text-gray-400 mr-2 mt-1"></i>
+                            <span>Sin carga masiva</span>
+                        </li>
+                        
+                        {% elif plan.nombre == 'Intermedio' %}
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span><strong>Hasta {{ plan.max_publicaciones }} publicaciones</strong> (+ 1 gratis)</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-star text-yellow-500 mr-2 mt-1"></i>
+                            <span><strong>{{ plan.destacados_incluidos_mes }} Publicaciones destacadas/mes</strong></span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Estadísticas avanzadas</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Prioridad en resultados</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Soporte prioritario</span>
+                        </li>
+                        
+                        {% elif plan.nombre == 'Avanzado' %}
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-infinity text-purple-500 mr-2 mt-1"></i>
+                            <span><strong>Publicaciones ilimitadas</strong></span>
+                        </li>
+                        {% if plan.destacados_incluidos_mes > 0 %}
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-star text-yellow-500 mr-2 mt-1"></i>
+                            <span><strong>{{ plan.destacados_incluidos_mes }} Publicaciones destacadas/mes</strong></span>
+                        </li>
+                        {% endif %}
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-file-excel text-green-600 mr-2 mt-1"></i>
+                            <span><strong>Carga masiva Excel</strong></span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-users text-blue-500 mr-2 mt-1"></i>
+                            <span>Gestión multiusuario</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-chart-line text-green-500 mr-2 mt-1"></i>
+                            <span>Estadísticas completas</span>
+                        </li>
+                        <li class="flex items-start text-gray-700">
+                            <i class="fas fa-headset text-purple-500 mr-2 mt-1"></i>
+                            <span>Soporte dedicado 24/7</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                    
+                    <div class="mt-auto">
+                        {% if user.is_authenticated %}
+                            {% if suscripcion_activa and suscripcion_activa.plan.pk == plan.pk %}
+                            <button class="w-full bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg cursor-not-allowed text-sm">
+                                <i class="fas fa-check mr-1"></i> Plan Actual
+                            </button>
+                            {% else %}
+                            <a href="{% url 'suscripciones:suscribirse' plan.pk %}" 
+                               class="block w-full text-center text-sm {% if plan.nombre == 'Intermedio' %}bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700{% elif plan.nombre == 'Avanzado' %}bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800{% elif plan.nombre == 'Gratis' %}bg-gray-500 hover:bg-gray-600{% else %}bg-blue-600 hover:bg-blue-700{% endif %} text-white font-semibold py-3 px-4 rounded-lg transition shadow-lg">
+                                {% if suscripcion_activa %}
+                                    <i class="fas fa-exchange-alt mr-1"></i> Cambiar a este plan
+                                {% else %}
+                                    <i class="fas fa-check-circle mr-1"></i> Elegir Plan
+                                {% endif %}
+                            </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'usuarios:login' %}" 
+                               class="block w-full text-center bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold py-3 px-4 rounded-lg transition">
+                                Iniciar Sesión
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- FAQ -->
+        <div class="mt-16">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Preguntas Frecuentes</h2>
+            <div class="bg-white rounded-xl shadow-md p-8 max-w-3xl mx-auto">
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">¿La primera publicación es gratis?</h4>
+                        <p class="text-gray-600">Sí, todos los propietarios pueden crear su primera publicación de forma gratuita.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">¿Puedo cambiar de plan?</h4>
+                        <p class="text-gray-600">Sí, puedes cambiar de plan en cualquier momento desde tu panel de suscripción.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-900 mb-2">¿Cómo funcionan las publicaciones destacadas?</h4>
+                        <p class="text-gray-600">Las publicaciones destacadas aparecen en posiciones privilegiadas y tienen mayor visibilidad.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ propiedad.titulo }} - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-white">
+    <!-- Galería de Imágenes -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% if propiedad.imagenes.all %}
+                <!-- Imagen Principal -->
+                <div class="md:col-span-2">
+                    <img src="{{ propiedad.imagen_principal.imagen.url }}" 
+                         alt="{{ propiedad.titulo }}" 
+                         class="w-full h-96 object-cover rounded-xl">
+                </div>
+                
+                <!-- Imágenes adicionales -->
+                {% for imagen in propiedad.imagenes.all|slice:"1:5" %}
+                <div>
+                    <img src="{{ imagen.imagen.url }}" 
+                         alt="{{ propiedad.titulo }}" 
+                         class="w-full h-48 object-cover rounded-lg">
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="md:col-span-2 bg-gradient-to-br from-yellow-400 to-orange-500 h-96 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-home text-white text-9xl opacity-50"></i>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Contenido Principal -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Columna Principal -->
+            <div class="lg:col-span-2">
+                <div class="mb-4">
+                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
+                        {{ propiedad.get_tipo_display }}
+                    </span>
+                    {% if propiedad.destacada %}
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold ml-2">
+                        Destacada
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ propiedad.titulo }}</h1>
+                
+                <div class="flex items-center text-gray-600 mb-6">
+                    <i class="fas fa-map-marker-alt mr-2"></i>
+                    <span>{{ propiedad.direccion }}, {{ propiedad.distrito }}, {{ propiedad.ciudad }}</span>
+                </div>
+                
+                <!-- Características Principales -->
+                <div class="grid grid-cols-2 {% if user == propiedad.propietario and not preview_mode %}md:grid-cols-4{% else %}md:grid-cols-3{% endif %} gap-4 mb-8">
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <i class="fas fa-ruler-combined text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-gray-600 text-sm">Área</p>
+                        <p class="font-semibold text-gray-900">{{ propiedad.area }}m²</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <i class="fas fa-bed text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-gray-600 text-sm">Habitaciones</p>
+                        <p class="font-semibold text-gray-900">{{ propiedad.habitaciones }}</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <i class="fas fa-bath text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-gray-600 text-sm">Baños</p>
+                        <p class="font-semibold text-gray-900">{{ propiedad.banos }}</p>
+                    </div>
+                    {% if user == propiedad.propietario and not preview_mode %}
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <i class="fas fa-eye text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-gray-600 text-sm">Vistas</p>
+                        <p class="font-semibold text-gray-900">{{ propiedad.vistas }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Características Adicionales -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Características</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% if propiedad.amoblado %}
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-couch mr-1"></i> Amoblado
+                        </span>
+                        {% endif %}
+                        {% if propiedad.estacionamiento %}
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-car mr-1"></i> Estacionamiento
+                        </span>
+                        {% endif %}
+                        {% if propiedad.mascotas %}
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-paw mr-1"></i> Acepta mascotas
+                        </span>
+                        {% endif %}
+                        {% if propiedad.incluye_expensas %}
+                        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-file-invoice-dollar mr-1"></i> Incluye expensas
+                        </span>
+                        {% endif %}
+                        <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+                            {% if propiedad.tipo_contacto == 'inmobiliaria' %}
+                                <i class="fas fa-building mr-1"></i>
+                            {% else %}
+                                <i class="fas fa-user mr-1"></i>
+                            {% endif %}
+                            {{ propiedad.get_tipo_contacto_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Descripción -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Descripción</h3>
+                    <p class="text-gray-700 whitespace-pre-line">{{ propiedad.descripcion }}</p>
+                </div>
+                
+                <!-- Valoraciones -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold text-gray-900">Valoraciones</h3>
+                        {% if user.is_authenticated and user != propiedad.propietario and not preview_mode %}
+                        <a href="{% url 'propiedades:valorar' propiedad.pk %}" 
+                           class="text-yellow-600 hover:text-yellow-700 font-semibold">
+                            <i class="fas fa-star mr-1"></i> Valorar
+                        </a>
+                        {% endif %}
+                    </div>
+                    
+                    {% if valoraciones %}
+                        <div class="space-y-4">
+                            {% for valoracion in valoraciones %}
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-white font-semibold">
+                                            {{ valoracion.usuario.username.0|upper }}
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-gray-900">{{ valoracion.usuario.get_full_name|default:valoracion.usuario.username }}</p>
+                                            <p class="text-gray-500 text-sm">{{ valoracion.fecha_valoracion|date:"d/m/Y" }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-yellow-500">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= valoracion.puntuacion %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                {% if valoracion.comentario %}
+                                <p class="text-gray-700">{{ valoracion.comentario }}</p>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500">Aún no hay valoraciones para esta propiedad.</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 sticky top-4">
+                    <div class="text-4xl font-bold text-gray-900 mb-4">
+                        ${{ propiedad.precio|floatformat:0 }}<span class="text-lg text-gray-600">/mes</span>
+                    </div>
+                    
+                    <!-- Propietario -->
+                    <div class="border-t border-gray-200 pt-4 mb-4">
+                        <p class="text-gray-600 text-sm mb-2">Publicado por</p>
+                        <a href="{% url 'usuarios:perfil' propiedad.propietario.username %}" 
+                           class="flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition">
+                            {% if propiedad.propietario.foto_perfil %}
+                            <img src="{{ propiedad.propietario.foto_perfil.url }}" 
+                                 alt="{{ propiedad.propietario.username }}" 
+                                 class="w-12 h-12 rounded-full object-cover">
+                            {% else %}
+                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-semibold text-xl">
+                                {{ propiedad.propietario.username.0|upper }}
+                            </div>
+                            {% endif %}
+                            <div>
+                                <p class="font-semibold text-gray-900">{{ propiedad.propietario.get_full_name|default:propiedad.propietario.username }}</p>
+                                <p class="text-gray-500 text-sm">Propietario</p>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- Botones de Acción -->
+                    {% if preview_mode %}
+                        <!-- En modo preview, mostrar como usuario no autenticado -->
+                        <a href="{% url 'usuarios:login' %}" 
+                           class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg text-center transition">
+                            Inicia sesión para contactar
+                        </a>
+                    {% elif user.is_authenticated %}
+                        {% if user != propiedad.propietario %}
+                        <div class="space-y-3">
+                            <a href="{% url 'contactos:solicitar' propiedad.pk %}" 
+                               class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg text-center transition">
+                                <i class="fas fa-envelope mr-2"></i> Contactar
+                            </a>
+                            
+                            <a href="{% url 'propiedades:toggle_favorito' propiedad.pk %}" 
+                               class="block w-full {% if es_favorito %}bg-red-500 hover:bg-red-600{% else %}bg-gray-200 hover:bg-gray-300 text-gray-800{% endif %} text-white font-semibold py-3 px-6 rounded-lg text-center transition">
+                                <i class="fas fa-heart mr-2"></i> 
+                                {% if es_favorito %}Quitar de Favoritos{% else %}Agregar a Favoritos{% endif %}
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="space-y-3">
+                            <a href="{% url 'propiedades:editar' propiedad.pk %}" 
+                               class="block w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg text-center transition">
+                                <i class="fas fa-edit mr-2"></i> Editar
+                            </a>
+                            <a href="{% url 'propiedades:suspender' propiedad.pk %}" 
+                               class="block w-full bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg text-center transition">
+                                <i class="fas fa-pause mr-2"></i> Suspender
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'usuarios:login' %}" 
+                           class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg text-center transition">
+                            Inicia sesión para contactar
+                        </a>
+                    {% endif %}
+                    
+                    <!-- Info adicional -->
+                    <div class="border-t border-gray-200 mt-4 pt-4 text-sm text-gray-600">
+                        <p><i class="fas fa-calendar mr-2"></i> Publicado el {{ propiedad.fecha_publicacion|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Propiedades Similares -->
+        {% if propiedades_similares %}
+        <div class="mt-16">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Propiedades similares</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {% for similar in propiedades_similares %}
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
+                    <a href="{% url 'propiedades:detalle' similar.pk %}">
+                        {% if similar.imagen_principal %}
+                        <img src="{{ similar.imagen_principal.imagen.url }}" 
+                             alt="{{ similar.titulo }}" 
+                             class="w-full h-48 object-cover">
+                        {% else %}
+                        <div class="w-full h-48 bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                            <i class="fas fa-home text-white text-4xl opacity-50"></i>
+                        </div>
+                        {% endif %}
+                    </a>
+                    <div class="p-4">
+                        <div class="text-2xl font-bold text-gray-900 mb-2">
+                            ${{ similar.precio|floatformat:0 }}
+                        </div>
+                        <a href="{% url 'propiedades:detalle' similar.pk %}">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-2 hover:text-yellow-600 transition">
+                                {{ similar.titulo|truncatewords:6 }}
+                            </h4>
+                        </a>
+                        <p class="text-gray-600 text-sm">
+                            {{ similar.distrito }}, {{ similar.ciudad }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

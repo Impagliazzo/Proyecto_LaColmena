@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Favoritos - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Mis Favoritos</h1>
+            <p class="text-gray-600 mt-2">Propiedades que has guardado</p>
+        </div>
+        
+        {% if favoritos %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for favorito in favoritos %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
+                <div class="relative">
+                    <div class="absolute top-4 left-4 flex gap-2 z-10">
+                        <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            {{ favorito.propiedad.get_operacion_display }}
+                        </span>
+                        <span class="{% if favorito.propiedad.tipo == 'departamento' %}bg-blue-500{% elif favorito.propiedad.tipo == 'casa' %}bg-green-500{% elif favorito.propiedad.tipo == 'local' %}bg-purple-500{% elif favorito.propiedad.tipo == 'oficina' %}bg-orange-500{% elif favorito.propiedad.tipo == 'terreno' %}bg-yellow-600{% else %}bg-pink-500{% endif %} text-white px-3 py-1 rounded-full text-sm font-semibold">
+                            {{ favorito.propiedad.get_tipo_display }}
+                        </span>
+                    </div>
+                    <a href="{% url 'propiedades:detalle' favorito.propiedad.pk %}">
+                        {% if favorito.propiedad.imagen_principal %}
+                        <img src="{{ favorito.propiedad.imagen_principal.imagen.url }}" 
+                             alt="{{ favorito.propiedad.titulo }}" 
+                             class="w-full h-48 object-cover">
+                        {% else %}
+                        <div class="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
+                            <i class="fas fa-home text-white text-6xl opacity-50"></i>
+                        </div>
+                        {% endif %}
+                    </a>
+                </div>
+                
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-2xl font-bold text-gray-900">
+                            ${{ favorito.propiedad.precio|floatformat:0 }}
+                        </h3>
+                        <a href="{% url 'propiedades:toggle_favorito' favorito.propiedad.pk %}" 
+                           class="text-red-500 hover:text-red-600 transition">
+                            <i class="fas fa-heart"></i>
+                        </a>
+                    </div>
+                    
+                    <a href="{% url 'propiedades:detalle' favorito.propiedad.pk %}">
+                        <h4 class="text-lg font-semibold text-gray-800 mb-2 hover:text-yellow-600 transition">
+                            {{ favorito.propiedad.titulo|truncatewords:8 }}
+                        </h4>
+                    </a>
+                    
+                    <p class="text-gray-600 text-sm mb-3 flex items-center">
+                        <i class="fas fa-map-marker-alt mr-2"></i>
+                        {{ favorito.propiedad.distrito }}, {{ favorito.propiedad.ciudad }}
+                    </p>
+                    
+                    <div class="flex items-center flex-wrap gap-3 text-gray-600 text-sm mb-4">
+                        <span class="flex items-center">
+                            <i class="fas fa-ruler-combined text-yellow-500 mr-1"></i>
+                            {{ favorito.propiedad.area }}m²
+                        </span>
+                        <span class="flex items-center">
+                            <i class="fas fa-bed text-yellow-500 mr-1"></i>
+                            {{ favorito.propiedad.habitaciones }}
+                        </span>
+                        <span class="flex items-center">
+                            <i class="fas fa-bath text-yellow-500 mr-1"></i>
+                            {{ favorito.propiedad.banos }}
+                        </span>
+                        {% if favorito.propiedad.mascotas %}
+                        <span class="flex items-center" title="Acepta mascotas">
+                            <i class="fas fa-paw text-purple-800 mr-1"></i>
+                        </span>
+                        {% endif %}
+                        {% if favorito.propiedad.amoblado %}
+                        <span class="flex items-center" title="Amoblado">
+                            <i class="fas fa-couch text-green-800 mr-1"></i>
+                        </span>
+                        {% endif %}
+                        {% if favorito.propiedad.estacionamiento %}
+                        <span class="flex items-center" title="Tiene estacionamiento">
+                            <i class="fas fa-car text-blue-800 mr-1"></i>
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <a href="{% url 'propiedades:detalle' favorito.propiedad.pk %}" 
+                           class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-center font-semibold py-2 px-4 rounded-lg transition">
+                            Ver Detalles
+                        </a>
+                        <a href="{% url 'contactos:solicitar' favorito.propiedad.pk %}" 
+                           class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center font-semibold py-2 px-4 rounded-lg transition">
+                            Contactar
+                        </a>
+                    </div>
+                    
+                    <p class="text-gray-500 text-xs mt-3">
+                        <i class="far fa-clock mr-1"></i>
+                        Agregado el {{ favorito.fecha_agregado|date:"d/m/Y" }}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-xl shadow-md p-12 text-center">
+            <div class="mb-6">
+                <i class="fas fa-heart text-gray-300 text-6xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">No tienes favoritos aún</h3>
+            <p class="text-gray-600 mb-6">Explora nuestras propiedades y guarda tus favoritas</p>
+            <a href="{% url 'propiedades:listado' %}" 
+               class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition">
+                <i class="fas fa-search mr-2"></i> Explorar Propiedades
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

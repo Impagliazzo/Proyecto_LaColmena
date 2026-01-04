@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}Inversiones - LaColmena{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="honeycomb-pattern py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">
+            💼 Proyectos de inversión inmobiliaria
+        </h1>
+        <p class="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
+            Conectamos inversores con propietarios que tienen proyectos en desarrollo.<br>
+            Encuentra oportunidades y contacta directamente con los desarrolladores.
+        </p>
+        <div class="flex justify-center space-x-4">
+            <a href="#propiedades" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg">
+                Ver Proyectos
+            </a>
+            <a href="{% url 'propiedades:crear' %}" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-8 rounded-lg transition shadow-lg border-2 border-gray-300">
+                Publicar Proyecto
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Beneficios -->
+<div class="bg-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">¿Cómo funciona LaColmena?</h2>
+        <div class="grid md:grid-cols-4 gap-8">
+            <div class="text-center p-6">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-search text-3xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Explora Proyectos</h3>
+                <p class="text-gray-600">Descubre proyectos en desarrollo publicados por propietarios.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-handshake text-3xl text-green-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Contacta Directo</h3>
+                <p class="text-gray-600">Comunícate directamente con el desarrollador del proyecto.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-comments text-3xl text-purple-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Negocia</h3>
+                <p class="text-gray-600">Acuerda términos y condiciones directamente con el propietario.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-building text-3xl text-yellow-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Publica tu Proyecto</h3>
+                <p class="text-gray-600">¿Tienes un proyecto? Publícalo y conecta con inversores.</p>
+            </div>
+        </div>
+        
+        <!-- Nota importante -->
+        <div class="mt-12 max-w-4xl mx-auto bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-2xl text-blue-500"></i>
+                </div>
+                <div class="ml-3">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Importante</h4>
+                    <p class="text-gray-700">
+                        LaColmena es una plataforma de conexión entre inversores y propietarios. 
+                        <strong>No manejamos fondos ni ofrecemos asesoría financiera.</strong> 
+                        Todas las negociaciones y transacciones se realizan directamente entre las partes. 
+                        Recomendamos siempre consultar con profesionales antes de realizar cualquier inversión.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Propiedades en Venta -->
+<div id="propiedades" class="bg-gray-50 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Proyectos de Inversión</h2>
+        <p class="text-gray-600 mb-8 text-center max-w-3xl mx-auto">
+            Encuentra proyectos inmobiliarios en desarrollo y propiedades en venta. 
+            Contacta directamente con los propietarios para conocer más detalles.
+        </p>
+        
+        {% if propiedades_venta %}
+            <div class="grid md:grid-cols-3 gap-6">
+                {% for propiedad in propiedades_venta %}
+                    <a href="{% url 'propiedades:detalle' propiedad.pk %}" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition">
+                        {% if propiedad.imagen_principal %}
+                            <img src="{{ propiedad.imagen_principal.imagen.url }}" alt="{{ propiedad.titulo }}" class="w-full h-48 object-cover">
+                        {% else %}
+                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                                <i class="fas fa-building text-4xl text-gray-400"></i>
+                            </div>
+                        {% endif %}
+                        <div class="p-4">
+                            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded mb-2 inline-block">En Venta</span>
+                            <h3 class="font-semibold text-lg mb-2">{{ propiedad.titulo }}</h3>
+                            <p class="text-gray-600 text-sm mb-2">{{ propiedad.distrito }}, {{ propiedad.ciudad }}</p>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-2xl font-bold text-green-600">S/ {{ propiedad.precio|floatformat:0 }}</span>
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                <i class="fas fa-bed text-yellow-500 mr-1"></i> {{ propiedad.habitaciones }} hab
+                                <i class="fas fa-bath text-yellow-500 ml-3 mr-1"></i> {{ propiedad.banos }} baños
+                                <i class="fas fa-ruler-combined text-yellow-500 ml-3 mr-1"></i> {{ propiedad.area }} m²
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-600 py-8">No hay proyectos disponibles en este momento.</p>
+        {% endif %}
+        
+        <div class="text-center mt-8">
+            <a href="{% url 'propiedades:listado' %}?operacion=venta" class="text-green-600 hover:text-green-700 font-semibold">
+                Ver todos los proyectos disponibles →
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Propietarios -->
+<div class="bg-white py-16">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">¿Tienes un proyecto inmobiliario?</h2>
+        <p class="text-gray-600 mb-8">
+            Publica tu proyecto en desarrollo o propiedad en venta y conecta con potenciales inversores. 
+            Solo pagas por la suscripción de publicación, sin comisiones adicionales.
+        </p>
+        <a href="{% url 'propiedades:crear' %}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-8 rounded-lg transition shadow-lg inline-block">
+            <i class="fas fa-plus-circle mr-2"></i> Publicar Proyecto
+        </a>
+    </div>
+</div>
+{% endblock %}

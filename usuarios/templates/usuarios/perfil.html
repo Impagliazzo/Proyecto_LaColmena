@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ usuario.get_full_name|default:usuario.username }} - BuscoTecho{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Alerta de Perfil Incompleto -->
+        {% if es_propio and not usuario.perfil.perfil_completo %}
+        <div class="bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-yellow-500 rounded-lg p-6 mb-6 shadow-sm">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-exclamation-circle text-yellow-500 text-3xl"></i>
+                </div>
+                <div class="ml-4 flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                        ¡Queremos conocerte mejor!
+                    </h3>
+                    <p class="text-gray-700 mb-3">
+                        Completá tu perfil para aprovechar todas las funcionalidades de BuscoTecho. 
+                        Solo te tomará un minuto y nos ayudará a brindarte una mejor experiencia.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <a href="{% url 'usuarios:completar_perfil' %}" 
+                           class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition inline-flex items-center">
+                            <i class="fas fa-edit mr-2"></i>
+                            Completar Perfil
+                        </a>
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="w-32 bg-gray-200 rounded-full h-2 mr-3">
+                                <div class="bg-yellow-500 h-2 rounded-full transition-all duration-300" 
+                                     style="width: {{ usuario.perfil.porcentaje_completado }}%"></div>
+                            </div>
+                            <span class="font-medium">{{ usuario.perfil.porcentaje_completado }}% completo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Header del Perfil -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+            <div class="bg-gradient-to-r from-yellow-400 to-orange-500 h-32"></div>
+            <div class="px-8 pb-8">
+                <div class="flex flex-col md:flex-row items-center md:items-start gap-6 -mt-16">
+                    <!-- Foto de Perfil -->
+                    <div class="flex-shrink-0">
+                        {% if usuario.foto_perfil %}
+                        <img src="{{ usuario.foto_perfil.url }}" 
+                             alt="{{ usuario.username }}" 
+                             class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+                        {% else %}
+                        <div class="w-32 h-32 bg-yellow-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white text-5xl font-bold">
+                            {{ usuario.username.0|upper }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Información del Usuario -->
+                    <div class="flex-1 text-center md:text-left mt-4 md:mt-12">
+                        <div class="flex flex-col md:flex-row md:items-center gap-3 mb-2">
+                            <h1 class="text-3xl font-bold text-gray-900">
+                                {{ usuario.get_full_name|default:usuario.username }}
+                            </h1>
+                            {% if perfil.verificado %}
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold inline-flex items-center">
+                                <i class="fas fa-check-circle mr-1"></i> Verificado
+                            </span>
+                            {% endif %}
+                            {% if usuario.es_propietario %}
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                <i class="fas fa-home mr-1"></i> Propietario
+                            </span>
+                            {% endif %}
+                        </div>
+                        <p class="text-gray-600 mb-2">@{{ usuario.username }}</p>
+                        {% if usuario.biografia %}
+                        <p class="text-gray-700 mt-3 max-w-2xl">{{ usuario.biografia }}</p>
+                        {% endif %}
+                        
+                        <!-- Información de Contacto -->
+                        <div class="flex flex-wrap gap-4 mt-4 text-gray-600">
+                            {% if usuario.email %}
+                            <span class="flex items-center">
+                                <i class="fas fa-envelope mr-2"></i>
+                                {{ usuario.email }}
+                            </span>
+                            {% endif %}
+                            {% if usuario.telefono %}
+                            <span class="flex items-center">
+                                <i class="fas fa-phone mr-2"></i>
+                                {{ usuario.telefono }}
+                            </span>
+                            {% endif %}
+                            <span class="flex items-center">
+                                <i class="fas fa-calendar mr-2"></i>
+                                Miembro desde {{ usuario.fecha_registro|date:"F Y" }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Botón de Editar (solo si es el perfil propio) -->
+                    {% if es_propio %}
+                    <div class="mt-4 md:mt-12">
+                        <a href="{% url 'usuarios:editar_perfil' %}" 
+                           class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition">
+                            <i class="fas fa-edit mr-2"></i> Editar Perfil
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estadísticas -->
+        {% if usuario.es_propietario %}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">Propiedades Publicadas</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">{{ publicaciones.count }}</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-full">
+                        <i class="fas fa-home text-blue-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">Valoración</p>
+                        <div class="flex items-center mt-2">
+                            <p class="text-3xl font-bold text-gray-900 mr-2">{{ perfil.puntuacion_promedio|floatformat:1 }}</p>
+                            <div class="text-yellow-500">
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-full">
+                        <i class="fas fa-star text-yellow-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-md p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm">Total Valoraciones</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-2">{{ perfil.total_valoraciones }}</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-full">
+                        <i class="fas fa-comments text-green-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Propiedades del Usuario (si es propietario) -->
+        {% if usuario.es_propietario and publicaciones %}
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Propiedades Publicadas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for propiedad in publicaciones %}
+                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1 {% if propiedad.estado == 'suspendida' %}opacity-75{% endif %}">
+                    <div class="relative">
+                        {% if propiedad.estado == 'suspendida' %}
+                        <div class="absolute inset-0 bg-gray-900 bg-opacity-70 z-10 flex items-center justify-center p-4">
+                            <div class="bg-red-500 text-white px-4 py-3 rounded-lg text-center">
+                                <i class="fas fa-pause-circle text-3xl mb-2"></i>
+                                <p class="font-bold text-sm mb-1">PROPIEDAD SUSPENDIDA</p>
+                                {% if propiedad.motivo_suspension %}
+                                <p class="text-xs">{{ propiedad.motivo_suspension }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="absolute top-4 left-4 flex gap-2 z-10">
+                            <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                {{ propiedad.get_operacion_display }}
+                            </span>
+                            <span class="{% if propiedad.tipo == 'departamento' %}bg-blue-500{% elif propiedad.tipo == 'casa' %}bg-green-500{% elif propiedad.tipo == 'local' %}bg-purple-500{% elif propiedad.tipo == 'oficina' %}bg-orange-500{% elif propiedad.tipo == 'terreno' %}bg-yellow-600{% else %}bg-pink-500{% endif %} text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                {{ propiedad.get_tipo_display }}
+                            </span>
+                        </div>
+                        <a href="{% url 'propiedades:detalle' propiedad.pk %}">
+                            {% if propiedad.imagen_principal %}
+                            <img src="{{ propiedad.imagen_principal.imagen.url }}" 
+                                 alt="{{ propiedad.titulo }}" 
+                                 class="w-full h-48 object-cover">
+                            {% else %}
+                            <div class="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
+                                <i class="fas fa-home text-white text-6xl opacity-50"></i>
+                            </div>
+                            {% endif %}
+                        </a>
+                    </div>
+                    
+                    <div class="p-5">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-2xl font-bold text-gray-900">
+                                ${{ propiedad.precio|floatformat:0 }}
+                            </h3>
+                        </div>
+                        
+                        <a href="{% url 'propiedades:detalle' propiedad.pk %}">
+                            <h4 class="text-lg font-semibold text-gray-800 mb-2 hover:text-yellow-600 transition">
+                                {{ propiedad.titulo|truncatewords:8 }}
+                            </h4>
+                        </a>
+                        
+                        <p class="text-gray-600 text-sm mb-3 flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            {{ propiedad.distrito }}, {{ propiedad.ciudad }}
+                        </p>
+                        
+                        <div class="flex items-center space-x-4 text-gray-600 text-sm">
+                            <span class="flex items-center">
+                                <i class="fas fa-ruler-combined text-yellow-500 mr-1"></i>
+                                {{ propiedad.area }}m²
+                            </span>
+                            <span class="flex items-center text-gray-600">
+                                <i class="fas fa-bed text-yellow-500 mr-1"></i>
+                                {{ propiedad.habitaciones }}
+                            </span>
+                            <span class="flex items-center text-gray-600">
+                                <i class="fas fa-bath text-yellow-500 mr-1"></i>
+                                {{ propiedad.banos }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% elif usuario.es_propietario %}
+        <div class="bg-white rounded-xl shadow-md p-12 text-center">
+            <i class="fas fa-home text-gray-300 text-6xl mb-4"></i>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                {% if es_propio %}
+                Aún no has publicado propiedades
+                {% else %}
+                Este usuario no tiene propiedades publicadas
+                {% endif %}
+            </h3>
+            {% if es_propio %}
+            <p class="text-gray-600 mb-6">Comienza a publicar tus inmuebles</p>
+            <a href="{% url 'propiedades:crear' %}" 
+               class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition">
+                <i class="fas fa-plus mr-2"></i> Publicar Propiedad
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <!-- Si no es propietario, mostrar opción para convertirse -->
+        {% if not usuario.es_propietario and es_propio %}
+        <div class="bg-white rounded-xl shadow-md p-12 text-center">
+            <i class="fas fa-building text-yellow-500 text-6xl mb-4"></i>
+            <h3 class="text-2xl font-bold text-gray-900 mb-2">¿Quieres publicar tus propiedades?</h3>
+            <p class="text-gray-600 mb-6">Conviértete en propietario y comienza a publicar</p>
+            <a href="{% url 'usuarios:convertir_propietario' %}" 
+               class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition">
+                <i class="fas fa-arrow-right mr-2"></i> Convertirme en Propietario
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
