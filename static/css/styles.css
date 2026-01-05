@@ -3,6 +3,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ocultar flechitas de inputs numéricos en toda la página */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
 /* Estilos personalizados */
 @layer components {
     .btn-primary {
@@ -143,4 +155,16 @@
         transparent 100%
     );
     background-size: 50px 2px;
+}
+
+/* Ocultar flechitas de inputs numéricos */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
 }

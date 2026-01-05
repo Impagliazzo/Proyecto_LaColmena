@@ -13,6 +13,8 @@ class PropiedadForm(forms.ModelForm):
             'ciudad', 'distrito', 'direccion',
             'area', 'habitaciones', 'banos',
             'estacionamiento', 'amoblado', 'mascotas',
+            'balcon', 'patio', 'parrilla', 'aire_acondicionado', 'calefaccion', 'ascensor',
+            'seguridad', 'amenities', 'accesibilidad',
             'especial_estudiantes'
         ]
         widgets = {
@@ -20,6 +22,9 @@ class PropiedadForm(forms.ModelForm):
         }
         labels = {
             'especial_estudiantes': 'Especial para estudiantes',
+            'aire_acondicionado': 'Aire acondicionado',
+            'calefaccion': 'Calefacción',
+            'balcon': 'Balcón',
         }
         help_texts = {
             'especial_estudiantes': 'Marca esta opción si tu propiedad está dirigida especialmente a estudiantes',
@@ -79,14 +84,16 @@ class BusquedaForm(forms.Form):
         required=False,
         widget=forms.NumberInput(attrs={
             'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
-            'placeholder': 'Precio mínimo'
+            'placeholder': 'Precio mínimo',
+            'style': 'appearance: textfield; -moz-appearance: textfield; -webkit-appearance: none;'
         })
     )
     precio_max = forms.DecimalField(
         required=False,
         widget=forms.NumberInput(attrs={
             'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
-            'placeholder': 'Precio máximo'
+            'placeholder': 'Precio máximo',
+            'style': 'appearance: textfield; -moz-appearance: textfield; -webkit-appearance: none;'
         })
     )
 

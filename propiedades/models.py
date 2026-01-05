@@ -75,6 +75,22 @@ class Propiedad(models.Model):
     amoblado = models.BooleanField(default=False)
     mascotas = models.BooleanField(default=False)
     
+    # Inmueble
+    piso = models.IntegerField(null=True, blank=True, help_text='Número de piso', validators=[MinValueValidator(-5)])
+    
+    # Comodidades
+    balcon = models.BooleanField(default=False, help_text='Tiene balcón o terraza')
+    patio = models.BooleanField(default=False, help_text='Tiene patio o jardín')
+    parrilla = models.BooleanField(default=False, help_text='Tiene parrilla')
+    aire_acondicionado = models.BooleanField(default=False)
+    calefaccion = models.BooleanField(default=False)
+    ascensor = models.BooleanField(default=False)
+    
+    # Edificio
+    seguridad = models.BooleanField(default=False, help_text='Tiene seguridad o portero')
+    amenities = models.BooleanField(default=False, help_text='Tiene amenities (pileta, gym, SUM)')
+    accesibilidad = models.BooleanField(default=False, help_text='Apto para movilidad reducida')
+    
     # Estado y estadísticas
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='activa')
     motivo_suspension = models.CharField(max_length=255, blank=True, help_text='Motivo por el cual la propiedad fue suspendida')

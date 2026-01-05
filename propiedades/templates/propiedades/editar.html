@@ -62,13 +62,6 @@
                             {{ form.precio }}
                         </div>
                         
-                        <div class="flex items-center">
-                            {{ form.incluye_expensas }}
-                            <label for="{{ form.incluye_expensas.id_for_label }}" class="ml-2 text-sm text-gray-700">
-                                Incluye gastos de expensas
-                            </label>
-                        </div>
-                        
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de contacto</label>
                             {{ form.tipo_contacto }}
@@ -97,9 +90,9 @@
                     </div>
                 </div>
                 
-                <!-- Características -->
+                <!-- Espacios -->
                 <div class="border-t border-gray-200 pt-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Características</h3>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Espacios</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Área (m²)</label>
@@ -116,39 +109,126 @@
                             {{ form.banos }}
                         </div>
                     </div>
-                    
-                    <div class="mt-4 space-y-2">
-                        <div class="flex items-center">
-                            {{ form.estacionamiento }}
-                            <label for="{{ form.estacionamiento.id_for_label }}" class="ml-2 text-sm text-gray-700">
-                                Tiene estacionamiento
-                                <i class="fas fa-car text-blue-800 ml-2"></i>
-                            </label>
-                        </div>
-                        
+                </div>
+                
+                <!-- Características -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Características</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div class="flex items-center">
                             {{ form.amoblado }}
-                            <label for="{{ form.amoblado.id_for_label }}" class="ml-2 text-sm text-gray-700">
-                                Amoblado
-                                <i class="fas fa-couch text-green-800 ml-2"></i>
+                            <label for="{{ form.amoblado.id_for_label }}" class="ml-2 text-sm text-gray-700" title="La propiedad incluye muebles">
+                                <i class="fas fa-couch text-gray-400 mr-1"></i> Amoblado
                             </label>
                         </div>
                         
                         <div class="flex items-center">
                             {{ form.mascotas }}
-                            <label for="{{ form.mascotas.id_for_label }}" class="ml-2 text-sm text-gray-700">
-                                Acepta mascotas
-                                <i class="fas fa-paw text-purple-800 ml-2"></i>
+                            <label for="{{ form.mascotas.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Se permiten mascotas en la propiedad">
+                                <i class="fas fa-paw text-gray-400 mr-1"></i> Acepta mascotas
                             </label>
                         </div>
                         
                         <div class="flex items-center">
-                            {{ form.especial_estudiantes }}
-                            <label for="{{ form.especial_estudiantes.id_for_label }}" class="ml-2 text-sm text-gray-700">
-                                Especial para estudiantes
-                                <i class="fas fa-graduation-cap text-purple-800 ml-2"></i>
+                            {{ form.estacionamiento }}
+                            <label for="{{ form.estacionamiento.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Incluye cochera o espacio para estacionar">
+                                <i class="fas fa-car text-gray-400 mr-1"></i> Estacionamiento
                             </label>
                         </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.incluye_expensas }}
+                            <label for="{{ form.incluye_expensas.id_for_label }}" class="ml-2 text-sm text-gray-700" title="El precio incluye los gastos comunes del edificio">
+                                <i class="fas fa-receipt text-gray-400 mr-1"></i> Incluye expensas
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Comodidades -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Comodidades</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="flex items-center">
+                            {{ form.balcon }}
+                            <label for="{{ form.balcon.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Tiene balcón o terraza">
+                                <i class="fas fa-door-open text-gray-400 mr-1"></i> Balcón
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.patio }}
+                            <label for="{{ form.patio.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Tiene patio o jardín">
+                                <i class="fas fa-tree text-gray-400 mr-1"></i> Patio
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.parrilla }}
+                            <label for="{{ form.parrilla.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Cuenta con parrilla o asador">
+                                <i class="fas fa-fire text-gray-400 mr-1"></i> Parrilla
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.aire_acondicionado }}
+                            <label for="{{ form.aire_acondicionado.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Cuenta con aire acondicionado">
+                                <i class="fas fa-snowflake text-gray-400 mr-1"></i> Aire acondicionado
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.calefaccion }}
+                            <label for="{{ form.calefaccion.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Cuenta con sistema de calefacción">
+                                <i class="fas fa-temperature-high text-gray-400 mr-1"></i> Calefacción
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.ascensor }}
+                            <label for="{{ form.ascensor.id_for_label }}" class="ml-2 text-sm text-gray-700" title="El edificio tiene ascensor">
+                                <i class="fas fa-elevator text-gray-400 mr-1"></i> Ascensor
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Edificio -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Edificio</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="flex items-center">
+                            {{ form.seguridad }}
+                            <label for="{{ form.seguridad.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Tiene seguridad privada o portero">
+                                <i class="fas fa-shield-alt text-gray-400 mr-1"></i> Seguridad
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.amenities }}
+                            <label for="{{ form.amenities.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Amenities: pileta, gimnasio, salón de usos múltiples, etc.">
+                                <i class="fas fa-swimming-pool text-gray-400 mr-1"></i> Amenities
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            {{ form.accesibilidad }}
+                            <label for="{{ form.accesibilidad.id_for_label }}" class="ml-2 text-sm text-gray-700" title="Apto para personas con movilidad reducida">
+                                <i class="fas fa-wheelchair text-gray-400 mr-1"></i> Accesibilidad
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Opciones especiales -->
+                <div class="border-t border-gray-200 pt-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Opciones Especiales</h3>
+                    <div class="flex items-center">
+                        {{ form.especial_estudiantes }}
+                        <label for="{{ form.especial_estudiantes.id_for_label }}" class="ml-2 text-sm text-gray-700">
+                            <i class="fas fa-graduation-cap text-purple-600 mr-1"></i> Especial para estudiantes
+                        </label>
+                        <p class="ml-6 text-xs text-gray-500">Marca esta opción si tu propiedad está dirigida especialmente a estudiantes</p>
                     </div>
                 </div>
                 

@@ -133,6 +133,68 @@ def listado_propiedades(request):
     if especial_estudiantes:
         propiedades = propiedades.filter(especial_estudiantes=True)
     
+    # Filtros adicionales (características)
+    if request.GET.get('amoblado'):
+        propiedades = propiedades.filter(amoblado=True)
+    
+    if request.GET.get('mascotas'):
+        propiedades = propiedades.filter(mascotas=True)
+    
+    if request.GET.get('estacionamiento'):
+        propiedades = propiedades.filter(estacionamiento=True)
+    
+    if request.GET.get('incluye_expensas'):
+        propiedades = propiedades.filter(incluye_expensas=True)
+    
+    habitaciones = request.GET.get('habitaciones')
+    if habitaciones and habitaciones.isdigit():
+        propiedades = propiedades.filter(habitaciones__gte=int(habitaciones))
+    
+    banos = request.GET.get('banos')
+    if banos and banos.isdigit():
+        propiedades = propiedades.filter(banos__gte=int(banos))
+    
+    area_min = request.GET.get('area_min')
+    if area_min and area_min.replace('.', '', 1).isdigit():
+        propiedades = propiedades.filter(area__gte=float(area_min))
+    
+    area_max = request.GET.get('area_max')
+    if area_max and area_max.replace('.', '', 1).isdigit():
+        propiedades = propiedades.filter(area__lte=float(area_max))
+    
+    tipo_contacto = request.GET.get('tipo_contacto')
+    if tipo_contacto in ['dueno', 'inmobiliaria']:
+        propiedades = propiedades.filter(tipo_contacto=tipo_contacto)
+    
+    # Filtros de comodidades
+    if request.GET.get('balcon'):
+        propiedades = propiedades.filter(balcon=True)
+    
+    if request.GET.get('patio'):
+        propiedades = propiedades.filter(patio=True)
+    
+    if request.GET.get('parrilla'):
+        propiedades = propiedades.filter(parrilla=True)
+    
+    if request.GET.get('aire_acondicionado'):
+        propiedades = propiedades.filter(aire_acondicionado=True)
+    
+    if request.GET.get('calefaccion'):
+        propiedades = propiedades.filter(calefaccion=True)
+    
+    if request.GET.get('ascensor'):
+        propiedades = propiedades.filter(ascensor=True)
+    
+    # Filtros de edificio
+    if request.GET.get('seguridad'):
+        propiedades = propiedades.filter(seguridad=True)
+    
+    if request.GET.get('amenities'):
+        propiedades = propiedades.filter(amenities=True)
+    
+    if request.GET.get('accesibilidad'):
+        propiedades = propiedades.filter(accesibilidad=True)
+    
     # Paginación
     paginator = Paginator(propiedades, 12)
     page_number = request.GET.get('page')

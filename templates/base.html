@@ -22,6 +22,18 @@
             background-attachment: fixed;
         }
         
+        /* Ocultar flechitas de inputs numéricos */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        
         /* Patrón profesional de panales de abeja */
         .honeycomb-pattern {
             position: relative;
@@ -117,27 +129,17 @@
                             <a href="{% url 'propiedades:listado' %}?operacion=venta" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
                                 Comprar
                             </a>
+                            <a href="{% url 'propiedades:listado' %}?especial_estudiantes=1" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
+                                Especial estudiantes
+                            </a>
                             <a href="{% url 'propiedades:crear' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
                                 Publicar propiedad
                             </a>
                         </div>
                     </div>
 
-                    <!-- Dropdown Estudiantes -->
-                    <div class="relative group">
-                        <a href="{% url 'propiedades:estudiantes' %}" class="flex items-center space-x-1 text-gray-700 hover:text-yellow-500 transition">
-                            <span>Estudiantes</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
-                        </a>
-                        <div class="absolute left-0 mt-0 w-56 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-50 before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2">
-                            <a href="{% url 'propiedades:estudiantes' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
-                                Deptos para estudiantes
-                            </a>
-                            <a href="{% url 'propiedades:buscar_companero' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
-                                Buscar compañero/a
-                            </a>
-                        </div>
-                    </div>
+                    <!-- Buscar Compañero -->
+                    <a href="{% url 'propiedades:buscar_companero' %}" class="text-gray-700 hover:text-yellow-500 transition">Buscar Compañero</a>
 
                     <!-- Inversiones -->
                     <a href="{% url 'propiedades:inversiones' %}" class="text-gray-700 hover:text-yellow-500 transition">Inversiones</a>
@@ -266,12 +268,11 @@
                 <div class="px-3 py-2 text-gray-600 font-semibold text-sm">Explorar</div>
                 <a href="{% url 'propiedades:listado' %}?operacion=alquiler" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Alquilar</a>
                 <a href="{% url 'propiedades:listado' %}?operacion=venta" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Comprar</a>
+                <a href="{% url 'propiedades:listado' %}?especial_estudiantes=1" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Especial estudiantes</a>
                 <a href="{% url 'propiedades:crear' %}" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Publicar propiedad</a>
                 
-                <!-- Estudiantes -->
-                <div class="px-3 py-2 text-gray-600 font-semibold text-sm mt-2">Estudiantes</div>
-                <a href="{% url 'propiedades:estudiantes' %}" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Deptos para estudiantes</a>
-                <a href="{% url 'propiedades:buscar_companero' %}" class="block px-5 py-2 text-gray-700 hover:bg-gray-100 rounded">Buscar compañero/a</a>
+                <!-- Buscar Compañero -->
+                <a href="{% url 'propiedades:buscar_companero' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded mt-2">Buscar Compañero</a>
                 
                 <!-- Otros enlaces -->
                 <a href="{% url 'propiedades:inversiones' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded mt-2">Inversiones</a>
@@ -343,7 +344,7 @@
     </main>
     
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white mt-16">
+    <footer class="bg-gray-900 text-white {% if request.GET.especial_estudiantes %}mt-0{% else %}mt-16{% endif %}">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
                 <!-- Columna 1: Logo y descripción - Más ancho -->
