@@ -8,6 +8,7 @@ class Notificacion(models.Model):
         ('contacto', 'Nueva solicitud de contacto'),
         ('suscripcion', 'Recordatorio de suscripción'),
         ('valoracion', 'Nueva valoración'),
+        ('validacion', 'Validación completada'),
         ('sistema', 'Notificación del sistema'),
     ]
     

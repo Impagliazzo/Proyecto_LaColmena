@@ -113,6 +113,125 @@
             </div>
         </div>
         
+        <!-- Estado de Validación (solo si es el perfil propio) -->
+        {% if es_propio %}
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+            <!-- Header compacto -->
+            <button onclick="toggleValidacion()" class="w-full px-6 py-4 border-b border-gray-100 flex items-center justify-between hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-center space-x-3">
+                    <h3 class="text-lg font-semibold text-gray-900">Verificación de seguridad</h3>
+                    {% if usuario.tiene_validaciones_completas %}
+                        <span class="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                            ✓ Completa
+                        </span>
+                    {% else %}
+                        <span class="relative inline-flex items-center">
+                            <span class="text-xs font-medium text-orange-600 bg-orange-50 px-3 py-1 rounded-full">
+                                {% if usuario.telefono_validado %}1{% elif usuario.email_validado %}1{% else %}2{% endif %} pendientes
+                            </span>
+                            <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                            </span>
+                        </span>
+                    {% endif %}
+                </div>
+                <i id="validacion-icon" class="fas fa-chevron-down text-gray-400 transition-transform duration-300"></i>
+            </button>
+            
+            <div id="validacion-content" class="p-6 space-y-4">
+                <!-- Item Teléfono -->
+                <div class="flex items-center justify-between p-4 rounded-xl border-2 transition-all {% if usuario.telefono_validado %}border-green-200 bg-green-50/50{% else %}border-orange-200 bg-orange-50/50 hover:border-orange-300{% endif %}">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center {% if usuario.telefono_validado %}bg-green-500{% else %}bg-orange-500{% endif %}">
+                            <i class="fas fa-phone text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-medium text-gray-900">Teléfono móvil</span>
+                                {% if usuario.telefono_validado %}
+                                    <i class="fas fa-check-circle text-green-500 text-sm"></i>
+                                {% endif %}
+                            </div>
+                            <span class="text-sm text-gray-500">{{ usuario.telefono|default:"Sin agregar" }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        {% if usuario.telefono_validado %}
+                            <a href="{% url 'usuarios:cambiar_telefono' %}" 
+                               class="text-sm font-medium text-gray-600 hover:text-gray-900 transition">
+                                Editar
+                            </a>
+                        {% else %}
+                            <a href="{% url 'usuarios:validar_telefono' %}" 
+                               class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition">
+                                Verificar
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Item Email -->
+                <div class="flex items-center justify-between p-4 rounded-xl border-2 transition-all {% if usuario.email_validado %}border-green-200 bg-green-50/50{% else %}border-orange-200 bg-orange-50/50 hover:border-orange-300{% endif %}">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center {% if usuario.email_validado %}bg-green-500{% else %}bg-orange-500{% endif %}">
+                            <i class="fas fa-envelope text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-medium text-gray-900">Correo electrónico</span>
+                                {% if usuario.email_validado %}
+                                    <i class="fas fa-check-circle text-green-500 text-sm"></i>
+                                {% endif %}
+                            </div>
+                            <span class="text-sm text-gray-500">{{ usuario.email }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        {% if usuario.email_validado %}
+                            <a href="{% url 'usuarios:cambiar_email' %}" 
+                               class="text-sm font-medium text-gray-600 hover:text-gray-900 transition">
+                                Editar
+                            </a>
+                        {% else %}
+                            <a href="{% url 'usuarios:validar_email' %}" 
+                               class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-lg text-sm font-medium transition">
+                                Verificar
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if not usuario.tiene_validaciones_completas %}
+                <!-- Mensaje informativo -->
+                <div class="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <div class="flex items-start space-x-3">
+                        <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                        <p class="text-sm text-gray-700">
+                            Verificá tu información para publicar propiedades y contactar otros usuarios de forma segura.
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <script>
+        function toggleValidacion() {
+            const content = document.getElementById('validacion-content');
+            const icon = document.getElementById('validacion-icon');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(-90deg)';
+            }
+        }
+        </script>
+        {% endif %}
+        
         <!-- Estadísticas -->
         {% if usuario.es_propietario %}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

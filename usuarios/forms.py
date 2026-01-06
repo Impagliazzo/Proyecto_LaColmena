@@ -7,7 +7,7 @@ class RegistroForm(UserCreationForm):
     email = forms.EmailField(required=True)
     first_name = forms.CharField(max_length=30, required=True, label='Nombre')
     last_name = forms.CharField(max_length=30, required=True, label='Apellido')
-    telefono = forms.CharField(max_length=15, required=False, label='Teléfono')
+    telefono = forms.CharField(max_length=15, required=True, label='Teléfono')
     
     class Meta:
         model = Usuario
@@ -138,3 +138,50 @@ class PerfilForm(forms.ModelForm):
                 field.widget.attrs['class'] = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent'
             else:
                 field.widget.attrs['class'] = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent'
+
+
+class ValidarTelefonoForm(forms.Form):
+    """Formulario para validar teléfono con código"""
+    codigo = forms.CharField(
+        max_length=6,
+        label='Código de verificación',
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-amber-500',
+            'placeholder': 'Ingresa el código de 6 dígitos'
+        })
+    )
+
+
+class ValidarEmailForm(forms.Form):
+    """Formulario para validar email con código"""
+    codigo = forms.CharField(
+        max_length=6,
+        label='Código de verificación',
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-amber-500',
+            'placeholder': 'Ingresa el código de 6 dígitos'
+        })
+    )
+
+
+class CambiarTelefonoForm(forms.Form):
+    """Formulario para cambiar teléfono"""
+    telefono = forms.CharField(
+        max_length=15,
+        label='Nuevo teléfono',
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-amber-500',
+            'placeholder': '+54 11 1234-5678'
+        })
+    )
+
+
+class CambiarEmailForm(forms.Form):
+    """Formulario para cambiar email"""
+    email = forms.EmailField(
+        label='Nuevo email',
+        widget=forms.EmailInput(attrs={
+            'class': 'w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-amber-500',
+            'placeholder': 'nuevo@ejemplo.com'
+        })
+    )

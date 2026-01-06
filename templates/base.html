@@ -154,42 +154,30 @@
                                 {% if user.foto_perfil %}
                                     <div class="relative w-10 h-10" style="clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);">
                                         <img src="{{ user.foto_perfil.url }}" alt="{{ user.username }}" class="w-full h-full object-cover">
-                                        {% with total_notificaciones=user.notificaciones_no_leidas %}
-                                            {% if not user.perfil.perfil_completo %}
-                                                {% with total_notificaciones=total_notificaciones|add:1 %}
-                                                    {% if total_notificaciones > 0 %}
-                                                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
-                                                            {{ total_notificaciones }}
-                                                        </span>
-                                                    {% endif %}
-                                                {% endwith %}
-                                            {% elif total_notificaciones > 0 %}
-                                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
-                                                    {{ total_notificaciones }}
-                                                </span>
-                                            {% endif %}
-                                        {% endwith %}
+                                        {% if user.notificaciones_no_leidas > 0 or user.necesita_validaciones and request.session.banner_validacion_cerrado %}
+                                            <span class="notificaciones-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
+                                                {% if user.necesita_validaciones and request.session.banner_validacion_cerrado %}
+                                                    {{ user.notificaciones_no_leidas|add:1 }}
+                                                {% else %}
+                                                    {{ user.notificaciones_no_leidas }}
+                                                {% endif %}
+                                            </span>
+                                        {% endif %}
                                     </div>
                                 {% else %}
                                     <div class="relative w-10 h-10">
                                         <div class="w-10 h-10 flex items-center justify-center text-white font-semibold" style="clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%); background-color: #fdd734;">
                                             {{ user.username.0|upper }}
                                         </div>
-                                        {% with total_notificaciones=user.notificaciones_no_leidas %}
-                                            {% if not user.perfil.perfil_completo %}
-                                                {% with total_notificaciones=total_notificaciones|add:1 %}
-                                                    {% if total_notificaciones > 0 %}
-                                                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
-                                                            {{ total_notificaciones }}
-                                                        </span>
-                                                    {% endif %}
-                                                {% endwith %}
-                                            {% elif total_notificaciones > 0 %}
-                                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
-                                                    {{ total_notificaciones }}
-                                                </span>
-                                            {% endif %}
-                                        {% endwith %}
+                                        {% if user.notificaciones_no_leidas > 0 or user.necesita_validaciones and request.session.banner_validacion_cerrado %}
+                                            <span class="notificaciones-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md" style="z-index: 10;">
+                                                {% if user.necesita_validaciones and request.session.banner_validacion_cerrado %}
+                                                    {{ user.notificaciones_no_leidas|add:1 }}
+                                                {% else %}
+                                                    {{ user.notificaciones_no_leidas }}
+                                                {% endif %}
+                                            </span>
+                                        {% endif %}
                                     </div>
                                 {% endif %}
                                 <span>{{ user.first_name|default:user.username }}</span>
@@ -199,8 +187,10 @@
                             <div class="absolute right-0 mt-0 w-56 bg-white rounded-lg shadow-lg py-2 hidden group-hover:block z-50 before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2">
                                 <a href="{% url 'usuarios:perfil' user.username %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100 relative">
                                     <i class="fas fa-user mr-2"></i> Mi Perfil
-                                    {% if not user.perfil.perfil_completo %}
-                                    <span class="absolute right-3 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">1</span>
+                                    {% if user.necesita_validaciones and request.session.banner_validacion_cerrado %}
+                                        <span class="absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                                            1
+                                        </span>
                                     {% endif %}
                                 </a>
                                 <a href="{% url 'propiedades:favoritos' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
@@ -217,7 +207,7 @@
                                 <a href="{% url 'suscripciones:mi_suscripcion' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
                                     <i class="fas fa-credit-card mr-2"></i> Mi Suscripción
                                 </a>
-                                {% if user.es_propietario and user.publicaciones.exists %}
+                                {% if user.es_propietario %}
                                     <a href="{% url 'propiedades:mis_propiedades' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">
                                         <i class="fas fa-home mr-2"></i> Mis Propiedades
                                     </a>
@@ -321,21 +311,199 @@
     
     <!-- Mensajes Flash -->
     {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4" id="messages-container">
             {% for message in messages %}
-                <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800{% elif message.tags == 'error' %}bg-red-100 text-red-800{% elif message.tags == 'warning' %}bg-yellow-100 text-yellow-800{% else %}bg-blue-100 text-blue-800{% endif %} fade-in">
+                <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 border-2 border-green-400 text-green-800{% elif message.tags == 'error' %}bg-red-100 border-2 border-red-400 text-red-800{% elif message.tags == 'warning' %}bg-yellow-100 border-2 border-yellow-400 text-yellow-800{% else %}bg-blue-100 border-2 border-blue-400 text-blue-800{% endif %} fade-in shadow-lg">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-2"></i>
-                            {{ message }}
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-xl"></i>
+                            <span class="font-semibold">{{ message }}</span>
                         </div>
-                        <button onclick="this.parentElement.parentElement.remove()" class="text-gray-600 hover:text-gray-800">
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-gray-600 hover:text-gray-800 ml-4">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                 </div>
             {% endfor %}
         </div>
+        
+        <script>
+        // Auto-cerrar mensajes de éxito después de 5 segundos
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagesContainer = document.getElementById('messages-container');
+            const bannerValidacion = document.getElementById('validacion-banner');
+            
+            // Si hay mensajes Y banner de validación, ocultar el banner inicialmente
+            if (messagesContainer && bannerValidacion) {
+                bannerValidacion.style.display = 'none';
+                
+                // Función para mostrar el banner después de cerrar mensajes
+                function mostrarBannerDespuesDeMensajes() {
+                    if (messagesContainer.children.length === 0) {
+                        bannerValidacion.style.display = 'block';
+                        setTimeout(() => {
+                            bannerValidacion.style.opacity = '1';
+                        }, 50);
+                    }
+                }
+                
+                // Auto-cerrar mensajes de éxito después de 5 segundos
+                setTimeout(() => {
+                    const allMessages = messagesContainer.querySelectorAll('.bg-green-100, .bg-blue-100');
+                    allMessages.forEach(msg => {
+                        msg.style.transition = 'opacity 1s ease-out';
+                        msg.style.opacity = '0';
+                        // Esperar a que el mensaje esté casi desvanecido antes de mostrar el banner
+                        setTimeout(() => {
+                            msg.remove();
+                            setTimeout(mostrarBannerDespuesDeMensajes, 400);
+                        }, 1000);
+                    });
+                }, 5000);
+                
+                // También mostrar banner si se cierra manualmente un mensaje
+                messagesContainer.addEventListener('click', function(e) {
+                    if (e.target.closest('button')) {
+                        setTimeout(mostrarBannerDespuesDeMensajes, 400);
+                    }
+                });
+            }
+        });
+        </script>
+    {% endif %}
+    
+    <!-- Banner de validación -->
+    {% if user.is_authenticated and user.necesita_validaciones and not request.session.banner_validacion_cerrado %}
+        <div id="validacion-banner" class="relative bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-500 overflow-hidden" style="{% if messages %}display: none; opacity: 0; transition: opacity 1s ease-in;{% endif %}">
+            <!-- Patrón de fondo animado -->
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse"></div>
+                <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+            </div>
+            
+            <div class="relative max-w-7xl mx-auto px-6 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <!-- Ícono animado -->
+                        <div class="relative">
+                            <div class="absolute inset-0 bg-white/30 rounded-xl animate-ping"></div>
+                            <div class="relative bg-white/20 backdrop-blur-sm rounded-xl p-3 border border-white/30">
+                                <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Contenido -->
+                        <div>
+                            <div class="flex items-center space-x-2 mb-0.5">
+                                <h3 class="text-white text-lg font-bold tracking-tight">Verificación de Cuenta Pendiente</h3>
+                                <span class="bg-white/20 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-0.5 rounded-full border border-white/30">
+                                    Importante
+                                </span>
+                            </div>
+                            <p class="text-white/90 text-sm max-w-2xl leading-snug">
+                                {% if not user.telefono_validado and not user.email_validado %}
+                                    Para tu seguridad y la de la comunidad, necesitamos que verifiques tu <strong class="font-semibold">teléfono</strong> y <strong class="font-semibold">email</strong>. Esto te permite publicar propiedades y contactar usuarios de forma segura.
+                                {% elif not user.telefono_validado %}
+                                    Para tu seguridad y la de la comunidad, necesitamos que verifiques tu <strong class="font-semibold">teléfono</strong>. Esto te permite publicar propiedades y contactar usuarios de forma segura.
+                                {% else %}
+                                    Para tu seguridad y la de la comunidad, necesitamos que verifiques tu <strong class="font-semibold">email</strong>. Esto te permite publicar propiedades y contactar usuarios de forma segura.
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Acciones -->
+                    <div class="flex items-center space-x-3">
+                        <a href="{% url 'usuarios:perfil' user.username %}" onclick="cerrarBannerValidacion(); return true;" class="group relative bg-white hover:bg-gray-50 text-amber-700 px-6 py-2 rounded-xl font-bold transition-all duration-200 shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5 flex items-center space-x-2">
+                            <span>Verificar Ahora</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                            </svg>
+                        </a>
+                        <button onclick="cerrarBannerValidacion()" class="text-white/70 hover:text-white transition-all duration-200 p-1.5 hover:bg-white/10 rounded-lg">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <style>
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.05); opacity: 0.15; }
+        }
+        
+        #validacion-banner {
+            transition: all 0.5s ease-out;
+            max-height: 200px;
+            overflow: hidden;
+        }
+        
+        #validacion-banner.oculto {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            opacity: 0;
+        }
+        </style>
+        
+        <script>
+        function cerrarBannerValidacion() {
+            const banner = document.getElementById('validacion-banner');
+            banner.classList.add('oculto');
+            
+            setTimeout(() => {
+                banner.style.display = 'none';
+            }, 500);
+            
+            // Mostrar badges inmediatamente
+            mostrarBadgesValidacion();
+            
+            // Guardar permanentemente en sesión del servidor
+            fetch('{% url "usuarios:cerrar_banner_validacion" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+        }
+        
+        function mostrarBadgesValidacion() {
+            // Actualizar badges en el avatar
+            const badges = document.querySelectorAll('.notificaciones-badge');
+            badges.forEach(badge => {
+                const currentCount = parseInt(badge.textContent) || 0;
+                badge.textContent = currentCount + 1;
+                badge.style.display = 'flex';
+            });
+            
+            // Si no existe badge, crear uno nuevo
+            if (badges.length === 0) {
+                const avatarContainers = document.querySelectorAll('.relative.w-10.h-10');
+                avatarContainers.forEach(container => {
+                    const newBadge = document.createElement('span');
+                    newBadge.className = 'notificaciones-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold shadow-md';
+                    newBadge.style.zIndex = '10';
+                    newBadge.textContent = '1';
+                    container.appendChild(newBadge);
+                });
+            }
+            
+            // Agregar badge en "Mi Perfil" del dropdown
+            const perfilLink = document.querySelector('a[href*="perfil"]');
+            if (perfilLink && !perfilLink.querySelector('.bg-red-500')) {
+                const badge = document.createElement('span');
+                badge.className = 'absolute right-4 top-1/2 -translate-y-1/2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold';
+                badge.textContent = '1';
+                perfilLink.appendChild(badge);
+            }
+        }
+        </script>
     {% endif %}
     
     <!-- Contenido Principal -->

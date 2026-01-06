@@ -6,7 +6,7 @@ from .models import Notificacion
 @login_required
 def listar_notificaciones(request):
     """Listado de notificaciones del usuario"""
-    notificaciones = Notificacion.objects.filter(usuario=request.user)
+    notificaciones = Notificacion.objects.filter(usuario=request.user).select_related('usuario')
     
     # Separar leídas y no leídas
     no_leidas = notificaciones.filter(leida=False)

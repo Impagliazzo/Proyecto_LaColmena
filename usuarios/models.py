@@ -10,6 +10,8 @@ class Usuario(AbstractUser):
     
     tipo = models.CharField(max_length=15, choices=TIPO_CHOICES, default='usuario')
     telefono = models.CharField(max_length=15, blank=True)
+    telefono_validado = models.BooleanField(default=False)
+    email_validado = models.BooleanField(default=False)
     foto_perfil = models.ImageField(upload_to='perfiles/', blank=True, null=True)
     fecha_nacimiento = models.DateField(blank=True, null=True)
     direccion = models.TextField(blank=True)
@@ -50,6 +52,14 @@ class Usuario(AbstractUser):
     def notificaciones_no_leidas(self):
         """Retorna el número de notificaciones no leídas"""
         return self.notificaciones.filter(leida=False).count()
+    
+    def tiene_validaciones_completas(self):
+        """Verifica si el usuario tiene teléfono y email validados"""
+        return self.telefono_validado and self.email_validado
+    
+    def necesita_validaciones(self):
+        """Verifica si el usuario necesita completar validaciones"""
+        return not self.tiene_validaciones_completas()
 
 
 class Perfil(models.Model):

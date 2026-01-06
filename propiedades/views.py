@@ -233,7 +233,7 @@ def detalle_propiedad(request, pk):
     propiedades_similares = Propiedad.objects.filter(
         estado='activa',
         categoria=propiedad.categoria
-    ).exclude(pk=propiedad.pk)[:4]
+    ).exclude(pk=propiedad.pk).select_related('propietario', 'categoria').prefetch_related('imagenes')[:4]
     
     context = {
         'propiedad': propiedad,
@@ -251,11 +251,13 @@ def crear_propiedad(request):
     # Verificar que sea propietario
     if not request.user.es_propietario():
         messages.warning(request, 'Debes ser propietario para publicar. Conviértete en propietario primero.')
-        return redirect('usuarios:convertir_propietario')    
-    # Verificar perfil completo
-    if not request.user.perfil.perfil_completo:
-        messages.warning(request, 'Completá tu perfil antes de publicar propiedades')
-        return redirect('usuarios:completar_perfil')    
+        return redirect('usuarios:convertir_propietario')
+    
+    # Verificar validaciones completas
+    if not request.user.tiene_validaciones_completas():
+        messages.warning(request, 'Debes validar tu teléfono y email antes de publicar propiedades')
+        return redirect('usuarios:perfil', username=request.user.username)
+    
     # Contar cuántas propiedades tiene el usuario (activas o suspendidas)
     total_propiedades = Propiedad.objects.filter(propietario=request.user).count()
     
@@ -533,7 +535,8 @@ def mis_propiedades(request):
     propiedades_list = Propiedad.objects.filter(
         propietario=request.user
     ).prefetch_related('imagenes').annotate(
-        total_valoraciones=Count('valoraciones')
+        total_valoraciones=Count('valoraciones'),
+        total_favoritos=Count('favoritos')
     ).order_by('-estado', '-fecha_publicacion')  # Activas primero, luego por fecha
     
     # Paginación
@@ -545,7 +548,7 @@ def mis_propiedades(request):
     activas = propiedades_list.filter(estado='activa').count()
     suspendidas = propiedades_list.filter(estado='suspendida').count()
     total_vistas = sum(p.vistas for p in propiedades_list)
-    total_favoritos = sum(p.favoritos.count() for p in propiedades_list)
+    total_favoritos = sum(p.total_favoritos for p in propiedades_list)
     
     # Obtener información de destacados disponibles
     from suscripciones.models import Suscripcion
@@ -708,7 +711,7 @@ def mis_favoritos(request):
     """Listado de propiedades favoritas"""
     favoritos = Favorito.objects.filter(
         usuario=request.user
-    ).select_related('propiedad').prefetch_related('propiedad__imagenes')
+    ).select_related('propiedad__propietario', 'propiedad__categoria').prefetch_related('propiedad__imagenes')
     
     return render(request, 'propiedades/favoritos.html', {'favoritos': favoritos})
 

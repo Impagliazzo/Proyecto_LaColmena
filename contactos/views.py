@@ -12,6 +12,11 @@ from .forms import SolicitudContactoForm
 @login_required
 def solicitar_contacto(request, propiedad_pk):
     """Solicitar contacto con propietario"""
+    # Verificar validaciones completas
+    if not request.user.tiene_validaciones_completas():
+        messages.warning(request, 'Debes validar tu teléfono y email antes de contactar propietarios')
+        return redirect('usuarios:perfil', username=request.user.username)
+    
     # Verificar perfil completo
     if not request.user.perfil.perfil_completo:
         messages.warning(request, 'Completá tu perfil antes de contactar propietarios')
