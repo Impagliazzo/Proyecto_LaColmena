@@ -2,6 +2,54 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator
+from django.core.exceptions import ValidationError
+from PIL import Image
+import os
+
+
+def validar_imagen_propiedad(imagen):
+    """Valida tamaño y dimensiones de imagen de propiedad"""
+    # Validar tamaño de archivo (máximo 5MB)
+    limite_mb = 5
+    if imagen.size > limite_mb * 1024 * 1024:
+        raise ValidationError(f'El archivo no puede superar {limite_mb}MB. Tamaño actual: {imagen.size / (1024*1024):.1f}MB')
+    
+    # Validar tipo de archivo
+    ext = os.path.splitext(imagen.name)[1].lower()
+    extensiones_validas = ['.jpg', '.jpeg', '.png', '.webp']
+    if ext not in extensiones_validas:
+        raise ValidationError(f'Formato no válido. Use: {", ".join(extensiones_validas)}')
+    
+    # Validar dimensiones mínimas
+    try:
+        img = Image.open(imagen)
+        ancho, alto = img.size
+        
+        # Dimensiones mínimas recomendadas: 800x600px
+        ancho_minimo = 800
+        alto_minimo = 600
+        
+        if ancho < ancho_minimo or alto < alto_minimo:
+            raise ValidationError(
+                f'La imagen debe tener al menos {ancho_minimo}x{alto_minimo} píxeles. '
+                f'Tamaño actual: {ancho}x{alto}px'
+            )
+        
+        # Validar dimensiones máximas (para evitar imágenes demasiado grandes)
+        ancho_maximo = 4000
+        alto_maximo = 4000
+        
+        if ancho > ancho_maximo or alto > alto_maximo:
+            raise ValidationError(
+                f'La imagen no puede superar {ancho_maximo}x{alto_maximo} píxeles. '
+                f'Tamaño actual: {ancho}x{alto}px'
+            )
+            
+    except Exception as e:
+        if isinstance(e, ValidationError):
+            raise
+        raise ValidationError('No se pudo procesar la imagen. Asegúrese de que sea un archivo válido.')
+
 
 class Categoria(models.Model):
     """Categorías de propiedades"""
@@ -61,6 +109,7 @@ class Propiedad(models.Model):
     tipo_contacto = models.CharField(max_length=20, choices=TIPO_CONTACTO_CHOICES, default='dueno')
     
     # Ubicación
+    provincia = models.CharField(max_length=100, default='Buenos Aires')
     ciudad = models.CharField(max_length=100)
     distrito = models.CharField(max_length=100)
     direccion = models.CharField(max_length=255)
@@ -152,7 +201,7 @@ class Propiedad(models.Model):
 class ImagenPropiedad(models.Model):
     """Imágenes de una propiedad"""
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE, related_name='imagenes')
-    imagen = models.ImageField(upload_to='propiedades/')
+    imagen = models.ImageField(upload_to='propiedades/', validators=[validar_imagen_propiedad])
     orden = models.IntegerField(default=0)
     es_principal = models.BooleanField(default=False)
     fecha_subida = models.DateTimeField(auto_now_add=True)

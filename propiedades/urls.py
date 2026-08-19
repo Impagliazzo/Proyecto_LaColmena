@@ -18,6 +18,8 @@ urlpatterns = [
     path('mis-favoritos/', views.mis_favoritos, name='favoritos'),
     path('valorar/<int:pk>/', views.valorar_propiedad, name='valorar'),
     path('reportar-valoracion/<int:pk>/', views.reportar_valoracion, name='reportar_valoracion'),
+    # Gestión de imágenes
+    path('imagen/<int:imagen_id>/eliminar/', views.eliminar_imagen, name='eliminar_imagen'),
     # API endpoints
     path('api/sugerencias-ubicacion/', views.sugerencias_ubicacion, name='sugerencias_ubicacion'),
     # Destacados
@@ -28,4 +30,5 @@ urlpatterns = [
     path('inversiones/', views.inversiones, name='inversiones'),
     path('quienes-somos/', views.quienes_somos, name='quienes_somos'),
     path('buscar-companero/', views.buscar_companero, name='buscar_companero'),
+    path('companero/<int:pk>/', views.detalle_publicacion_companero, name='detalle_companero'),
 ]

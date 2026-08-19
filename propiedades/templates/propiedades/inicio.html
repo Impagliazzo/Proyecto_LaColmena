@@ -3,15 +3,225 @@
 
 {% block title %}LaColmena - Encuentra tu próximo hogar{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Fondo decorativo de la página principal: crema cálido + panal en las esquinas inferiores.
+       Teselación real (hexágonos del mismo tamaño dentro de cada grupo, sin superposición).
+       Puramente visual - no afecta ninguna otra página ni la funcionalidad. */
+    .inicio-panal-fondo {
+        /* position:relative SIN z-index: solo para que bottom/left/right de las
+           esquinas decorativas (y el fondo de abajo) se midan contra este
+           wrapper. Si le pusiéramos z-index acá, todo el wrapper pasaría a
+           pintarse como capa "posicionada" por ENCIMA del footer (que es
+           estático), tapando su texto en vez de quedar tapado por él. */
+        position: relative;
+        /* overflow-x:clip (NO "hidden"): recorta el desborde horizontal del
+           grupo derecho (que se corre un poco fuera del borde a propósito)
+           sin arrastrar overflow-y a "auto" como haría "hidden" - "clip" es
+           el único valor que no dispara esa regla de acoplamiento de la spec
+           de CSS, así que no genera una segunda scrollbar. */
+        overflow-x: clip;
+    }
+
+    /* El color de fondo NO va directo en .inicio-panal-fondo: al no tener
+       z-index ese wrapper no arma su propio contexto de apilamiento, así que
+       un background-color puesto ahí pintaría por ENCIMA de sus hijos con
+       z-index negativo (los hexágonos), tapándolos por completo. Por eso el
+       fondo es su propia capa, con un z-index más negativo que las esquinas. */
+    .inicio-panal-bg {
+        position: absolute;
+        inset: 0;
+        z-index: -2;
+        background-color: #FFF7E6;
+        pointer-events: none;
+    }
+
+    .inicio-panal-esquina {
+        position: absolute;
+        bottom: 0;
+        z-index: -1;
+        pointer-events: none;
+        display: block;
+    }
+
+    /* Se corren hacia abajo a propósito: el footer (que va encima, fuera de
+       este wrapper) tapa la parte inferior para que el panal "nazca" desde
+       el borde, en vez de quedar todo flotando por encima de él. El grupo
+       derecho además se corre un poco hacia afuera del borde (lo recorta
+       overflow-x:clip del wrapper) para que no quede ese margen vacío. */
+    .inicio-panal-esquina--izq {
+        left: 0;
+        width: 248px;
+        height: auto;
+        transform: translateY(90px);
+    }
+
+    .inicio-panal-esquina--der {
+        right: 0;
+        width: 320px;
+        height: auto;
+        max-height: 100%;
+        transform: translateY(90px) translateX(20px);
+    }
+
+    @media (max-width: 1024px) {
+        .inicio-panal-esquina--izq { width: 190px; transform: translateY(65px); }
+        .inicio-panal-esquina--der { width: 240px; transform: translateY(65px) translateX(14px); }
+    }
+
+    @media (max-width: 640px) {
+        .inicio-panal-esquina { opacity: 0.75; }
+        .inicio-panal-esquina--izq { width: 127px; transform: translateY(35px); }
+        .inicio-panal-esquina--der { width: 150px; transform: translateY(35px) translateX(8px); }
+    }
+
+    /* --- Rediseño del hero: se une al mismo crema del resto de la página en
+       vez del bloque naranja saturado que tenía antes (gradiente + grilla +
+       mancha animada). Se anula solo acá (no se toca la clase global, que no
+       se usa en ninguna otra página) para que el fondo crema de
+       .inicio-panal-bg se vea también detrás del hero. */
+    .honeycomb-hero {
+        background: transparent !important;
+    }
+    .honeycomb-hero::before,
+    .honeycomb-hero::after {
+        content: none !important;
+    }
+
+    /* Panal del hero: los MISMOS hexágonos que las esquinas del footer
+       (teselación real, relleno sólido, mismo borde crema, mismo degradado
+       de opacidad) generados con la misma función, solo que más grandes y
+       ubicados en las esquinas del hero en vez de las del footer. Nada de
+       hexágonos sueltos, bordes solos ni decoraciones nuevas. */
+    .inicio-hero-esquina {
+        position: absolute;
+        z-index: 0;
+        pointer-events: none;
+        display: block;
+    }
+    .inicio-hero-esquina--bl { left: 0; bottom: 0; width: 420px; height: auto; }
+    .inicio-hero-esquina--tr { right: -16px; top: -16px; width: 280px; height: auto; }
+
+    @media (max-width: 1024px) {
+        .inicio-hero-esquina--bl { width: 300px; }
+        .inicio-hero-esquina--tr { width: 204px; right: -12px; top: -12px; }
+    }
+
+    @media (max-width: 640px) {
+        .inicio-hero-esquina--bl { width: 170px; }
+        .inicio-hero-esquina--tr { width: 121px; right: -8px; top: -8px; }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="inicio-panal-fondo">
+    <div class="inicio-panal-bg"></div>
+    <svg class="inicio-panal-esquina inicio-panal-esquina--izq" viewBox="0 0 248 246" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <polygon points="56.0,186.0 82.0,201.0 82.0,231.0 56.0,246.0 30.0,231.0 30.0,201.0" fill="#FFC107" opacity="0.95" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="107.9,186.0 133.9,201.0 133.9,231.0 107.9,246.0 81.9,231.0 81.9,201.0" fill="#FFA000" opacity="1.0" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="159.9,186.0 185.9,201.0 185.9,231.0 159.9,246.0 133.9,231.0 133.9,201.0" fill="#FFC107" opacity="0.98" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="211.9,186.0 237.9,201.0 237.9,231.0 211.9,246.0 185.9,231.0 185.9,201.0" fill="#FFA000" opacity="0.97" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="30.0,141.0 56.0,156.0 56.0,186.0 30.0,201.0 4.0,186.0 4.0,156.0" fill="#FFD54F" opacity="0.84" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="82.0,141.0 108.0,156.0 108.0,186.0 82.0,201.0 56.0,186.0 56.0,156.0" fill="#FFC107" opacity="0.8" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="133.9,141.0 159.9,156.0 159.9,186.0 133.9,201.0 107.9,186.0 107.9,156.0" fill="#FFD54F" opacity="0.92" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="185.9,141.0 211.9,156.0 211.9,186.0 185.9,201.0 159.9,186.0 159.9,156.0" fill="#FFC107" opacity="0.88" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="56.0,96.0 82.0,111.0 82.0,141.0 56.0,156.0 30.0,141.0 30.0,111.0" fill="#FFD54F" opacity="0.68" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="107.9,96.0 133.9,111.0 133.9,141.0 107.9,156.0 81.9,141.0 81.9,111.0" fill="#FFB74D" opacity="0.64" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="159.9,96.0 185.9,111.0 185.9,141.0 159.9,156.0 133.9,141.0 133.9,111.0" fill="#FFD54F" opacity="0.6" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="30.0,51.0 56.0,66.0 56.0,96.0 30.0,111.0 4.0,96.0 4.0,66.0" fill="#FFB74D" opacity="0.52" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="82.0,51.0 108.0,66.0 108.0,96.0 82.0,111.0 56.0,96.0 56.0,66.0" fill="#FFD54F" opacity="0.48" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="56.0,6.0 82.0,21.0 82.0,51.0 56.0,66.0 30.0,51.0 30.0,21.0" fill="#FFE082" opacity="0.24" stroke="#FFF7E6" stroke-width="2"/>
+    </svg>
+    <svg class="inicio-panal-esquina inicio-panal-esquina--der" viewBox="0 0 320 406" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <polygon points="259.7,342.0 287.4,358.0 287.4,390.0 259.7,406.0 232.0,390.0 232.0,358.0" fill="#FFC107" opacity="0.96" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="204.3,342.0 232.0,358.0 232.0,390.0 204.3,406.0 176.6,390.0 176.6,358.0" fill="#FFA000" opacity="1.0" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="148.8,342.0 176.5,358.0 176.5,390.0 148.8,406.0 121.1,390.0 121.1,358.0" fill="#FFC107" opacity="0.99" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="93.4,342.0 121.1,358.0 121.1,390.0 93.4,406.0 65.7,390.0 65.7,358.0" fill="#FFA000" opacity="0.97" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="38.0,342.0 65.7,358.0 65.7,390.0 38.0,406.0 10.3,390.0 10.3,358.0" fill="#FFC107" opacity="0.96" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="287.4,294.0 315.1,310.0 315.1,342.0 287.4,358.0 259.7,342.0 259.7,310.0" fill="#FFC107" opacity="1.0" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="232.0,294.0 259.7,310.0 259.7,342.0 232.0,358.0 204.3,342.0 204.3,310.0" fill="#FFA000" opacity="0.97" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="176.5,294.0 204.2,310.0 204.2,342.0 176.5,358.0 148.8,342.0 148.8,310.0" fill="#FFC107" opacity="0.93" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="121.1,294.0 148.8,310.0 148.8,342.0 121.1,358.0 93.4,342.0 93.4,310.0" fill="#FFA000" opacity="0.9" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="65.7,294.0 93.4,310.0 93.4,342.0 65.7,358.0 38.0,342.0 38.0,310.0" fill="#FFC107" opacity="1.0" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="259.7,246.0 287.4,262.0 287.4,294.0 259.7,310.0 232.0,294.0 232.0,262.0" fill="#FFC107" opacity="0.81" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="204.3,246.0 232.0,262.0 232.0,294.0 204.3,310.0 176.6,294.0 176.6,262.0" fill="#FFD54F" opacity="0.77" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="148.8,246.0 176.5,262.0 176.5,294.0 148.8,310.0 121.1,294.0 121.1,262.0" fill="#FFC107" opacity="0.72" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="93.4,246.0 121.1,262.0 121.1,294.0 93.4,310.0 65.7,294.0 65.7,262.0" fill="#FFD54F" opacity="0.86" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="287.4,198.0 315.1,214.0 315.1,246.0 287.4,262.0 259.7,246.0 259.7,214.0" fill="#FFB74D" opacity="0.65" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="232.0,198.0 259.7,214.0 259.7,246.0 232.0,262.0 204.3,246.0 204.3,214.0" fill="#FFD54F" opacity="0.6" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="176.5,198.0 204.2,214.0 204.2,246.0 176.5,262.0 148.8,246.0 148.8,214.0" fill="#FFB74D" opacity="0.75" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="121.1,198.0 148.8,214.0 148.8,246.0 121.1,262.0 93.4,246.0 93.4,214.0" fill="#FFD54F" opacity="0.7" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="65.7,198.0 93.4,214.0 93.4,246.0 65.7,262.0 38.0,246.0 38.0,214.0" fill="#FFB74D" opacity="0.65" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="259.7,150.0 287.4,166.0 287.4,198.0 259.7,214.0 232.0,198.0 232.0,166.0" fill="#FFD54F" opacity="0.46" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="148.8,150.0 176.5,166.0 176.5,198.0 148.8,214.0 121.1,198.0 121.1,166.0" fill="#FFD54F" opacity="0.54" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="93.4,150.0 121.1,166.0 121.1,198.0 93.4,214.0 65.7,198.0 65.7,166.0" fill="#FFB74D" opacity="0.5" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="287.4,102.0 315.1,118.0 315.1,150.0 287.4,166.0 259.7,150.0 259.7,118.0" fill="#FFE082" opacity="0.44" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="232.0,102.0 259.7,118.0 259.7,150.0 232.0,166.0 204.3,150.0 204.3,118.0" fill="#FFB74D" opacity="0.41" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="176.5,102.0 204.2,118.0 204.2,150.0 176.5,166.0 148.8,150.0 148.8,118.0" fill="#FFE082" opacity="0.37" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="259.7,54.0 287.4,70.0 287.4,102.0 259.7,118.0 232.0,102.0 232.0,70.0" fill="#FFE082" opacity="0.28" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="204.3,54.0 232.0,70.0 232.0,102.0 204.3,118.0 176.6,102.0 176.6,70.0" fill="#FFE082" opacity="0.26" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="287.4,6.0 315.1,22.0 315.1,54.0 287.4,70.0 259.7,54.0 259.7,22.0" fill="#FFE082" opacity="0.17" stroke="#FFF7E6" stroke-width="2"/>
+    </svg>
 <!-- Hero Section con Búsqueda -->
-<div class="py-16 honeycomb-hero relative overflow-hidden">
+<div class="py-24 md:py-32 honeycomb-hero relative">
+    <svg class="inicio-hero-esquina inicio-hero-esquina--bl" viewBox="0 0 454.3 524" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <polygon points="71.3,442.0 105.9,462.0 105.9,502.0 71.3,522.0 36.6,502.0 36.6,462.0" fill="#FFA000" opacity="0.95" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="140.6,442.0 175.2,462.0 175.2,502.0 140.6,522.0 105.9,502.0 105.9,462.0" fill="#FFC107" opacity="0.95" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="209.8,442.0 244.5,462.0 244.5,502.0 209.8,522.0 175.2,502.0 175.2,462.0" fill="#FFA000" opacity="0.95" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="279.1,442.0 313.8,462.0 313.8,502.0 279.1,522.0 244.5,502.0 244.5,462.0" fill="#FFC107" opacity="0.95" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="348.4,442.0 383.1,462.0 383.1,502.0 348.4,522.0 313.8,502.0 313.8,462.0" fill="#FFA000" opacity="0.95" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="417.7,442.0 452.3,462.0 452.3,502.0 417.7,522.0 383.1,502.0 383.1,462.0" fill="#FFC107" opacity="0.95" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="36.6,382.0 71.3,402.0 71.3,442.0 36.6,462.0 2.0,442.0 2.0,402.0" fill="#FFC107" opacity="0.84" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="105.9,382.0 140.6,402.0 140.6,442.0 105.9,462.0 71.3,442.0 71.3,402.0" fill="#FFA000" opacity="0.84" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="175.2,382.0 209.8,402.0 209.8,442.0 175.2,462.0 140.6,442.0 140.6,402.0" fill="#FFC107" opacity="0.84" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="244.5,382.0 279.1,402.0 279.1,442.0 244.5,462.0 209.8,442.0 209.8,402.0" fill="#FFA000" opacity="0.84" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="313.8,382.0 348.4,402.0 348.4,442.0 313.8,462.0 279.1,442.0 279.1,402.0" fill="#FFC107" opacity="0.84" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="383.1,382.0 417.7,402.0 417.7,442.0 383.1,462.0 348.4,442.0 348.4,402.0" fill="#FFA000" opacity="0.84" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="71.3,322.0 105.9,342.0 105.9,382.0 71.3,402.0 36.6,382.0 36.6,342.0" fill="#FFC107" opacity="0.72" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="140.6,322.0 175.2,342.0 175.2,382.0 140.6,402.0 105.9,382.0 105.9,342.0" fill="#FFD54F" opacity="0.72" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="209.8,322.0 244.5,342.0 244.5,382.0 209.8,402.0 175.2,382.0 175.2,342.0" fill="#FFC107" opacity="0.72" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="279.1,322.0 313.8,342.0 313.8,382.0 279.1,402.0 244.5,382.0 244.5,342.0" fill="#FFD54F" opacity="0.72" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="348.4,322.0 383.1,342.0 383.1,382.0 348.4,402.0 313.8,382.0 313.8,342.0" fill="#FFC107" opacity="0.72" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="36.6,262.0 71.3,282.0 71.3,322.0 36.6,342.0 2.0,322.0 2.0,282.0" fill="#FFD54F" opacity="0.61" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="105.9,262.0 140.6,282.0 140.6,322.0 105.9,342.0 71.3,322.0 71.3,282.0" fill="#FFC107" opacity="0.61" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="175.2,262.0 209.8,282.0 209.8,322.0 175.2,342.0 140.6,322.0 140.6,282.0" fill="#FFD54F" opacity="0.61" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="244.5,262.0 279.1,282.0 279.1,322.0 244.5,342.0 209.8,322.0 209.8,282.0" fill="#FFC107" opacity="0.61" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="313.8,262.0 348.4,282.0 348.4,322.0 313.8,342.0 279.1,322.0 279.1,282.0" fill="#FFD54F" opacity="0.61" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="71.3,202.0 105.9,222.0 105.9,262.0 71.3,282.0 36.6,262.0 36.6,222.0" fill="#FFD54F" opacity="0.50" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="140.6,202.0 175.2,222.0 175.2,262.0 140.6,282.0 105.9,262.0 105.9,222.0" fill="#FFB74D" opacity="0.50" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="209.8,202.0 244.5,222.0 244.5,262.0 209.8,282.0 175.2,262.0 175.2,222.0" fill="#FFD54F" opacity="0.50" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="279.1,202.0 313.8,222.0 313.8,262.0 279.1,282.0 244.5,262.0 244.5,222.0" fill="#FFB74D" opacity="0.50" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="36.6,142.0 71.3,162.0 71.3,202.0 36.6,222.0 2.0,202.0 2.0,162.0" fill="#FFB74D" opacity="0.39" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="105.9,142.0 140.6,162.0 140.6,202.0 105.9,222.0 71.3,202.0 71.3,162.0" fill="#FFD54F" opacity="0.39" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="175.2,142.0 209.8,162.0 209.8,202.0 175.2,222.0 140.6,202.0 140.6,162.0" fill="#FFB74D" opacity="0.39" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="71.3,82.0 105.9,102.0 105.9,142.0 71.3,162.0 36.6,142.0 36.6,102.0" fill="#FFE082" opacity="0.27" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="140.6,82.0 175.2,102.0 175.2,142.0 140.6,162.0 105.9,142.0 105.9,102.0" fill="#FFE082" opacity="0.27" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="36.6,22.0 71.3,42.0 71.3,82.0 36.6,102.0 2.0,82.0 2.0,42.0" fill="#FFE082" opacity="0.16" stroke="#FFF7E6" stroke-width="2"/>
+    </svg>
+    <svg class="inicio-hero-esquina inicio-hero-esquina--tr" viewBox="0 0 206.7 210.0" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <polygon points="47.0,0.0 69.5,13.0 69.5,39.0 47.0,52.0 24.5,39.0 24.5,13.0" fill="#FFA000" opacity="0.65" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="92.1,0.0 114.6,13.0 114.6,39.0 92.1,52.0 69.6,39.0 69.6,13.0" fill="#FFC107" opacity="0.65" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="137.1,0.0 159.6,13.0 159.6,39.0 137.1,52.0 114.6,39.0 114.6,13.0" fill="#FFA000" opacity="0.65" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="182.2,0.0 204.7,13.0 204.7,39.0 182.2,52.0 159.6,39.0 159.6,13.0" fill="#FFC107" opacity="0.65" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="24.5,39.0 47.0,52.0 47.0,78.0 24.5,91.0 2.0,78.0 2.0,52.0" fill="#FFA000" opacity="0.55" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="69.5,39.0 92.0,52.0 92.0,78.0 69.5,91.0 47.0,78.0 47.0,52.0" fill="#FFC107" opacity="0.55" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="114.6,39.0 137.1,52.0 137.1,78.0 114.6,91.0 92.1,78.0 92.1,52.0" fill="#FFA000" opacity="0.55" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="159.7,39.0 182.2,52.0 182.2,78.0 159.7,91.0 137.1,78.0 137.1,52.0" fill="#FFC107" opacity="0.55" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="47.0,78.0 69.5,91.0 69.5,117.0 47.0,130.0 24.5,117.0 24.5,91.0" fill="#FFD54F" opacity="0.41" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="92.1,78.0 114.6,91.0 114.6,117.0 92.1,130.0 69.6,117.0 69.6,91.0" fill="#FFC107" opacity="0.41" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="137.1,78.0 159.6,91.0 159.6,117.0 137.1,130.0 114.6,117.0 114.6,91.0" fill="#FFD54F" opacity="0.41" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="182.2,78.0 204.7,91.0 204.7,117.0 182.2,130.0 159.6,117.0 159.6,91.0" fill="#FFC107" opacity="0.41" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="69.5,117.0 92.0,130.0 92.0,156.0 69.5,169.0 47.0,156.0 47.0,130.0" fill="#FFD54F" opacity="0.28" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="114.6,117.0 137.1,130.0 137.1,156.0 114.6,169.0 92.1,156.0 92.1,130.0" fill="#FFB74D" opacity="0.28" stroke="#FFF7E6" stroke-width="2"/>
+        <polygon points="137.1,156.0 159.6,169.0 159.6,195.0 137.1,208.0 114.6,195.0 114.6,169.0" fill="#FFE082" opacity="0.14" stroke="#FFF7E6" stroke-width="2"/>
+    </svg>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
                 Te ayudamos a encontrar tu próximo lugar
             </h1>
-            <p class="text-lg text-gray-700">
+            <p class="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto">
                 Miles de propiedades disponibles para alquilar en toda la ciudad
             </p>
         </div>
@@ -58,38 +268,38 @@
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
         {% for categoria in categorias %}
         <a href="{% url 'propiedades:listado' %}?categoria={{ categoria.id }}" 
-           class="bg-{{ categoria.color }}-500 hover:bg-{{ categoria.color }}-600 text-white p-6 rounded-xl text-center transition transform hover:scale-105 shadow-md">
-            <i class="fas {{ categoria.icono|default:'fa-building' }} text-3xl mb-2"></i>
-            <p class="font-semibold">{{ categoria.nombre }}</p>
+           class="bg-{{ categoria.color }}-500 hover:bg-{{ categoria.color }}-600 text-white p-6 rounded-xl transition transform hover:scale-105 shadow-md" style="display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; text-align: center !important;">
+            <i class="fas {{ categoria.icono|default:'fa-building' }}" style="font-size: 1.875rem !important; margin-bottom: 8px !important;"></i>
+            <p style="font-weight: 600 !important; margin: 0 !important;">{{ categoria.nombre }}</p>
         </a>
         {% empty %}
-        <a href="{% url 'propiedades:listado' %}?tipo=departamento" class="bg-blue-500 hover:bg-blue-600 text-white p-6 rounded-xl text-center transition transform hover:scale-105 shadow-md">
-            <i class="fas fa-building text-3xl mb-2"></i>
-            <p class="font-semibold">Departamentos</p>
+        <a href="{% url 'propiedades:listado' %}?tipo=departamento" class="bg-blue-500 hover:bg-blue-600 text-white p-6 rounded-xl transition transform hover:scale-105 shadow-md" style="display: block; text-align: center;">
+            <i class="fas fa-building" style="display: block; font-size: 3rem; margin-bottom: 8px; text-align: center;"></i>
+            <p style="font-weight: 600; margin: 0; text-align: center;">Departamentos</p>
         </a>
-        <a href="{% url 'propiedades:listado' %}?tipo=casa" class="bg-green-500 hover:bg-green-600 text-white p-6 rounded-xl text-center transition transform hover:scale-105 shadow-md">
-            <i class="fas fa-home text-3xl mb-2"></i>
-            <p class="font-semibold">Casas</p>
+        <a href="{% url 'propiedades:listado' %}?tipo=casa" class="bg-green-500 hover:bg-green-600 text-white p-6 rounded-xl transition transform hover:scale-105 shadow-md" style="display: block; text-align: center;">
+            <i class="fas fa-home" style="display: block; font-size: 3rem; margin-bottom: 8px; text-align: center;"></i>
+            <p style="font-weight: 600; margin: 0; text-align: center;">Casas</p>
         </a>
-        <a href="{% url 'propiedades:listado' %}?tipo=cuarto" class="bg-purple-500 hover:bg-purple-600 text-white p-6 rounded-xl text-center transition transform hover:scale-105 shadow-md">
-            <i class="fas fa-door-open text-3xl mb-2"></i>
-            <p class="font-semibold">Locales</p>
+        <a href="{% url 'propiedades:listado' %}?tipo=cuarto" class="bg-purple-500 hover:bg-purple-600 text-white p-6 rounded-xl transition transform hover:scale-105 shadow-md" style="display: block; text-align: center;">
+            <i class="fas fa-door-open" style="display: block; font-size: 3rem; margin-bottom: 8px; text-align: center;"></i>
+            <p style="font-weight: 600; margin: 0; text-align: center;">Locales</p>
         </a>
-        <a href="{% url 'propiedades:listado' %}?tipo=oficina" class="bg-orange-500 hover:bg-orange-600 text-white p-6 rounded-xl text-center transition transform hover:scale-105 shadow-md">
-            <i class="fas fa-briefcase text-3xl mb-2"></i>
-            <p class="font-semibold">Oficinas</p>
+        <a href="{% url 'propiedades:listado' %}?tipo=oficina" class="bg-orange-500 hover:bg-orange-600 text-white p-6 rounded-xl transition transform hover:scale-105 shadow-md" style="display: block; text-align: center;">
+            <i class="fas fa-briefcase" style="display: block; font-size: 3rem; margin-bottom: 8px; text-align: center;"></i>
+            <p style="font-weight: 600; margin: 0; text-align: center;">Oficinas</p>
         </a>
-        <a href="{% url 'propiedades:listado' %}?tipo=terreno" class="bg-yellow-500 hover:bg-yellow-600 text-white p-6 rounded-xl text-center transition transform hover:scale-105 shadow-md">
-            <i class="fas fa-map text-3xl mb-2"></i>
-            <p class="font-semibold">Terrenos</p>
+        <a href="{% url 'propiedades:listado' %}?tipo=terreno" class="bg-yellow-500 hover:bg-yellow-600 text-white p-6 rounded-xl transition transform hover:scale-105 shadow-md" style="display: block; text-align: center;">
+            <i class="fas fa-map" style="display: block; font-size: 3rem; margin-bottom: 8px; text-align: center;"></i>
+            <p style="font-weight: 600; margin: 0; text-align: center;">Terrenos</p>
         </a>
-        <a href="{% url 'propiedades:listado' %}" class="bg-pink-500 hover:bg-pink-600 text-white p-6 rounded-xl text-center transition transform hover:scale-105 shadow-md">
-            <i class="fas fa-warehouse text-3xl mb-2"></i>
-            <p class="font-semibold">Bodegas</p>
+        <a href="{% url 'propiedades:listado' %}" class="bg-pink-500 hover:bg-pink-600 text-white p-6 rounded-xl transition transform hover:scale-105 shadow-md" style="display: block; text-align: center;">
+            <i class="fas fa-warehouse" style="display: block; font-size: 3rem; margin-bottom: 8px; text-align: center;"></i>
+            <p style="font-weight: 600; margin: 0; text-align: center;">Bodegas</p>
         </a>
-        <a href="{% url 'propiedades:listado' %}" class="bg-red-500 hover:bg-red-600 text-white p-6 rounded-xl text-center transition transform hover:scale-105 shadow-md">
-            <i class="fas fa-bed text-3xl mb-2"></i>
-            <p class="font-semibold">Alojamiento</p>
+        <a href="{% url 'propiedades:listado' %}" class="bg-red-500 hover:bg-red-600 text-white p-6 rounded-xl transition transform hover:scale-105 shadow-md" style="display: block; text-align: center;">
+            <i class="fas fa-bed" style="display: block; font-size: 3rem; margin-bottom: 8px; text-align: center;"></i>
+            <p style="font-weight: 600; margin: 0; text-align: center;">Alojamiento</p>
         </a>
         {% endfor %}
     </div>
@@ -111,10 +321,10 @@
                 <!-- Badge -->
                 <div class="relative">
                     <div class="absolute top-4 left-4 flex gap-2 z-10">
-                        <span class="{% if propiedad.tipo == 'departamento' %}bg-blue-500{% elif propiedad.tipo == 'casa' %}bg-green-500{% elif propiedad.tipo == 'local' %}bg-purple-500{% elif propiedad.tipo == 'oficina' %}bg-orange-500{% elif propiedad.tipo == 'terreno' %}bg-yellow-600{% else %}bg-pink-500{% endif %} text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        <span class="{% if propiedad.tipo == 'departamento' %}bg-blue-500{% elif propiedad.tipo == 'casa' %}bg-green-500{% elif propiedad.tipo == 'local' %}bg-purple-500{% elif propiedad.tipo == 'oficina' %}bg-orange-500{% elif propiedad.tipo == 'terreno' %}bg-yellow-600{% else %}bg-pink-500{% endif %} text-white font-semibold shadow text-sm" style="padding: 8px 20px !important; border-radius: 9999px !important; display: inline-block !important; white-space: nowrap !important; border: none !important; outline: none !important;">
                             {{ propiedad.get_tipo_display }}
                         </span>
-                        <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                        <span class="bg-yellow-500 text-white font-semibold shadow text-sm" style="padding: 8px 20px !important; border-radius: 9999px !important; display: inline-block !important; white-space: nowrap !important; border: none !important; outline: none !important;">
                             {% if propiedad.operacion == 'venta' %}En venta{% else %}En alquiler{% endif %}
                         </span>
                     </div>
@@ -379,7 +589,7 @@
 </script>
 
 <!-- Call to Action -->
-<div class="pt-16" style="background: transparent;">
+<div class="pt-16 pb-16" style="background: transparent;">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white rounded-3xl shadow-lg p-8 sm:p-12 text-center">
             <h2 class="text-3xl font-bold text-gray-900 mb-4">
@@ -401,13 +611,14 @@
                         Publicar Inmueble
                     </a>
                 {% endif %}
-                <a href="{% url 'suscripciones:planes' %}" 
+                <a href="{% url 'suscripciones:planes' %}"
                    class="border-2 border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white font-semibold py-3 px-8 rounded-lg transition">
                     Ver Cómo Funciona
                 </a>
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 

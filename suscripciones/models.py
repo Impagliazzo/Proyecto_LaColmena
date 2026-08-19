@@ -52,20 +52,24 @@ class Suscripcion(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.fecha_vencimiento:
-            self.fecha_vencimiento = timezone.now() + timedelta(days=self.plan.duracion_dias)
+            # Para proyecto universitario: establecer fecha muy lejana (100 años)
+            self.fecha_vencimiento = timezone.now() + timedelta(days=36500)
         super().save(*args, **kwargs)
     
     def esta_activa(self):
-        return self.estado == 'activa' and self.fecha_vencimiento > timezone.now()
+        # Para proyecto universitario: las suscripciones activas nunca vencen
+        return self.estado == 'activa'
     
     def dias_restantes(self):
         if self.esta_activa():
-            return (self.fecha_vencimiento - timezone.now()).days
+            # Retornar número grande para indicar tiempo "ilimitado"
+            return 999999
         return 0
     
     def esta_por_vencer(self):
         """Retorna True si faltan 7 días o menos para vencer"""
-        return self.esta_activa() and self.dias_restantes() <= 7
+        # Para proyecto universitario: nunca está por vencer
+        return False
 
 
 class Pago(models.Model):

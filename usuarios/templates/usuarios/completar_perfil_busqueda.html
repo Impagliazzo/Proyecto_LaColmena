@@ -1,0 +1,1540 @@
+{% extends 'base.html' %}
+
+{% block title %}Completar Perfil de Búsqueda - LaColmena{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+        min-height: 100vh;
+    }
+    
+    .wizard-container {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 1.5rem 0.75rem;
+    }
+    
+    .hero-section {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        padding: 2rem 1.5rem;
+        border-radius: 24px;
+        box-shadow: 0 15px 45px rgba(0,0,0,0.12);
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 500px;
+        height: 500px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        bottom: -30%;
+        left: -5%;
+        width: 400px;
+        height: 400px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+        animation: float 8s ease-in-out infinite reverse;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 0.75rem;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        color: white;
+        opacity: 0.95;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Progress Indicators */
+    .progress-container {
+        background: white;
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        margin-bottom: 1.5rem;
+    }
+    
+    .step-indicators {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+    
+    .step-dot {
+        width: 40px;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .step-dot.completed {
+        background: linear-gradient(90deg, #10b981, #059669);
+    }
+    
+    .step-dot.active {
+        background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+    }
+    
+    /* Step Card */
+    .step-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem 1.75rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+        border: 1px solid rgba(245, 158, 11, 0.1);
+        position: relative;
+        overflow: hidden;
+        display: none;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .step-card.active {
+        display: block;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .step-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 6px;
+        background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
+        background-size: 200% 100%;
+        animation: shimmer 3s infinite;
+    }
+    
+    .step-header {
+        text-align: center;
+        margin-bottom: 1.75rem;
+    }
+    
+    .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-radius: 50%;
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 5px 15px rgba(245, 158, 11, 0.18);
+    }
+    
+    .step-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    
+    .step-description {
+        font-size: 0.9rem;
+        color: #6b7280;
+        line-height: 1.5;
+    }
+    
+    .step-optional {
+        display: inline-block;
+        background: #e0e7ff;
+        color: #4338ca;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 0.5rem;
+    }
+    
+    /* Form Fields */
+    .field-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .field-label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 1rem;
+    }
+    
+    .radio-grid {
+        display: grid;
+        gap: 0.75rem;
+    }
+    
+    .radio-option {
+        position: relative;
+        background: #fafafa;
+        border: 2.5px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .radio-option:hover {
+        background: #fef3c7;
+        border-color: #fbbf24;
+        transform: scale(1.02);
+        box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15);
+    }
+    
+    .radio-option input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        accent-color: #f59e0b;
+        flex-shrink: 0;
+    }
+    
+    .radio-option:has(input:checked) {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-color: #f59e0b;
+        border-width: 2.5px;
+        box-shadow: 0 6px 25px rgba(245, 158, 11, 0.2);
+        transform: scale(1.02);
+    }
+    
+    .radio-option span {
+        cursor: pointer;
+        font-weight: 600;
+        color: #374151;
+        flex: 1;
+        font-size: 1rem;
+    }
+    
+    .radio-option:has(input:checked) span {
+        color: #92400e;
+        font-weight: 800;
+    }
+    
+    .radio-option::after {
+        content: '✓';
+        position: absolute;
+        right: 1.5rem;
+        font-size: 1.5rem;
+        color: #f59e0b;
+        opacity: 0;
+        transform: scale(0);
+        transition: all 0.3s ease;
+    }
+    
+    .radio-option:has(input:checked)::after {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        border: 3px solid #e5e7eb;
+        border-radius: 16px;
+        font-size: 1.05rem;
+        transition: all 0.3s ease;
+        background: white;
+        font-weight: 500;
+    }
+    
+    input:focus,
+    select:focus {
+        outline: none;
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1);
+        transform: scale(1.01);
+    }
+    
+    .checkbox-option {
+        background: white;
+        border: 3px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .checkbox-option:hover {
+        background: #fef3c7;
+        border-color: #fbbf24;
+        transform: scale(1.02);
+    }
+    
+    .checkbox-option:has(input:checked) {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-color: #f59e0b;
+        box-shadow: 0 8px 30px rgba(245, 158, 11, 0.25);
+    }
+    
+    input[type="checkbox"] {
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        accent-color: #f59e0b;
+    }
+    
+    /* Estilos para categorías de etiquetas */
+    .tag-category {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .tag-category:hover {
+        border-color: #fbbf24;
+        box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+    }
+    
+    .category-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f3f4f6;
+    }
+    
+    .category-icon {
+        font-size: 1.8rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .checkbox-tags-grid {
+        display: block;
+    }
+    
+    .checkbox-tags-grid ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .checkbox-tags-grid li {
+        display: flex;
+    }
+    
+    .checkbox-tags-grid label {
+        background: #f9fafb;
+        border: 2px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #374151;
+        width: 100%;
+    }
+    
+    .checkbox-tags-grid label:hover {
+        border-color: #fbbf24;
+        background: #fffbeb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+    }
+    
+    .checkbox-tags-grid label:has(input:checked) {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-color: #f59e0b;
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+        transform: translateY(-2px);
+        color: #92400e;
+    }
+    
+    .checkbox-tags-grid input[type="checkbox"] {
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        accent-color: #f59e0b;
+        flex-shrink: 0;
+    }
+    
+    .conditional-box {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border: 3px dashed #f59e0b;
+        border-radius: 20px;
+        padding: 2rem;
+        margin-top: 1.5rem;
+        animation: slideDown 0.5s ease;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            max-height: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            max-height: 1000px;
+            transform: translateY(0);
+        }
+    }
+    
+    .conditional-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #92400e;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    /* Navigation Buttons */
+    .step-navigation {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #f3f4f6;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+    
+    .btn-prev {
+        background: white;
+        color: #374151;
+        border: 2.5px solid #e5e7eb;
+    }
+    
+    .btn-prev:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+        transform: translateX(-5px);
+    }
+    
+    .btn-next {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.3);
+        margin-left: auto;
+    }
+    
+    .btn-next:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+    }
+    
+    .btn-submit {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        margin-left: auto;
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+    }
+    
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    
+    /* Motivation Messages */
+    .motivation-box {
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        border-left: 5px solid #3b82f6;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-top: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .motivation-icon {
+        font-size: 2rem;
+    }
+    
+    .motivation-text {
+        flex: 1;
+    }
+    
+    .motivation-title {
+        font-weight: 700;
+        color: #1e40af;
+        margin-bottom: 0.25rem;
+        font-size: 0.95rem;
+    }
+    
+    .motivation-description {
+        color: #1e40af;
+        font-size: 0.85rem;
+    }
+    
+    .help-text {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+    
+    .error-text {
+        color: #dc2626;
+        font-size: 0.9rem;
+        margin-top: 0.75rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .error-text::before {
+        content: '⚠️';
+    }
+    
+    .hidden-field {
+        display: none;
+    }
+    
+    /* Autocomplete */
+    .autocomplete-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 3px solid #f59e0b;
+        border-top: none;
+        border-radius: 0 0 16px 16px;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .autocomplete-item {
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    
+    .autocomplete-item:hover {
+        background: #fef3c7;
+        color: #92400e;
+        font-weight: 600;
+    }
+    
+    .autocomplete-item:last-child {
+        border-bottom: none;
+    }
+    
+    /* Notificaciones profesionales - coherente con LaColmena */
+    .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-width: 320px;
+    }
+    
+    .notification {
+        background: white;
+        border-radius: 12px;
+        padding: 0.875rem 1rem;
+        box-shadow: 0 8px 30px rgba(245, 158, 11, 0.12);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-out 4.7s;
+        border: 2.5px solid;
+    }
+    
+    .notification.error {
+        border-color: #dc2626;
+        background: linear-gradient(135deg, #fff 0%, #fee2e2 100%);
+    }
+    
+    .notification.warning {
+        border-color: #F59E0B;
+        background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);
+    }
+    
+    .notification.success {
+        border-color: #10b981;
+        background: linear-gradient(135deg, #fff 0%, #d1fae5 100%);
+    }
+    
+    .notification-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        animation: bounce 0.5s ease-out;
+        filter: drop-shadow(0 1px 3px rgba(0,0,0,0.1));
+    }
+    
+    .notification-content {
+        flex: 1;
+    }
+    
+    .notification-title {
+        font-weight: 700;
+        color: #78350f;
+        margin-bottom: 0.15rem;
+        font-size: 0.875rem;
+    }
+    
+    .notification.error .notification-title {
+        color: #991b1b;
+    }
+    
+    .notification.success .notification-title {
+        color: #065f46;
+    }
+    
+    .notification-message {
+        color: #92400e;
+        font-size: 0.75rem;
+        line-height: 1.3;
+    }
+    
+    .notification.error .notification-message {
+        color: #7f1d1d;
+    }
+    
+    .notification.success .notification-message {
+        color: #064e3b;
+    }
+    
+    .notification-close {
+        background: rgba(245, 158, 11, 0.1);
+        border: none;
+        color: #92400e;
+        font-size: 1.25rem;
+        cursor: pointer;
+        padding: 0;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        border-radius: 50%;
+        font-weight: bold;
+    }
+    
+    .notification-close:hover {
+        background: #F59E0B;
+        color: white;
+        transform: rotate(90deg);
+    }
+    
+    @keyframes slideInRight {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(400px);
+        }
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: scale(1); }
+        25% { transform: scale(1.15); }
+        50% { transform: scale(0.95); }
+        75% { transform: scale(1.05); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <!-- Contenedor de notificaciones -->
+    <div class="notification-container" id="notificationContainer"></div>
+    
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <div class="hero-title">🏠 Encuentra tu Compañero/a Ideal</div>
+            <div class="hero-subtitle">
+                Completa tu perfil en pocos pasos y conecta con personas compatibles
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Indicators -->
+    <div class="progress-container">
+        <div class="step-indicators">
+            <div class="step-dot" data-step="1"></div>
+            <div class="step-dot" data-step="2"></div>
+            <div class="step-dot" data-step="3"></div>
+            <div class="step-dot" data-step="4"></div>
+        </div>
+    </div>
+
+    <!-- Formulario Multi-Step -->
+    <form method="post" id="perfilBusquedaForm">
+        {% csrf_token %}
+        
+        <!-- PASO 1: Situación Actual -->
+        <div class="step-card active" data-step="1">
+            <div class="step-header">
+                <div class="step-number">📍</div>
+                <h2 class="step-title">¿Cuál es tu situación actual?</h2>
+                <p class="step-description">
+                    Cuéntanos si ya tienes un lugar o estás buscando con quién compartir
+                </p>
+            </div>
+            
+            <div class="field-group">
+                <div class="radio-grid">
+                    {% for choice in form.situacion_actual %}
+                        {% if choice.choice_value != '' and choice.choice_value != '---------' %}
+                        <label class="radio-option" for="{{ choice.id_for_label }}">
+                            {{ choice.tag }}
+                            <span>{{ choice.choice_label }}</span>
+                        </label>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if form.situacion_actual.errors %}
+                    <p class="error-text">{{ form.situacion_actual.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="motivation-box">
+                <div class="motivation-icon">💡</div>
+                <div class="motivation-text">
+                    <div class="motivation-title">¡Bienvenido!</div>
+                    <div class="motivation-description">Este es el primer paso para encontrar tu compañero/a ideal. Mientras más completo sea tu perfil, mejores coincidencias encontrarás.</div>
+                </div>
+            </div>
+            
+            <div class="step-navigation">
+                <button type="button" class="btn btn-next" onclick="nextStep()">
+                    Siguiente →
+                </button>
+            </div>
+        </div>
+
+        <!-- PASO 2: Información Personal -->
+        <div class="step-card" data-step="2">
+            <div class="step-header">
+                <div class="step-number">👤</div>
+                <h2 class="step-title">Información Personal</h2>
+                <p class="step-description">
+                    Ayúdanos a conocerte mejor para conectarte con personas compatibles
+                </p>
+            </div>
+            
+            <div class="field-group">
+                <label class="field-label" for="{{ form.edad.id_for_label }}">
+                    ¿Cuántos años tienes?
+                </label>
+                {{ form.edad }}
+                {% if form.edad.errors %}
+                    <p class="error-text">{{ form.edad.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="field-group">
+                <label class="field-label">¿Con qué género te identificas?</label>
+                <div class="radio-grid">
+                    {% for choice in form.genero %}
+                        {% if choice.choice_value != '' and choice.choice_value != '---------' %}
+                        <label class="radio-option" for="{{ choice.id_for_label }}">
+                            {{ choice.tag }}
+                            <span>{{ choice.choice_label }}</span>
+                        </label>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if form.genero.errors %}
+                    <p class="error-text">{{ form.genero.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="motivation-box">
+                <div class="motivation-icon">🎯</div>
+                <div class="motivation-text">
+                    <div class="motivation-title">¡Vas muy bien!</div>
+                    <div class="motivation-description">Esta información ayuda a encontrar compañeros/as de edad similar.</div>
+                </div>
+            </div>
+            
+            <div class="step-navigation">
+                <button type="button" class="btn btn-prev" onclick="prevStep()">
+                    ← Anterior
+                </button>
+                <button type="button" class="btn btn-next" onclick="nextStep()">
+                    Siguiente →
+                </button>
+            </div>
+        </div>
+
+        <!-- PASO 3: Situación Laboral/Académica -->
+        <div class="step-card" data-step="3">
+            <div class="step-header">
+                <div class="step-number">💼</div>
+                <h2 class="step-title">Situación Laboral/Académica</h2>
+                <p class="step-description">
+                    Conocer tu ocupación nos ayuda a sugerir horarios y estilos de vida compatibles
+                </p>
+            </div>
+            
+            <div class="field-group">
+                <label class="field-label">¿Cuál es tu situación actual?</label>
+                <div class="radio-grid">
+                    {% for choice in form.situacion_laboral %}
+                        {% if choice.choice_value != '' and choice.choice_value != '---------' %}
+                        <label class="radio-option" for="{{ choice.id_for_label }}">
+                            {{ choice.tag }}
+                            <span>{{ choice.choice_label }}</span>
+                        </label>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if form.situacion_laboral.errors %}
+                    <p class="error-text">{{ form.situacion_laboral.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <!-- Campos condicionales para estudiantes -->
+            <div id="campos_estudiante" class="conditional-field hidden-field">
+                <div class="conditional-box">
+                    <h4 class="conditional-title">🎓 Información Académica</h4>
+                    
+                    <div class="field-group">
+                        <label class="field-label" for="{{ form.universidad.id_for_label }}">
+                            ¿En qué universidad estudias?
+                        </label>
+                        <div style="position: relative;">
+                            <input type="text" 
+                                   name="universidad" 
+                                   id="{{ form.universidad.id_for_label }}"
+                                   value="{{ form.universidad.value|default:'' }}"
+                                   placeholder="Empieza a escribir..."
+                                   autocomplete="off"
+                                   onkeyup="filtrarUniversidades(this.value)"
+                                   onfocus="document.getElementById('universidades-list').style.display='none'">
+                            <div id="universidades-list" class="autocomplete-list"></div>
+                        </div>
+                        {% if form.universidad.errors %}
+                            <p class="error-text">{{ form.universidad.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Modalidad de estudio</label>
+                        <div class="radio-grid">
+                            {% for choice in form.modalidad_estudio %}
+                                <label class="radio-option" for="{{ choice.id_for_label }}">
+                                    {{ choice.tag }}
+                                    <span>{{ choice.choice_label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        {% if form.modalidad_estudio.errors %}
+                            <p class="error-text">{{ form.modalidad_estudio.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Campos condicionales para trabajadores -->
+            <div id="campos_trabajador" class="conditional-field hidden-field">
+                <div class="conditional-box">
+                    <h4 class="conditional-title">💼 Información Laboral</h4>
+                    
+                    <div class="field-group">
+                        <label class="field-label" for="{{ form.empresa_rubro.id_for_label }}">
+                            ¿En qué empresa o rubro trabajas?
+                        </label>
+                        {{ form.empresa_rubro }}
+                        <p class="help-text">Ejemplo: "Microsoft", "Tecnología", "Educación"</p>
+                        {% if form.empresa_rubro.errors %}
+                            <p class="error-text">{{ form.empresa_rubro.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Modalidad de trabajo</label>
+                        <div class="radio-grid">
+                            {% for choice in form.modalidad_trabajo %}
+                                <label class="radio-option" for="{{ choice.id_for_label }}">
+                                    {{ choice.tag }}
+                                    <span>{{ choice.choice_label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                        {% if form.modalidad_trabajo.errors %}
+                            <p class="error-text">{{ form.modalidad_trabajo.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="motivation-box">
+                <div class="motivation-icon">🌟</div>
+                <div class="motivation-text">
+                    <div class="motivation-title">¡Excelente progreso!</div>
+                    <div class="motivation-description">Tu situación laboral ayuda a encontrar compañeros con horarios similares.</div>
+                </div>
+            </div>
+            
+            <div class="step-navigation">
+                <button type="button" class="btn btn-prev" onclick="prevStep()">
+                    ← Anterior
+                </button>
+                <button type="button" class="btn btn-next" onclick="nextStep()">
+                    Siguiente →
+                </button>
+            </div>
+        </div>
+
+        <!-- PASO 4: Hábitos y Estilo de Vida -->
+        <div class="step-card" data-step="4">
+            <div class="step-header">
+                <div class="step-number">✨</div>
+                <h2 class="step-title">Hábitos y Estilo de Vida</h2>
+                <p class="step-description">
+                    Selecciona las etiquetas que mejor te describen. Esto ayudará a encontrar compañeros compatibles.
+                    <span class="step-optional">(Todas las opciones son opcionales)</span>
+                </p>
+            </div>
+            
+            <!-- Categorías de etiquetas organizadas por secciones -->
+            <div class="space-y-10">
+                
+                <!-- CATEGORÍA 1: Hábitos y Vicios -->
+                <div class="tag-category">
+                    <h3 class="category-title">
+                        <span class="category-icon">🚭</span>
+                        Hábitos y Vicios
+                    </h3>
+                    <div class="checkbox-tags-grid">
+                        {{ form.habitos_vicios }}
+                    </div>
+                    {% if form.habitos_vicios.errors %}
+                        <p class="error-text">{{ form.habitos_vicios.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- CATEGORÍA 2: Mascotas -->
+                <div class="tag-category">
+                    <h3 class="category-title">
+                        <span class="category-icon">🐾</span>
+                        Mascotas
+                    </h3>
+                    <div class="checkbox-tags-grid">
+                        {{ form.mascotas_tags }}
+                    </div>
+                    {% if form.mascotas_tags.errors %}
+                        <p class="error-text">{{ form.mascotas_tags.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- CATEGORÍA 3: Convivencia y Limpieza -->
+                <div class="tag-category">
+                    <h3 class="category-title">
+                        <span class="category-icon">🧼</span>
+                        Convivencia y Limpieza
+                    </h3>
+                    <div class="checkbox-tags-grid">
+                        {{ form.convivencia_limpieza }}
+                    </div>
+                    {% if form.convivencia_limpieza.errors %}
+                        <p class="error-text">{{ form.convivencia_limpieza.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- CATEGORÍA 4: Horarios y Trabajo -->
+                <div class="tag-category">
+                    <h3 class="category-title">
+                        <span class="category-icon">⏰</span>
+                        Horarios y Trabajo
+                    </h3>
+                    <div class="checkbox-tags-grid">
+                        {{ form.horarios_trabajo }}
+                    </div>
+                    {% if form.horarios_trabajo.errors %}
+                        <p class="error-text">{{ form.horarios_trabajo.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- CATEGORÍA 5: Comida y Social -->
+                <div class="tag-category">
+                    <h3 class="category-title">
+                        <span class="category-icon">🍕</span>
+                        Comida y Social
+                    </h3>
+                    <div class="checkbox-tags-grid">
+                        {{ form.comida_social }}
+                    </div>
+                    {% if form.comida_social.errors %}
+                        <p class="error-text">{{ form.comida_social.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+            </div>
+            
+            <div class="motivation-box" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-left-color: #10b981;">
+                <div class="motivation-icon">🎉</div>
+                <div class="motivation-text">
+                    <div class="motivation-title" style="color: #065f46;">¡Perfil casi completo!</div>
+                    <div class="motivation-description" style="color: #065f46;">Estas etiquetas aparecerán en tu perfil y ayudarán a otros a conocerte mejor. ¡Ya estás listo para encontrar tu compañero/a ideal!</div>
+                </div>
+            </div>
+            
+            <div class="step-navigation">
+                <button type="button" class="btn btn-prev" onclick="prevStep()">
+                    ← Anterior
+                </button>
+                <button type="submit" class="btn btn-submit">
+                    ✓ Completar Perfil
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 4;
+
+// Sistema de notificaciones profesional
+function showNotification(title, message, type = 'error') {
+    const container = document.getElementById('notificationContainer');
+    
+    // Iconos según el tipo
+    const icons = {
+        error: '❌',
+        warning: '⚠️',
+        success: '✓',
+        info: 'ℹ️'
+    };
+    
+    // Crear notificación
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <div class="notification-icon">${icons[type] || icons.error}</div>
+        <div class="notification-content">
+            <div class="notification-title">${title}</div>
+            <div class="notification-message">${message}</div>
+        </div>
+        <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+    `;
+    
+    container.appendChild(notification);
+    
+    // Auto eliminar después de 5 segundos
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Diccionario de descripciones para los tooltips
+    const tooltips = {
+        'fumador': 'Soy fumador casual. El #Fumador aparecerá en tu perfil',
+        'vaper': 'Uso vaporizador regularmente. El #Vaper aparecerá en tu perfil',
+        'drink_friendly': 'Disfruto tomar algo ocasionalmente. El #DrinkFriendly aparecerá en tu perfil',
+        'abstemio': 'No consumo alcohol. El #Abstemio aparecerá en tu perfil',
+        'ruidoso_pero_majo': 'Soy expresivo y sociable. El #RuidosoPeroMajo aparecerá en tu perfil',
+        'modo_silencio': 'Me gusta el silencio. El #ModoSilencio aparecerá en tu perfil',
+        'gamer': 'Me gusta jugar videojuegos. El #Gamer aparecerá en tu perfil',
+        'dog_lover': 'Tengo o amo los perros. El #DogLover aparecerá en tu perfil',
+        'cat_lover': 'Tengo o amo los gatos. El #CatLover aparecerá en tu perfil',
+        'mascota_exotica': 'Tengo una mascota exótica. El #MascotaExotica aparecerá en tu perfil',
+        'pet_friendly': 'Me encantan los animales en general. El #PetFriendly aparecerá en tu perfil',
+        'limpio': 'No tengo problemas con tareas del hogar. El #Limpio aparecerá en tu perfil',
+        'manana_lo_lavo': 'Procrastino un poco con la limpieza. El #MañanaLoLavo aparecerá en tu perfil',
+        'caos_bajo_control': 'Un poco desordenado pero manejable. El #CaosBajoControl aparecerá en tu perfil',
+        'team_limpieza': 'Me encanta mantener todo impecable. El #TeamLimpieza aparecerá en tu perfil',
+        'sin_filtros': 'Soy directo y honesto. El #SinFiltros aparecerá en tu perfil',
+        'nudista_light': 'Me siento cómodo en ropa casual en casa. El #NudistaLight aparecerá en tu perfil',
+        'home_office': 'Trabajo desde casa regularmente. El #HomeOffice aparecerá en tu perfil',
+        'casi_nunca_estoy': 'Paso poco tiempo en casa. El #CasiNuncaEstoy aparecerá en tu perfil',
+        'night_owl': 'Soy más activo de noche. El #NightOwl aparecerá en tu perfil',
+        'early_bird': 'Madrugo y soy productivo temprano. El #EarlyBird aparecerá en tu perfil',
+        'ronco_un_poco': 'Ronco al dormir (advertencia justa). El #RoncoUnPoco aparecerá en tu perfil',
+        'chef_en_casa': 'Me gusta cocinar para mí y otros. El #ChefEnCasa aparecerá en tu perfil',
+        'rey_del_delivery': 'Prefiero pedir comida a cocinar. El #ReyDelDelivery aparecerá en tu perfil',
+        'vegan_vibes': 'Sigo una dieta vegana/vegetariana. El #VeganVibes aparecerá en tu perfil',
+        'casa_social': 'Me gusta recibir amigos en casa. El #CasaSocial aparecerá en tu perfil',
+        'full_privacidad': 'Valoro mi espacio personal. El #FullPrivacidad aparecerá en tu perfil',
+        'pareja_visitante': 'Mi pareja visita regularmente. El #ParejaVisitante aparecerá en tu perfil'
+    };
+    
+    // Aplicar tooltips usando el atributo title nativo
+    document.querySelectorAll('.checkbox-tags-grid input[type="checkbox"]').forEach(checkbox => {
+        const value = checkbox.value;
+        const label = checkbox.closest('label');
+        if (label && tooltips[value]) {
+            label.setAttribute('title', tooltips[value]);
+        }
+    });
+    
+    // Eliminar opciones vacías o inválidas de todos los radio buttons
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        if (!radio.value || radio.value.trim() === '' || radio.value === '---------' || radio.value === '-----') {
+            const label = radio.closest('label');
+            if (label) {
+                label.remove();
+            }
+        }
+    });
+    
+    // Inicializar
+    updateProgress();
+    
+    // Configurar campos condicionales
+    const situacionLaboralRadios = document.querySelectorAll('input[name="situacion_laboral"]');
+    situacionLaboralRadios.forEach(radio => {
+        radio.addEventListener('change', actualizarCamposCondicionales);
+    });
+    
+    // Ejecutar al cargar para mostrar campos si ya hay selección
+    actualizarCamposCondicionales();
+    
+    // Actualizar progreso cuando se completen campos
+    const allInputs = document.querySelectorAll('input, select');
+    allInputs.forEach(input => {
+        input.addEventListener('change', updateProgress);
+    });
+});
+
+function nextStep() {
+    console.log('nextStep llamado, currentStep:', currentStep);
+    
+    // Validar campos obligatorios del paso actual antes de avanzar
+    if (!validarPasoActual()) {
+        return;
+    }
+    
+    if (currentStep < totalSteps) {
+        // Ocultar paso actual
+        const currentCard = document.querySelector(`.step-card[data-step="${currentStep}"]`);
+        console.log('currentCard:', currentCard);
+        if (currentCard) {
+            currentCard.classList.remove('active');
+        }
+        
+        // Avanzar al siguiente paso
+        currentStep++;
+        
+        // Mostrar siguiente paso
+        const nextCard = document.querySelector(`.step-card[data-step="${currentStep}"]`);
+        console.log('nextCard:', nextCard);
+        if (nextCard) {
+            nextCard.classList.add('active');
+        }
+        
+        // Actualizar progreso
+        updateProgress();
+        
+        // Scroll suave al inicio del formulario
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+}
+
+function prevStep() {
+    if (currentStep > 1) {
+        // Ocultar paso actual
+        const currentCard = document.querySelector(`.step-card[data-step="${currentStep}"]`);
+        currentCard.classList.remove('active');
+        
+        // Retroceder
+        currentStep--;
+        
+        // Mostrar paso anterior
+        const prevCard = document.querySelector(`.step-card[data-step="${currentStep}"]`);
+        prevCard.classList.add('active');
+        
+        // Actualizar progreso
+        updateProgress();
+        
+        // Scroll suave al inicio del formulario
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+}
+
+function validarPasoActual() {
+    console.log('validarPasoActual llamado para paso:', currentStep);
+    
+    // Paso 1: Situación Actual - OBLIGATORIO
+    if (currentStep === 1) {
+        const situacionActual = document.querySelector('input[name="situacion_actual"]:checked');
+        console.log('Validando paso 1, situacionActual:', situacionActual);
+        // Validar que exista Y que tenga un valor válido (no vacío, no "-----", no null)
+        if (!situacionActual || !situacionActual.value || situacionActual.value.trim() === '' || situacionActual.value === '-----' || situacionActual.value === '---------') {
+            showNotification(
+                'Situación requerida',
+                'Por favor, selecciona si ya tienes un lugar o estás buscando compañero/a antes de continuar.',
+                'warning'
+            );
+            return false;
+        }
+    }
+    
+    // Paso 2: Información Personal - edad y género OBLIGATORIOS
+    if (currentStep === 2) {
+        const edad = document.querySelector('input[name="edad"]');
+        const genero = document.querySelector('input[name="genero"]:checked');
+        console.log('Validando paso 2, edad:', edad?.value, 'genero:', genero);
+        
+        if (!edad || !edad.value || edad.value.trim() === '') {
+            showNotification(
+                'Edad requerida',
+                'Por favor, ingresa tu edad para continuar con el proceso.',
+                'warning'
+            );
+            return false;
+        }
+        
+        // Validar edad mínima 18 años
+        const edadNum = parseInt(edad.value);
+        if (isNaN(edadNum) || edadNum < 18) {
+            showNotification(
+                'Edad mínima no alcanzada',
+                'Esta plataforma está diseñada para personas mayores de 18 años. Te invitamos a regresar cuando cumplas la edad requerida.',
+                'error'
+            );
+            return false;
+        }
+        
+        // Validar que el género tenga un valor válido
+        if (!genero || !genero.value || genero.value.trim() === '' || genero.value === '-----' || genero.value === '---------') {
+            showNotification(
+                'Género requerido',
+                'Por favor, selecciona el género con el que te identificas para continuar.',
+                'warning'
+            );
+            return false;
+        }
+    }
+    
+    // Paso 3: Situación Laboral - SOLO situacion_laboral es OBLIGATORIA
+    if (currentStep === 3) {
+        const situacionLaboral = document.querySelector('input[name="situacion_laboral"]:checked');
+        console.log('Validando paso 3, situacionLaboral:', situacionLaboral);
+        // Validar que tenga un valor válido
+        if (!situacionLaboral || !situacionLaboral.value || situacionLaboral.value.trim() === '' || situacionLaboral.value === '-----' || situacionLaboral.value === '---------') {
+            showNotification(
+                'Situación laboral requerida',
+                'Por favor, indica si eres estudiante, trabajador o ambas cosas antes de continuar.',
+                'warning'
+            );
+            return false;
+        }
+    }
+    
+    // Si pasó todas las validaciones, permitir continuar
+    console.log('Validación exitosa para paso', currentStep);
+    return true;
+}
+
+function updateProgress() {
+    // Actualizar indicadores de paso
+    const stepDots = document.querySelectorAll('.step-dot');
+    
+    stepDots.forEach((dot, index) => {
+        const stepNumber = index + 1;
+        dot.classList.remove('completed', 'active');
+        
+        if (stepNumber < currentStep) {
+            dot.classList.add('completed');
+        } else if (stepNumber === currentStep) {
+            dot.classList.add('active');
+        }
+    });
+}
+
+function getTotalRequiredFields() {
+    // Campos obligatorios básicos: situacion_actual, edad, genero, situacion_laboral
+    return 4;
+}
+
+function getCompletedFields() {
+    let completed = 0;
+    
+    // Campos obligatorios básicos
+    const basicFields = [
+        'situacion_actual',
+        'edad',
+        'genero',
+        'situacion_laboral'
+    ];
+    
+    basicFields.forEach(fieldName => {
+        const field = document.querySelector(`[name="${fieldName}"]`);
+        if (field) {
+            if (field.type === 'radio') {
+                const checked = document.querySelector(`[name="${fieldName}"]:checked`);
+                if (checked) completed++;
+            } else if (field.value && field.value.trim() !== '' && field.value !== '---------') {
+                completed++;
+            }
+        }
+    });
+    
+    // NOTA: Universidad, empresa y modalidades NO se cuentan para el progreso
+    // porque son campos opcionales de sugerencia, no obligatorios
+    
+    return completed;
+}
+
+function actualizarCamposCondicionales() {
+    const situacionSeleccionada = document.querySelector('input[name="situacion_laboral"]:checked');
+    const camposEstudiante = document.getElementById('campos_estudiante');
+    const camposTrabajador = document.getElementById('campos_trabajador');
+    
+    if (!situacionSeleccionada) {
+        camposEstudiante.classList.add('hidden-field');
+        camposTrabajador.classList.add('hidden-field');
+        return;
+    }
+    
+    const valor = situacionSeleccionada.value;
+    
+    // Mostrar/ocultar campos según la situación laboral
+    if (valor === 'estudiante' || valor === 'ambas') {
+        camposEstudiante.classList.remove('hidden-field');
+    } else {
+        camposEstudiante.classList.add('hidden-field');
+    }
+    
+    if (valor === 'trabajador' || valor === 'ambas') {
+        camposTrabajador.classList.remove('hidden-field');
+    } else {
+        camposTrabajador.classList.add('hidden-field');
+    }
+    
+    // Actualizar progreso
+    updateProgress();
+}
+
+// Lista completa de universidades argentinas
+const universidadesArgentinas = [
+    'Universidad de Buenos Aires (UBA)',
+    'Universidad Nacional de Córdoba (UNC)',
+    'Universidad Nacional de La Plata (UNLP)',
+    'Universidad Nacional de Rosario (UNR)',
+    'Universidad Tecnológica Nacional (UTN)',
+    'Universidad Nacional del Litoral (UNL)',
+    'Universidad Nacional de Cuyo (UNCUYO)',
+    'Universidad Nacional de Tucumán (UNT)',
+    'Universidad Nacional del Sur (UNS)',
+    'Universidad Nacional del Nordeste (UNNE)',
+    'Universidad Nacional del Chaco Austral (UNCAus)',
+    'Universidad Nacional de Mar del Plata (UNMDP)',
+    'Universidad Nacional de Salta (UNSa)',
+    'Universidad Nacional de San Juan (UNSJ)',
+    'Universidad Nacional de La Pampa (UNLPam)',
+    'Universidad Nacional de Río Cuarto (UNRC)',
+    'Universidad Nacional de San Luis (UNSL)',
+    'Universidad Nacional de Entre Ríos (UNER)',
+    'Universidad Nacional de Misiones (UNaM)',
+    'Universidad Nacional del Comahue (UNCo)',
+    'Universidad Nacional de Jujuy (UNJu)',
+    'Universidad Nacional de Catamarca (UNCa)',
+    'Universidad Nacional de La Rioja (UNLaR)',
+    'Universidad Nacional de la Patagonia San Juan Bosco (UNPSJB)',
+    'Universidad Nacional de Santiago del Estero (UNSE)',
+    'Universidad Nacional de Formosa (UNaF)',
+    'Universidad Nacional de la Patagonia Austral (UNPA)',
+    'Universidad Nacional de Quilmes (UNQ)',
+    'Universidad Nacional de Lanús (UNLa)',
+    'Universidad Nacional de General Sarmiento (UNGS)',
+    'Universidad Nacional de Tres de Febrero (UNTREF)',
+    'Universidad Nacional de San Martín (UNSAM)',
+    'Universidad Nacional Arturo Jauretche (UNAJ)',
+    'Universidad Nacional del Oeste (UNO)',
+    'Universidad Nacional de Avellaneda (UNDAV)',
+    'Universidad Nacional de José C. Paz (UNPAZ)',
+    'Universidad Nacional de Hurlingham (UNAHUR)',
+    'Universidad Nacional de Moreno (UNM)',
+    'Universidad Nacional Guillermo Brown (UNAB)',
+    'Universidad Nacional Raúl Scalabrini Ortiz (UNSO)',
+    'Universidad Nacional de Villa María (UNVM)',
+    'Universidad Nacional de Lomas de Zamora (UNLZ)',
+    'Universidad Nacional de Chilecito (UNdeC)',
+    'Universidad Nacional de Río Negro (UNRN)',
+    'Universidad Nacional de Tierra del Fuego (UNTDF)',
+    'Universidad de Palermo (UP)',
+    'Universidad Austral',
+    'Universidad Torcuato Di Tella (UTDT)',
+    'Universidad de San Andrés (UdeSA)',
+    'Universidad del CEMA',
+    'Universidad Católica Argentina (UCA)',
+    'Universidad del Salvador (USAL)',
+    'Universidad Argentina de la Empresa (UADE)',
+    'Universidad de Belgrano (UB)',
+    'Universidad Abierta Interamericana (UAI)',
+    'Universidad de Ciencias Empresariales y Sociales (UCES)',
+    'Universidad CAECE',
+    'Universidad Maimónides',
+    'Universidad de Morón (UM)',
+    'Instituto Tecnológico de Buenos Aires (ITBA)',
+    'Universidad Favaloro',
+    'Universidad del Museo Social Argentino (UMSA)',
+    'Universidad Católica de Córdoba (UCC)',
+    'Universidad Blas Pascal (UBP)',
+    'Universidad Empresarial Siglo 21',
+    'Universidad Católica de Salta (UCASAL)',
+    'Universidad Católica de La Plata (UCALP)',
+    'Universidad Católica de Cuyo (UCCuyo)',
+    'Universidad de Mendoza (UM)',
+    'Universidad Juan Agustín Maza',
+    'Universidad del Aconcagua (UDA)',
+    'Universidad Champagnat',
+    'Universidad de Congreso',
+    'Universidad Provincial de Córdoba (UPC)',
+    'Universidad Kennedy',
+    'Universidad Argentina John F. Kennedy',
+    'Universidad de Flores (UFLO)',
+    'Universidad Adventista del Plata (UAP)',
+    'Universidad Nacional de La Matanza (UNLaM)',
+    'Universidad Metropolitana para la Educación y el Trabajo (UMET)'
+];
+
+function filtrarUniversidades(texto) {
+    const lista = document.getElementById('universidades-list');
+    
+    if (texto.length < 2) {
+        lista.style.display = 'none';
+        return;
+    }
+    
+    const filtradas = universidadesArgentinas.filter(uni => 
+        uni.toLowerCase().includes(texto.toLowerCase())
+    );
+    
+    if (filtradas.length === 0) {
+        lista.style.display = 'none';
+        return;
+    }
+    
+    lista.innerHTML = '';
+    filtradas.forEach(uni => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item';
+        item.textContent = uni;
+        item.onclick = function() {
+            document.getElementById('id_universidad').value = uni;
+            lista.style.display = 'none';
+        };
+        lista.appendChild(item);
+    });
+    
+    lista.style.display = 'block';
+}
+
+// Cerrar la lista si se hace click fuera
+document.addEventListener('click', function(e) {
+    const lista = document.getElementById('universidades-list');
+    const input = document.getElementById('id_universidad');
+    if (lista && input && e.target !== input) {
+        lista.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

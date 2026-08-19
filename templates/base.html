@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,6 +9,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- CSS local personalizado -->
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
@@ -15,11 +19,70 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* REDUCCIÓN GLOBAL AL 80% - Aplicado a todo el sitio */
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom, #fffbc3 0%, #fdd766 100%) !important;
             min-height: 100vh;
             background-attachment: fixed;
+            font-size: 14px; /* Base reducida de 16px a 14px = 87.5% */
+        }
+        
+        /* Tailwind overrides para reducir tamaños */
+        h1 { font-size: 1.8rem !important; } /* ~2.25rem original */
+        h2 { font-size: 1.5rem !important; } /* ~1.875rem original */
+        h3 { font-size: 1.25rem !important; } /* ~1.5rem original */
+        h4 { font-size: 1.1rem !important; } /* ~1.25rem original */
+        h5 { font-size: 1rem !important; } /* ~1.125rem original */
+        
+        .text-xl { font-size: 1rem !important; } /* 1.25rem original */
+        .text-2xl { font-size: 1.2rem !important; } /* 1.5rem original */
+        .text-3xl { font-size: 1.5rem !important; } /* 1.875rem original */
+        .text-4xl { font-size: 1.8rem !important; } /* 2.25rem original */
+        
+        .px-4 { padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
+        .py-4 { padding-top: 0.8rem !important; padding-bottom: 0.8rem !important; }
+        .px-6 { padding-left: 1.2rem !important; padding-right: 1.2rem !important; }
+        .py-6 { padding-top: 1.2rem !important; padding-bottom: 1.2rem !important; }
+        .px-8 { padding-left: 1.6rem !important; padding-right: 1.6rem !important; }
+        .py-8 { padding-top: 1.6rem !important; padding-bottom: 1.6rem !important; }
+        
+        .m-4 { margin: 0.8rem !important; }
+        .m-6 { margin: 1.2rem !important; }
+        .m-8 { margin: 1.6rem !important; }
+        .my-4 { margin-top: 0.8rem !important; margin-bottom: 0.8rem !important; }
+        .my-6 { margin-top: 1.2rem !important; margin-bottom: 1.2rem !important; }
+        .my-8 { margin-top: 1.6rem !important; margin-bottom: 1.6rem !important; }
+        
+        .rounded-lg { border-radius: 0.6rem !important; } /* 0.75rem original */
+        .rounded-xl { border-radius: 0.8rem !important; } /* 1rem original */
+        .rounded-2xl { border-radius: 1.2rem !important; } /* 1.5rem original */
+        
+        .shadow-lg { box-shadow: 0 8px 20px rgba(0,0,0,0.08) !important; }
+        .shadow-xl { box-shadow: 0 12px 30px rgba(0,0,0,0.1) !important; }
+        
+        /* Navbar reducido */
+        nav .h-16 { height: 3.5rem !important; } /* 4rem original */
+        nav svg { width: 32px !important; height: 32px !important; } /* 40px original */
+        nav .space-x-6 > * + * { margin-left: 1.2rem !important; } /* 1.5rem original */
+        
+        /* Botones reducidos */
+        .btn, button, .bg-yellow-500, .bg-amber-500, .bg-green-500, .bg-blue-500 {
+            padding: 0.6rem 1.2rem !important;
+            font-size: 0.9rem !important;
+            border-radius: 0.5rem !important;
+        }
+        
+        /* Inputs y forms reducidos */
+        input, select, textarea {
+            padding: 0.6rem 0.8rem !important;
+            font-size: 0.9rem !important;
+            border-radius: 0.5rem !important;
+        }
+        
+        /* Cards reducidas */
+        .bg-white:not(nav) {
+            border-radius: 0.8rem !important;
         }
         
         /* Ocultar flechitas de inputs numéricos */
@@ -33,17 +96,126 @@
             -moz-appearance: textfield;
             appearance: textfield;
         }
-        
-        /* Patrón profesional de panales de abeja */
-        .honeycomb-pattern {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #FCD34D 0%, #FBBF24 50%, #F59E0B 100%);
+
+        /* Notificaciones profesionales */
+        .notification-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.3s ease;
         }
-        
-        /* Grupo de 3 hexágonos (lado superior izquierdo) */
-        .honeycomb-pattern::before {
-            content: '';
+
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            position: relative;
+            clip-path: polygon(50% 0%, 93.3% 25%, 93.3% 75%, 50% 100%, 6.7% 75%, 6.7% 25%);
+        }
+
+        .notification-success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification-success .notification-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .notification-error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .notification-error .notification-icon {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .notification-warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .notification-warning .notification-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .notification-info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .notification-info .notification-icon {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .notification-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .notification-close {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(107, 114, 128, 0.25);
+            color: #4b5563;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.9;
+            font-size: 18px;
+            font-weight: bold;
+            line-height: 1;
+            font-family: Arial, sans-serif;
+        }
+
+        .notification-close:hover {
+            background: rgba(107, 114, 128, 0.35);
+            color: #374151;
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+        }
             position: absolute;
             top: 50px;
             left: 100px;
@@ -96,7 +268,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="bg-white shadow-md">
+    <nav class="bg-white shadow-md relative z-20">
         <div class="w-full px-0">
             <div class="flex justify-between items-center h-16 px-4">
                 <!-- Logo -->
@@ -311,17 +483,41 @@
     
     <!-- Mensajes Flash -->
     {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4" id="messages-container">
+        <div class="fixed top-20 left-4 z-50 w-full max-w-lg" id="messages-container">
             {% for message in messages %}
-                <div class="mb-4 p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 border-2 border-green-400 text-green-800{% elif message.tags == 'error' %}bg-red-100 border-2 border-red-400 text-red-800{% elif message.tags == 'warning' %}bg-yellow-100 border-2 border-yellow-400 text-yellow-800{% else %}bg-blue-100 border-2 border-blue-400 text-blue-800{% endif %} fade-in shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} mr-3 text-xl"></i>
-                            <span class="font-semibold">{{ message }}</span>
+                <div class="mb-3 notification-card {% if message.tags == 'success' %}notification-success{% elif message.tags == 'error' %}notification-error{% elif message.tags == 'warning' %}notification-warning{% else %}notification-info{% endif %}">
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0 mt-0.5">
+                            <div class="notification-icon">
+                                {% if message.tags == 'success' %}
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                {% elif message.tags == 'error' %}
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                {% elif message.tags == 'warning' %}
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                {% else %}
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                    </svg>
+                                {% endif %}
+                            </div>
                         </div>
-                        <button onclick="this.parentElement.parentElement.remove()" class="text-gray-600 hover:text-gray-800 ml-4">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <div class="flex-1 min-w-0">
+                            <div class="notification-content">
+                                <p class="notification-text">{{ message }}</p>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <button onclick="this.closest('.notification-card').style.animation='slideOut 0.3s ease-in-out'; setTimeout(() => this.closest('.notification-card').remove(), 300)" class="notification-close">
+                                ×
+                            </button>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
@@ -332,6 +528,19 @@
         document.addEventListener('DOMContentLoaded', function() {
             const messagesContainer = document.getElementById('messages-container');
             const bannerValidacion = document.getElementById('validacion-banner');
+            
+            // Auto-cerrar mensajes después de 3 segundos (fuera del condicional del banner)
+            if (messagesContainer) {
+                setTimeout(() => {
+                    const allMessages = messagesContainer.querySelectorAll('.notification-card');
+                    allMessages.forEach(msg => {
+                        if (!msg.classList.contains('notification-error')) {
+                            msg.style.animation = 'slideOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+                            setTimeout(() => msg.remove(), 400);
+                        }
+                    });
+                }, 3000);
+            }
             
             // Si hay mensajes Y banner de validación, ocultar el banner inicialmente
             if (messagesContainer && bannerValidacion) {
@@ -347,19 +556,19 @@
                     }
                 }
                 
-                // Auto-cerrar mensajes de éxito después de 5 segundos
+                // Auto-cerrar mensajes después de 3 segundos
                 setTimeout(() => {
-                    const allMessages = messagesContainer.querySelectorAll('.bg-green-100, .bg-blue-100');
+                    const allMessages = messagesContainer.querySelectorAll('.notification-card');
                     allMessages.forEach(msg => {
-                        msg.style.transition = 'opacity 1s ease-out';
-                        msg.style.opacity = '0';
-                        // Esperar a que el mensaje esté casi desvanecido antes de mostrar el banner
-                        setTimeout(() => {
-                            msg.remove();
-                            setTimeout(mostrarBannerDespuesDeMensajes, 400);
-                        }, 1000);
+                        if (!msg.classList.contains('notification-error')) {
+                            msg.style.animation = 'slideOut 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+                            setTimeout(() => {
+                                msg.remove();
+                                setTimeout(mostrarBannerDespuesDeMensajes, 400);
+                            }, 400);
+                        }
                     });
-                }, 5000);
+                }, 3000);
                 
                 // También mostrar banner si se cierra manualmente un mensaje
                 messagesContainer.addEventListener('click', function(e) {
@@ -512,7 +721,7 @@
     </main>
     
     <!-- Footer -->
-    <footer class="bg-gray-900 text-white {% if request.GET.especial_estudiantes %}mt-0{% else %}mt-16{% endif %}">
+    <footer class="bg-gray-900 text-white mt-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
                 <!-- Columna 1: Logo y descripción - Más ancho -->

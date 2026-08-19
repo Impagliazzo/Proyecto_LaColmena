@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ publicacion.titulo }} - LaColmena{% endblock %}
+
+{% block content %}
+<div class="bg-white">
+    <!-- Galería de Imágenes -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% if publicacion.imagenes.all %}
+            <div class="space-y-4">
+                <div class="relative overflow-hidden rounded-3xl shadow-2xl group">
+                    <img id="imagen-principal"
+                         src="{{ publicacion.imagen_principal.imagen.url }}"
+                         alt="{{ publicacion.titulo }}"
+                         class="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+
+                {% if publicacion.imagenes.all|length > 1 %}
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                    {% for imagen in publicacion.imagenes.all %}
+                    <div class="relative overflow-hidden rounded-2xl shadow-lg cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:z-10 {% if forloop.first %}ring-2 ring-yellow-500{% endif %}"
+                         onclick="cambiarImagen('{{ imagen.imagen.url }}', this)">
+                        <img src="{{ imagen.imagen.url }}"
+                             alt="Vista {{ forloop.counter }}"
+                             class="w-full h-24 object-cover">
+                        <div class="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="relative overflow-hidden rounded-3xl shadow-2xl">
+                <div class="h-[500px] bg-gradient-to-br from-yellow-400 via-orange-400 to-orange-500 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-user-friends text-white text-9xl opacity-40 mb-4"></i>
+                        <p class="text-white text-xl font-semibold">Sin imágenes disponibles</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+    function cambiarImagen(url, elemento) {
+        const imgPrincipal = document.getElementById('imagen-principal');
+        imgPrincipal.style.opacity = '0';
+
+        setTimeout(() => {
+            imgPrincipal.src = url;
+            imgPrincipal.style.opacity = '1';
+        }, 200);
+
+        document.querySelectorAll('.grid > div').forEach(el => {
+            el.classList.remove('ring-2', 'ring-yellow-500');
+        });
+
+        elemento.classList.add('ring-2', 'ring-yellow-500');
+    }
+    </script>
+
+    <!-- Contenido Principal -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Columna Principal -->
+            <div class="lg:col-span-2">
+                <div class="mb-4">
+                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">
+                        Búsqueda de compañero/a
+                    </span>
+                </div>
+
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ publicacion.titulo }}</h1>
+
+                <div class="flex items-center text-gray-600 mb-6">
+                    <i class="fas fa-map-marker-alt mr-2"></i>
+                    <span>{{ publicacion.direccion }}, {{ publicacion.distrito }}, {{ publicacion.ciudad }}</span>
+                </div>
+
+                <!-- Características Principales -->
+                <div class="grid grid-cols-2 {% if es_propia %}md:grid-cols-4{% else %}md:grid-cols-3{% endif %} gap-4 mb-8">
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <i class="fas fa-bed text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-gray-600 text-sm">Habitaciones</p>
+                        <p class="font-semibold text-gray-900">{{ publicacion.habitaciones_disponibles }}/{{ publicacion.habitaciones_totales }}</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <i class="fas fa-bath text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-gray-600 text-sm">Baños</p>
+                        <p class="font-semibold text-gray-900">{{ publicacion.banos }}</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <i class="fas fa-money-bill-wave text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-gray-600 text-sm">Precio</p>
+                        <p class="font-semibold text-gray-900">{{ publicacion.get_precio_display }}</p>
+                    </div>
+                    {% if es_propia %}
+                    <div class="bg-gray-50 p-4 rounded-lg text-center">
+                        <i class="fas fa-eye text-yellow-500 text-2xl mb-2"></i>
+                        <p class="text-gray-600 text-sm">Vistas</p>
+                        <p class="font-semibold text-gray-900">{{ publicacion.vistas }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Comodidades -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Comodidades</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% if publicacion.amoblado %}
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-couch mr-1"></i> Amoblado
+                        </span>
+                        {% endif %}
+                        {% if publicacion.balcon %}
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-door-open mr-1"></i> Balcón
+                        </span>
+                        {% endif %}
+                        {% if publicacion.cocina %}
+                        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-utensils mr-1"></i> Cocina equipada
+                        </span>
+                        {% endif %}
+                        {% if publicacion.wifi %}
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-wifi mr-1"></i> WiFi
+                        </span>
+                        {% endif %}
+                        {% if publicacion.lavarropas %}
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-tshirt mr-1"></i> Lavarropas
+                        </span>
+                        {% endif %}
+                        {% if publicacion.aire_acondicionado %}
+                        <span class="bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-snowflake mr-1"></i> Aire acondicionado
+                        </span>
+                        {% endif %}
+                        {% if publicacion.calefaccion %}
+                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-temperature-high mr-1"></i> Calefacción
+                        </span>
+                        {% endif %}
+                        {% if publicacion.expensas_incluidas %}
+                        <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-file-invoice-dollar mr-1"></i> Expensas incluidas
+                        </span>
+                        {% endif %}
+                        {% if publicacion.servicios_incluidos %}
+                        <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-bolt mr-1"></i> Servicios incluidos
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Descripción</h3>
+                    <p class="text-gray-700 whitespace-pre-line">{{ publicacion.descripcion }}</p>
+                </div>
+
+                <!-- Preferencias -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Preferencias para el/la compañero/a</h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% if publicacion.preferencia_genero != 'indiferente' %}
+                        <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-venus-mars mr-1"></i> {{ publicacion.get_preferencia_genero_display }}
+                        </span>
+                        {% endif %}
+                        <span class="{% if publicacion.acepta_mascotas %}bg-purple-100 text-purple-800{% else %}bg-gray-100 text-gray-500{% endif %} px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-paw mr-1"></i> {% if publicacion.acepta_mascotas %}Acepta mascotas{% else %}No acepta mascotas{% endif %}
+                        </span>
+                        <span class="{% if publicacion.fumador_acepto %}bg-green-100 text-green-800{% else %}bg-gray-100 text-gray-500{% endif %} px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-smoking mr-1"></i> {% if publicacion.fumador_acepto %}Acepta fumadores{% else %}No acepta fumadores{% endif %}
+                        </span>
+                        {% if publicacion.fecha_disponibilidad %}
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                            <i class="fas fa-calendar mr-1"></i> Disponible desde {{ publicacion.fecha_disponibilidad|date:"d/m/Y" }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="lg:col-span-1">
+                <div class="bg-white border-2 border-gray-200 rounded-xl p-6 sticky top-4">
+                    <div class="text-3xl font-bold text-gray-900 mb-4">
+                        {{ publicacion.get_precio_display }}
+                    </div>
+
+                    <!-- Publicado por -->
+                    <div class="border-t border-gray-200 pt-4 mb-4">
+                        <p class="text-gray-600 text-sm mb-2">Publicado por</p>
+                        <a href="{% url 'usuarios:perfil' publicacion.usuario.username %}"
+                           class="flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition">
+                            {% if publicacion.usuario.foto_perfil %}
+                            <img src="{{ publicacion.usuario.foto_perfil.url }}"
+                                 alt="{{ publicacion.usuario.username }}"
+                                 class="w-12 h-12 rounded-full object-cover">
+                            {% else %}
+                            <div class="w-12 h-12 bg-yellow-500 rounded-full flex items-center justify-center text-white font-semibold text-xl">
+                                {{ publicacion.usuario.username.0|upper }}
+                            </div>
+                            {% endif %}
+                            <div>
+                                <p class="font-semibold text-gray-900">{{ publicacion.usuario.get_full_name|default:publicacion.usuario.username }}</p>
+                                <p class="text-gray-500 text-sm">Ver perfil</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    {% if es_propia %}
+                    {% if solicitudes_pendientes %}
+                    <a href="{% url 'contactos:solicitudes_recibidas_companero' %}"
+                       class="block bg-blue-50 hover:bg-blue-100 border-2 border-blue-300 rounded-lg p-4 mb-3 transition">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="relative">
+                                    <i class="fas fa-bell text-blue-600 text-xl"></i>
+                                    <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                                        {{ solicitudes_pendientes|length }}
+                                    </span>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-blue-900">
+                                        {{ solicitudes_pendientes|length }} solicitud{{ solicitudes_pendientes|length|pluralize:"es" }} pendiente{{ solicitudes_pendientes|length|pluralize }}
+                                    </p>
+                                    <p class="text-blue-700 text-xs">Ver quién quiere contactarte</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-blue-400"></i>
+                        </div>
+                    </a>
+                    {% endif %}
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800">
+                        <p class="font-semibold mb-2"><i class="fas fa-info-circle mr-1"></i> Esta es tu publicación</p>
+                        <p class="mb-3">Administrala desde tu perfil.</p>
+                        <a href="{% url 'usuarios:perfil' publicacion.usuario.username %}"
+                           class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg text-center transition mb-2">
+                            Ir a mi perfil
+                        </a>
+                        <a href="{% url 'contactos:solicitudes_recibidas_companero' %}"
+                           class="block w-full bg-white hover:bg-gray-50 text-yellow-800 font-semibold py-2 px-4 rounded-lg text-center border border-yellow-300 transition">
+                            Ver todas las solicitudes
+                        </a>
+                    </div>
+                    {% elif user.is_authenticated %}
+                    <a href="{% url 'contactos:solicitar_companero' publicacion.pk %}"
+                       class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg text-center transition">
+                        <i class="fas fa-envelope mr-2"></i> Contactar
+                    </a>
+                    {% else %}
+                    <a href="{% url 'usuarios:login' %}"
+                       class="block w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg text-center transition">
+                        Inicia sesión para contactar
+                    </a>
+                    {% endif %}
+
+                    <!-- Info adicional -->
+                    <div class="border-t border-gray-200 mt-4 pt-4 text-sm text-gray-600">
+                        <p><i class="fas fa-calendar mr-2"></i> Publicado el {{ publicacion.fecha_creacion|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

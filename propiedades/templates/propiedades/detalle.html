@@ -4,32 +4,66 @@
 
 {% block content %}
 <div class="bg-white">
-    <!-- Galería de Imágenes -->
+    <!-- Galería de Imágenes Moderna -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {% if propiedad.imagenes.all %}
-                <!-- Imagen Principal -->
-                <div class="md:col-span-2">
-                    <img src="{{ propiedad.imagen_principal.imagen.url }}" 
+        {% if propiedad.imagenes.all %}
+            <div class="space-y-4">
+                <!-- Imagen Principal Grande con bordes redondeados y sombra suave -->
+                <div class="relative overflow-hidden rounded-3xl shadow-2xl group">
+                    <img id="imagen-principal" 
+                         src="{{ propiedad.imagen_principal.imagen.url }}" 
                          alt="{{ propiedad.titulo }}" 
-                         class="w-full h-96 object-cover rounded-xl">
+                         class="w-full h-[500px] object-cover transition-transform duration-700 group-hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 
-                <!-- Imágenes adicionales -->
-                {% for imagen in propiedad.imagenes.all|slice:"1:5" %}
-                <div>
-                    <img src="{{ imagen.imagen.url }}" 
-                         alt="{{ propiedad.titulo }}" 
-                         class="w-full h-48 object-cover rounded-lg">
+                <!-- Grid de Miniaturas Moderno -->
+                {% if propiedad.imagenes.all|length > 1 %}
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                    {% for imagen in propiedad.imagenes.all %}
+                    <div class="relative overflow-hidden rounded-2xl shadow-lg cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:z-10 {% if forloop.first %}ring-2 ring-yellow-500{% endif %}"
+                         onclick="cambiarImagen('{{ imagen.imagen.url }}', this)">
+                        <img src="{{ imagen.imagen.url }}" 
+                             alt="Vista {{ forloop.counter }}" 
+                             class="w-full h-24 object-cover">
+                        <div class="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors duration-300"></div>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-            {% else %}
-                <div class="md:col-span-2 bg-gradient-to-br from-yellow-400 to-orange-500 h-96 rounded-xl flex items-center justify-center">
-                    <i class="fas fa-home text-white text-9xl opacity-50"></i>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="relative overflow-hidden rounded-3xl shadow-2xl">
+                <div class="h-[500px] bg-gradient-to-br from-yellow-400 via-orange-400 to-orange-500 flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-home text-white text-9xl opacity-40 mb-4"></i>
+                        <p class="text-white text-xl font-semibold">Sin imágenes disponibles</p>
+                    </div>
                 </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </div>
+    
+    <script>
+    function cambiarImagen(url, elemento) {
+        // Cambiar la imagen principal con animación
+        const imgPrincipal = document.getElementById('imagen-principal');
+        imgPrincipal.style.opacity = '0';
+        
+        setTimeout(() => {
+            imgPrincipal.src = url;
+            imgPrincipal.style.opacity = '1';
+        }, 200);
+        
+        // Quitar el anillo de todas las miniaturas
+        document.querySelectorAll('.grid > div').forEach(el => {
+            el.classList.remove('ring-2', 'ring-yellow-500');
+        });
+        
+        // Agregar anillo a la miniatura seleccionada
+        elemento.classList.add('ring-2', 'ring-yellow-500');
+    }
+    </script>
     
     <!-- Contenido Principal -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from propiedades.models import Propiedad
+from usuarios.models import PublicacionCompanero
 
 class SolicitudContacto(models.Model):
     """Solicitudes de contacto de usuarios a propietarios"""
@@ -27,3 +28,30 @@ class SolicitudContacto(models.Model):
         
     def __str__(self):
         return f'{self.usuario.username} - {self.propiedad.titulo}'
+
+
+class SolicitudContactoCompanero(models.Model):
+    """Solicitudes de contacto de usuarios hacia publicaciones de compañero/a de piso"""
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('contactado', 'Contactado'),
+        ('rechazado', 'Rechazado'),
+    ]
+
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='solicitudes_contacto_companero')
+    publicacion = models.ForeignKey(PublicacionCompanero, on_delete=models.CASCADE, related_name='solicitudes_contacto')
+    mensaje = models.TextField()
+    telefono = models.CharField(max_length=15, blank=True)
+    email = models.EmailField()
+    estado = models.CharField(max_length=15, choices=ESTADO_CHOICES, default='pendiente')
+    fecha_solicitud = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    fecha_respuesta = models.DateTimeField(null=True, blank=True)  # Cuando el/la publicante responde
+
+    class Meta:
+        verbose_name = 'Solicitud de contacto (compañero/a)'
+        verbose_name_plural = 'Solicitudes de contacto (compañero/a)'
+        ordering = ['-fecha_solicitud']
+
+    def __str__(self):
+        return f'{self.usuario.username} - {self.publicacion.titulo}'

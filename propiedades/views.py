@@ -4,8 +4,42 @@ from django.contrib import messages
 from django.db.models import Q, Count, Avg
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_http_methods
 from .models import Propiedad, Categoria, Favorito, Valoracion, ImagenPropiedad, ReporteValoracion, Destacado
 from .forms import PropiedadForm, BusquedaForm, ValoracionForm
+import json
+
+@login_required
+def eliminar_imagen(request, imagen_id):
+    """Eliminar imagen de una propiedad"""
+    if request.method != 'POST':
+        messages.error(request, 'Método no permitido')
+        return redirect('propiedades:mis_propiedades')
+    
+    try:
+        imagen = get_object_or_404(ImagenPropiedad, id=imagen_id, propiedad__propietario=request.user)
+        propiedad_id = imagen.propiedad.pk
+        
+        # Eliminar la imagen
+        imagen.delete()
+        
+        # Si quedan imágenes, reordenar: hacer que la primera sea siempre principal
+        imagenes = list(ImagenPropiedad.objects.filter(propiedad_id=propiedad_id).order_by('id'))
+        if imagenes:
+            for i, img in enumerate(imagenes):
+                img.es_principal = (i == 0)  # Solo la primera es principal
+                img.orden = i  # Reordenar
+                img.save()
+        
+        messages.success(request, 'Imagen eliminada correctamente')
+        return redirect('propiedades:editar', pk=propiedad_id)
+        
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': f'Error al eliminar imagen: {str(e)}'
+        })
 
 def inicio(request):
     """Página principal con búsqueda y propiedades destacadas"""
@@ -403,6 +437,31 @@ def editar_propiedad(request, pk):
         # Procesar formulario normal de edición
         form = PropiedadForm(request.POST, request.FILES, instance=propiedad)
         if form.is_valid():
+            # Procesar nuevas imágenes si se adjuntaron
+            imagenes_nuevas = request.FILES.getlist('imagenes')
+            
+            # Contar imágenes actuales
+            imagenes_actuales = propiedad.imagenes.count()
+            
+            # DEBUG: Imprimir información para entender qué está pasando
+            print(f"DEBUG - Imágenes actuales: {imagenes_actuales}")
+            print(f"DEBUG - Imágenes nuevas: {len(imagenes_nuevas)}")
+            print(f"DEBUG - FILES en request: {list(request.FILES.keys())}")
+            print(f"DEBUG - POST keys: {list(request.POST.keys())}")
+            
+            # Si no hay imágenes actuales Y no se están subiendo nuevas
+            if imagenes_actuales == 0 and len(imagenes_nuevas) == 0:
+                messages.error(request, 'La propiedad debe tener al menos 1 imagen principal. Agrega al menos una foto.')
+                context = {
+                    'form': form,
+                    'propiedad': propiedad,
+                    'suscripcion': suscripcion,
+                    'destacados_disponibles': destacados_disponibles,
+                    'puede_destacar': puede_destacar,
+                    'destacado_activo': destacado_activo,
+                }
+                return render(request, 'propiedades/editar.html', context)
+            
             # Verificar suscripción si se está reactivando la propiedad
             estado_nuevo = form.cleaned_data.get('estado')
             estado_anterior = propiedad.estado
@@ -440,32 +499,39 @@ def editar_propiedad(request, pk):
                 # Limpiar motivo de suspensión al reactivar
                 propiedad.motivo_suspension = ''
             
-            form.save()
+            # Guardar cambios del formulario primero
+            propiedad = form.save()
             
             # Procesar nuevas imágenes si se adjuntaron
-            imagenes_nuevas = request.FILES.getlist('imagenes')
             if imagenes_nuevas:
-                # Contar imágenes existentes
+                # Contar imágenes existentes después del save
                 imagenes_actuales = propiedad.imagenes.count()
                 max_nuevas = 10 - imagenes_actuales
                 
                 if max_nuevas > 0:
                     # Agregar nuevas imágenes (máximo 10 total)
-                    orden_inicial = imagenes_actuales
                     for i, imagen in enumerate(imagenes_nuevas[:max_nuevas]):
                         ImagenPropiedad.objects.create(
                             propiedad=propiedad,
                             imagen=imagen,
-                            orden=orden_inicial + i,
-                            es_principal=False
+                            orden=imagenes_actuales + i,
+                            es_principal=(imagenes_actuales == 0 and i == 0)  # Primera imagen es principal si no hay otras
                         )
+                    
+                    # Reordenar para asegurar que la primera imagen sea principal
+                    imagenes = list(propiedad.imagenes.all().order_by('id'))
+                    for idx, img in enumerate(imagenes):
+                        img.es_principal = (idx == 0)
+                        img.orden = idx
+                        img.save()
+                    
                     messages.success(request, f'Propiedad actualizada y {len(imagenes_nuevas[:max_nuevas])} imagen(es) agregada(s) correctamente')
                 else:
                     messages.warning(request, 'Propiedad actualizada. No se agregaron imágenes porque ya tienes el máximo (10 imágenes).')
             else:
                 messages.success(request, 'Propiedad actualizada correctamente')
             
-            return redirect('propiedades:detalle', pk=propiedad.pk)
+            return redirect('propiedades:editar', pk=propiedad.pk)
     else:
         form = PropiedadForm(instance=propiedad)
     
@@ -640,8 +706,14 @@ def toggle_destacado(request, pk):
         destacado_existente = Destacado.objects.filter(propiedad=propiedad).first()
         
         if destacado_existente:
-            # Reactivar destacado existente
+            # Reactivar destacado existente y actualizar fechas
+            fecha_inicio = timezone.now()
+            fecha_fin = suscripcion.fecha_vencimiento
+            
             destacado_existente.activo = True
+            destacado_existente.fecha_inicio = fecha_inicio
+            destacado_existente.fecha_fin = fecha_fin
+            destacado_existente.duracion_dias = (fecha_fin - fecha_inicio).days
             destacado_existente.save()
         else:
             # Crear nuevo destacado vinculado al período de suscripción
@@ -923,9 +995,125 @@ def quienes_somos(request):
     return render(request, 'propiedades/quienes_somos.html')
 
 
+@login_required
 def buscar_companero(request):
-    """Página para buscar compañero de departamento"""
-    return render(request, 'propiedades/buscar_companero.html')
+    """Feed de publicaciones de compañero/a de piso, con filtros y paginación"""
+    # Verificar que el usuario tenga validaciones completas
+    if not request.user.tiene_validaciones_completas():
+        messages.warning(request, 'Debes validar tu teléfono y email antes de buscar compañero/a.')
+        return redirect('usuarios:perfil', username=request.user.username)
+
+    # Verificar que el usuario tenga el perfil de búsqueda completo
+    if not request.user.perfil.perfil_busqueda_completo():
+        messages.info(request, 'Para buscar compañero/a, primero debes completar tu perfil de búsqueda.')
+        return redirect('usuarios:completar_perfil_busqueda')
+
+    from usuarios.models import PublicacionCompanero
+    from .forms import BusquedaCompaneroForm
+
+    # Quien ya tiene lugar no necesita ver el feed de otras personas que
+    # también tienen lugar (esas publicaciones no le sirven) — el feed
+    # navegable es para quien busca compartir. Si ya publicó, "Buscar
+    # Compañero" lo lleva directo a ver/gestionar su propia publicación,
+    # no tiene sentido mostrarle una pantalla intermedia.
+    tiene_lugar = request.user.perfil.situacion_actual == 'tengo_lugar'
+
+    if tiene_lugar and hasattr(request.user, 'publicacion_companero'):
+        return redirect('propiedades:detalle_companero', pk=request.user.publicacion_companero.pk)
+
+    page_obj = None
+    form = BusquedaCompaneroForm(request.GET)
+    querystring = ''
+
+    if not tiene_lugar:
+        publicaciones = PublicacionCompanero.objects.filter(
+            estado='activa'
+        ).select_related('usuario', 'usuario__perfil').prefetch_related('imagenes')
+
+        if form.is_valid():
+            busqueda = form.cleaned_data.get('busqueda')
+            if busqueda:
+                publicaciones = publicaciones.filter(
+                    Q(titulo__icontains=busqueda) |
+                    Q(descripcion__icontains=busqueda) |
+                    Q(ciudad__icontains=busqueda) |
+                    Q(distrito__icontains=busqueda)
+                )
+            ciudad = form.cleaned_data.get('ciudad')
+            if ciudad:
+                publicaciones = publicaciones.filter(ciudad__icontains=ciudad)
+            precio_min = form.cleaned_data.get('precio_min')
+            if precio_min:
+                publicaciones = publicaciones.filter(precio_mensual__gte=precio_min)
+            precio_max = form.cleaned_data.get('precio_max')
+            if precio_max:
+                publicaciones = publicaciones.filter(precio_mensual__lte=precio_max)
+            preferencia_genero = form.cleaned_data.get('preferencia_genero')
+            if preferencia_genero:
+                publicaciones = publicaciones.filter(preferencia_genero=preferencia_genero)
+
+        # Filtros rápidos (fuera del form, mismo patrón que listado_propiedades)
+        habitaciones = request.GET.get('habitaciones_disponibles')
+        if habitaciones and habitaciones.isdigit():
+            publicaciones = publicaciones.filter(habitaciones_disponibles__gte=int(habitaciones))
+        if request.GET.get('acepta_mascotas'):
+            publicaciones = publicaciones.filter(acepta_mascotas=True)
+        if request.GET.get('fumador_acepto'):
+            publicaciones = publicaciones.filter(fumador_acepto=True)
+
+        paginator = Paginator(publicaciones, 12)
+        page_obj = paginator.get_page(request.GET.get('page'))
+
+        # Preservar los filtros activos al paginar
+        querystring_dict = request.GET.copy()
+        querystring_dict.pop('page', None)
+        querystring = querystring_dict.urlencode()
+
+    # Si llegamos hasta acá con tiene_lugar=True es porque todavía no publicó
+    # (si ya hubiera publicado, se lo redirigió arriba a su propia publicación).
+    context = {
+        'page_obj': page_obj,
+        'form': form,
+        'querystring': querystring,
+        'tiene_lugar': tiene_lugar,
+    }
+    return render(request, 'propiedades/buscar_companero.html', context)
+
+
+@login_required
+def detalle_publicacion_companero(request, pk):
+    """Detalle de una publicación de compañero/a de piso"""
+    from usuarios.models import PublicacionCompanero
+
+    if not request.user.tiene_validaciones_completas():
+        messages.warning(request, 'Debes validar tu teléfono y email antes de buscar compañero/a.')
+        return redirect('usuarios:perfil', username=request.user.username)
+
+    if not request.user.perfil.perfil_busqueda_completo():
+        messages.info(request, 'Para buscar compañero/a, primero debes completar tu perfil de búsqueda.')
+        return redirect('usuarios:completar_perfil_busqueda')
+
+    publicacion = get_object_or_404(
+        PublicacionCompanero.objects.select_related('usuario', 'usuario__perfil').prefetch_related('imagenes'),
+        pk=pk
+    )
+
+    publicacion.incrementar_vistas()
+
+    es_propia = request.user == publicacion.usuario
+    solicitudes_pendientes = None
+    if es_propia:
+        from contactos.models import SolicitudContactoCompanero
+        solicitudes_pendientes = SolicitudContactoCompanero.objects.filter(
+            publicacion=publicacion, estado='pendiente'
+        ).select_related('usuario').order_by('-fecha_solicitud')
+
+    context = {
+        'publicacion': publicacion,
+        'es_propia': es_propia,
+        'solicitudes_pendientes': solicitudes_pendientes,
+    }
+    return render(request, 'propiedades/detalle_publicacion_companero.html', context)
 
 
 @login_required

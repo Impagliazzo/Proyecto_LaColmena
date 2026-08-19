@@ -2,6 +2,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Propiedad, ImagenPropiedad, Valoracion
+from usuarios.models import PublicacionCompanero
 
 class PropiedadForm(forms.ModelForm):
     """Formulario para crear/editar propiedades"""
@@ -10,7 +11,7 @@ class PropiedadForm(forms.ModelForm):
         fields = [
             'titulo', 'descripcion', 'tipo', 'operacion', 'precio', 
             'incluye_expensas', 'tipo_contacto',
-            'ciudad', 'distrito', 'direccion',
+            'provincia', 'ciudad', 'distrito', 'direccion',
             'area', 'habitaciones', 'banos',
             'estacionamiento', 'amoblado', 'mascotas',
             'balcon', 'patio', 'parrilla', 'aire_acondicionado', 'calefaccion', 'ascensor',
@@ -32,6 +33,10 @@ class PropiedadForm(forms.ModelForm):
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        # Hacer el campo título obligatorio
+        self.fields['titulo'].required = True
+        
         for field_name, field in self.fields.items():
             if isinstance(field.widget, forms.CheckboxInput):
                 field.widget.attrs['class'] = 'rounded text-yellow-500 focus:ring-yellow-500'
@@ -94,6 +99,47 @@ class BusquedaForm(forms.Form):
             'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
             'placeholder': 'Precio máximo',
             'style': 'appearance: textfield; -moz-appearance: textfield; -webkit-appearance: none;'
+        })
+    )
+
+
+class BusquedaCompaneroForm(forms.Form):
+    """Formulario de búsqueda de publicaciones de compañero/a"""
+    busqueda = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
+            'placeholder': 'Palermo, 2 ambientes...'
+        })
+    )
+    ciudad = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
+            'placeholder': 'Ciudad'
+        })
+    )
+    precio_min = forms.DecimalField(
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
+            'placeholder': 'Precio mínimo',
+            'style': 'appearance: textfield; -moz-appearance: textfield; -webkit-appearance: none;'
+        })
+    )
+    precio_max = forms.DecimalField(
+        required=False,
+        widget=forms.NumberInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
+            'placeholder': 'Precio máximo',
+            'style': 'appearance: textfield; -moz-appearance: textfield; -webkit-appearance: none;'
+        })
+    )
+    preferencia_genero = forms.ChoiceField(
+        required=False,
+        choices=[('', 'Cualquiera')] + PublicacionCompanero._meta.get_field('preferencia_genero').choices,
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
         })
     )
 

@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil de Búsqueda - {{ perfil.usuario.get_full_name }} - LaColmena{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+        min-height: 100vh;
+    }
+    
+    .profile-hero {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        padding: 4rem 0 3rem;
+        border-radius: 0 0 40px 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .profile-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 600px;
+        height: 600px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+    }
+    
+    .avatar-container {
+        width: 140px;
+        height: 140px;
+        margin: 0 auto 1.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .avatar {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 6px solid white;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        object-fit: cover;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+    }
+    
+    .verified-badge {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: #10b981;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 4px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+    }
+    
+    .profile-card {
+        background: white;
+        border-radius: 24px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        border-left: 5px solid #f59e0b;
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #fef3c7;
+    }
+    
+    .card-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+    }
+    
+    .card-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin: 0;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.25rem;
+    }
+    
+    .info-item {
+        background: #f9fafb;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+    }
+    
+    .info-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.4rem;
+    }
+    
+    .info-value {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+    
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .badge-success {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .badge-warning {
+        background: #fed7aa;
+        color: #92400e;
+    }
+    
+    .badge-info {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .badge-purple {
+        background: #e9d5ff;
+        color: #6b21a8;
+    }
+    
+    .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+    }
+    
+    .tag {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 1px solid #fbbf24;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+    }
+    
+    .btn-secondary {
+        background: white;
+        color: #374151;
+        border: 2px solid #e5e7eb;
+    }
+    
+    .btn-secondary:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+    }
+    
+    .compatibility-score {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 16px;
+        text-align: center;
+        margin-bottom: 2rem;
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+    }
+    
+    .score-number {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+    }
+    
+    .score-label {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-hero">
+    <div class="max-w-4xl mx-auto px-4 text-center" style="position: relative; z-index: 1;">
+        <div class="avatar-container">
+            <div class="avatar">
+                {% if perfil.usuario.foto_perfil %}
+                    <img src="{{ perfil.usuario.foto_perfil.url }}" alt="{{ perfil.usuario.get_full_name }}">
+                {% else %}
+                    👤
+                {% endif %}
+            </div>
+            {% if perfil.usuario.tiene_validaciones_completas %}
+                <div class="verified-badge">✓</div>
+            {% endif %}
+        </div>
+        
+        <h1 class="text-4xl font-extrabold text-white mb-2">
+            {{ perfil.usuario.get_full_name|default:perfil.usuario.username }}
+        </h1>
+        
+        <p class="text-xl text-white opacity-90 mb-4">
+            {{ perfil.edad }} años • {{ perfil.get_genero_display }}
+        </p>
+        
+        <div class="flex justify-center gap-3 flex-wrap">
+            <span class="badge badge-success">
+                ✓ Verificado
+            </span>
+            {% if perfil.situacion_actual == 'tengo_lugar' %}
+                <span class="badge badge-info">
+                    🏠 Busca compañero/a
+                </span>
+            {% else %}
+                <span class="badge badge-warning">
+                    🔍 Busca lugar
+                </span>
+            {% endif %}
+            <span class="badge badge-purple">
+                {{ perfil.get_situacion_laboral_display }}
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-4xl mx-auto px-4 pb-12">
+    
+    <!-- Situación Laboral/Académica -->
+    <div class="profile-card">
+        <div class="card-header">
+            <div class="card-icon">💼</div>
+            <h2 class="card-title">Situación Laboral/Académica</h2>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Estado</div>
+                <div class="info-value">{{ perfil.get_situacion_laboral_display }}</div>
+            </div>
+            
+            {% if perfil.universidad %}
+            <div class="info-item">
+                <div class="info-label">🎓 Universidad</div>
+                <div class="info-value">{{ perfil.universidad }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Modalidad de Estudio</div>
+                <div class="info-value">{{ perfil.get_modalidad_estudio_display }}</div>
+            </div>
+            {% endif %}
+            
+            {% if perfil.empresa_rubro %}
+            <div class="info-item">
+                <div class="info-label">💼 Empresa/Rubro</div>
+                <div class="info-value">{{ perfil.empresa_rubro }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Modalidad de Trabajo</div>
+                <div class="info-value">{{ perfil.get_modalidad_trabajo_display }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Preferencias de Convivencia -->
+    <div class="profile-card">
+        <div class="card-header">
+            <div class="card-icon">🏡</div>
+            <h2 class="card-title">Preferencias de Convivencia</h2>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">💰 Presupuesto Máximo</div>
+                <div class="info-value">{{ perfil.get_presupuesto_maximo_display }}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">📍 Zona Preferida</div>
+                <div class="info-value">{{ perfil.zona_preferida }}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">📅 Fecha de Ingreso</div>
+                <div class="info-value">{{ perfil.fecha_ingreso|date:"d/m/Y" }}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">⏱️ Duración Mínima</div>
+                <div class="info-value">{{ perfil.get_duracion_minima_display }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Hábitos y Estilo de Vida -->
+    <div class="profile-card">
+        <div class="card-header">
+            <div class="card-icon">✨</div>
+            <h2 class="card-title">Hábitos y Estilo de Vida</h2>
+        </div>
+        
+        <div class="tag-list">
+            <span class="tag">
+                {% if perfil.fumador %}🚬 Fumador{% else %}🚭 No fumador{% endif %}
+            </span>
+            <span class="tag">
+                {% if perfil.mascotas %}🐾 Tiene mascotas{% else %}🐾 Sin mascotas{% endif %}
+            </span>
+        </div>
+        
+        <div class="info-grid mt-4">
+            <div class="info-item">
+                <div class="info-label">Convivencia</div>
+                <div class="info-value">{{ perfil.get_preferencia_convivencia_display }}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">⏰ Horario de Descanso</div>
+                <div class="info-value">{{ perfil.get_horario_descanso_display }}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">🧹 Orden y Limpieza</div>
+                <div class="info-value">{{ perfil.get_orden_limpieza_display }}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">👥 Visitas</div>
+                <div class="info-value">{{ perfil.get_visitas_display }}</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">🏠 Espacios Comunes</div>
+                <div class="info-value">{{ perfil.get_uso_espacios_comunes_display }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Botones de Acción -->
+    <div class="action-buttons">
+        {% if request.user == perfil.usuario %}
+            <a href="{% url 'usuarios:completar_perfil_busqueda' %}" class="btn btn-primary">
+                ✏️ Editar Perfil
+            </a>
+            <a href="{% url 'propiedades:buscar_companero' %}" class="btn btn-secondary">
+                🔍 Buscar Compañeros
+            </a>
+        {% else %}
+            <button class="btn btn-primary" onclick="alert('Función de contacto próximamente')">
+                💬 Contactar
+            </button>
+            <button class="btn btn-secondary" onclick="alert('Función de favoritos próximamente')">
+                ⭐ Agregar a Favoritos
+            </button>
+        {% endif %}
+    </div>
+    
+    <!-- Info adicional -->
+    <div class="mt-6 text-center text-sm text-gray-600">
+        <p>Perfil actualizado el {{ perfil.fecha_actualizacion|date:"d/m/Y" }}</p>
+    </div>
+</div>
+{% endblock %}

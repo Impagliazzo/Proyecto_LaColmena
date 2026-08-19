@@ -16,12 +16,72 @@
                     <h3 class="text-xl font-semibold text-gray-900 mb-4">Información Básica</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Título de la publicación</label>
+                            <div class="flex items-center gap-2 mb-2">
+                                <label class="block text-sm font-medium text-gray-700">Título de la publicación *</label>
+                                <div class="relative group">
+                                    <!-- Icono de lámpara/tip -->
+                                    <svg class="w-4 h-4 text-amber-400 hover:text-amber-500 cursor-help transition-all duration-200 transform hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 2a6 6 0 00-6 6c0 1.887.454 3.665 1.257 5.234a.75.75 0 00.515.454C6.378 14.481 7.695 15 10 15s3.622-.519 4.228-1.312a.75.75 0 00.515-.454A7.917 7.917 0 0016 8a6 6 0 00-6-6zM9.25 8a.75.75 0 01.75-.75 2.25 2.25 0 012.25 2.25.75.75 0 01-1.5 0 .75.75 0 00-.75-.75.75.75 0 01-.75-.75zM8.5 16a1.5 1.5 0 003 0h-3z"/>
+                                    </svg>
+                                    <!-- Tooltip moderno -->
+                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50">
+                                        <div class="bg-gray-900 text-white text-sm rounded-xl shadow-2xl p-4 w-72 border border-gray-700">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M10 2a6 6 0 00-6 6c0 1.887.454 3.665 1.257 5.234a.75.75 0 00.515.454C6.378 14.481 7.695 15 10 15s3.622-.519 4.228-1.312a.75.75 0 00.515-.454A7.917 7.917 0 0016 8a6 6 0 00-6-6z"/>
+                                                </svg>
+                                                <span class="font-semibold text-amber-400">¿No sabés qué título poner?</span>
+                                            </div>
+                                            <div class="text-gray-300 leading-relaxed">
+                                                <p class="mb-2">Pensá en lo que más destaca del inmueble: tipo, ambientes y zona.</p>
+                                                <div class="bg-gray-800 rounded-lg p-2 mb-2">
+                                                    <p class="text-amber-300 text-xs font-medium">Ejemplo:</p>
+                                                    <p class="text-white text-sm italic">"Departamento 2 ambientes con balcón en el centro"</p>
+                                                </div>
+                                                <p class="text-amber-300 text-xs flex items-center gap-1">
+                                                    Un buen título hace que te contacten más rápido 
+                                                    <span class="text-sm">😉</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Flecha del tooltip -->
+                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-gray-900"></div>
+                                    </div>
+                                </div>
+                            </div>
                             {{ form.titulo }}
                         </div>
                         
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Descripción</label>
+                            <div class="flex items-center gap-2 mb-2">
+                                <label class="block text-sm font-medium text-gray-700">Descripción</label>
+                                <div class="relative group">
+                                    <!-- Icono de lámpara/tip -->
+                                    <svg class="w-4 h-4 text-amber-400 hover:text-amber-500 cursor-help transition-all duration-200 transform hover:scale-110" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 2a6 6 0 00-6 6c0 1.887.454 3.665 1.257 5.234a.75.75 0 00.515.454C6.378 14.481 7.695 15 10 15s3.622-.519 4.228-1.312a.75.75 0 00.515-.454A7.917 7.917 0 0016 8a6 6 0 00-6-6zM9.25 8a.75.75 0 01.75-.75 2.25 2.25 0 012.25 2.25.75.75 0 01-1.5 0 .75.75 0 00-.75-.75.75.75 0 01-.75-.75zM8.5 16a1.5 1.5 0 003 0h-3z"/>
+                                    </svg>
+                                    <!-- Tooltip moderno -->
+                                    <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-50">
+                                        <div class="bg-gray-900 text-white text-sm rounded-xl shadow-2xl p-4 w-72 border border-gray-700">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M10 2a6 6 0 00-6 6c0 1.887.454 3.665 1.257 5.234a.75.75 0 00.515.454C6.378 14.481 7.695 15 10 15s3.622-.519 4.228-1.312a.75.75 0 00.515-.454A7.917 7.917 0 0016 8a6 6 0 00-6-6z"/>
+                                                </svg>
+                                                <span class="font-semibold text-amber-400">¿No sabés qué escribir acá?</span>
+                                            </div>
+                                            <div class="text-gray-300 leading-relaxed">
+                                                <p class="mb-2">Contá cómo es el inmueble y qué lo hace especial.</p>
+                                                <p class="mb-2">Ambientes, ubicación, servicios y a quién está dirigido.</p>
+                                                <p class="text-amber-300 text-xs">
+                                                    Cuanto más claro seas, mejores consultas vas a recibir.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- Flecha del tooltip -->
+                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-gray-900"></div>
+                                    </div>
+                                </div>
+                            </div>
                             {{ form.descripcion }}
                         </div>
                         
@@ -50,18 +110,37 @@
                 <!-- Ubicación -->
                 <div class="border-t border-gray-200 pt-6">
                     <h3 class="text-xl font-semibold text-gray-900 mb-4">Ubicación</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Ciudad</label>
-                            {{ form.ciudad }}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Provincia *</label>
+                            <input type="text" name="provincia" id="provincia-input" required
+                                   value="{{ form.provincia.value|default:'' }}"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                   placeholder="Escriba para buscar provincia..."
+                                   autocomplete="off"
+                                   onkeyup="filtrarProvincias(this.value)"
+                                   onfocus="document.getElementById('provincias-list').style.display='none'">
+                            <div id="provincias-list" class="autocomplete-list"></div>
+                        </div>
+                        
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Localidad *</label>
+                            <input type="text" name="ciudad" id="localidad-input" required
+                                   value="{{ form.ciudad.value|default:'' }}"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                   placeholder="Escriba para buscar localidad..."
+                                   autocomplete="off"
+                                   onkeyup="filtrarLocalidades(this.value)"
+                                   onfocus="document.getElementById('localidades-list').style.display='none'">
+                            <div id="localidades-list" class="autocomplete-list"></div>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Distrito</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Distrito/Barrio</label>
                             {{ form.distrito }}
                         </div>
                         
-                        <div class="md:col-span-2">
+                        <div class="md:col-span-3">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Dirección</label>
                             {{ form.direccion }}
                         </div>
@@ -213,14 +292,38 @@
                 <!-- Imágenes -->
                 <div class="border-t border-gray-200 pt-6">
                     <h3 class="text-xl font-semibold text-gray-900 mb-4">Imágenes</h3>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                            <p class="text-sm text-yellow-800">
+                                <strong>Consejo:</strong> La primera imagen que subas será la imagen principal. Puedes cambiarla después al editar la publicación.
+                            </p>
+                        </div>
+                    </div>
+                    
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Subir imágenes (máximo 10, la primera será la principal)
+                            Subir imágenes *
                         </label>
-                        <input type="file" name="imagenes" multiple accept="image/*" required
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent">
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-yellow-500 transition-colors">
+                            <input type="file" name="imagenes" id="imagenes-input" multiple accept="image/*" required
+                                   class="hidden" onchange="mostrarVistaPrevia(event)">
+                            <label for="imagenes-input" class="cursor-pointer">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-lg font-medium text-gray-600 mb-1">Haz clic para subir imágenes</p>
+                                <p class="text-sm text-gray-500">o arrastra y suelta archivos aquí</p>
+                            </label>
+                        </div>
+                        
+                        <!-- Vista previa de imágenes -->
+                        <div id="vista-previa" class="mt-4 hidden">
+                            <p class="text-sm font-medium text-gray-700 mb-2">Imágenes seleccionadas:</p>
+                            <div id="imagenes-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                        </div>
+                        
                         <p class="mt-2 text-sm text-gray-500">
-                            Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB por imagen.
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB por imagen. Máximo 10 imágenes.
                         </p>
                     </div>
                 </div>
@@ -240,4 +343,317 @@
         </div>
     </div>
 </div>
+
+<style>
+.autocomplete-list {
+    position: absolute;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    display: none;
+}
+
+.autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s;
+}
+
+.autocomplete-item:hover {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+</style>
+
+<script>
+// Lista completa de provincias argentinas
+const provinciasArgentinas = [
+    'Buenos Aires',
+    'Ciudad Autónoma de Buenos Aires',
+    'Catamarca',
+    'Chaco',
+    'Chubut',
+    'Córdoba',
+    'Corrientes',
+    'Entre Ríos',
+    'Formosa',
+    'Jujuy',
+    'La Pampa',
+    'La Rioja',
+    'Mendoza',
+    'Misiones',
+    'Neuquén',
+    'Río Negro',
+    'Salta',
+    'San Juan',
+    'San Luis',
+    'Santa Cruz',
+    'Santa Fe',
+    'Santiago del Estero',
+    'Tierra del Fuego, Antártida e Islas del Atlántico Sur',
+    'Tucumán'
+];
+
+// Diccionario de localidades por provincia
+const localidadesPorProvincia = {
+    'Buenos Aires': [
+        'Almirante Brown', 'Avellaneda', 'Berazategui', 'Berisso', 'Cañuelas', 'Ensenada', 'Esteban Echeverría', 'Ezeiza', 'Florencio Varela', 'La Plata', 'Lanús', 'Lomas de Zamora', 'Presidente Perón', 'Quilmes', 'San Vicente', '25 de Mayo', 'Adolfo Alsina', 'Ayacucho', 'Azul', 'Balcarce', 'Benito Juárez', 'Bolívar', 'Castelli', 'Chascomús', 'Coronel Dorrego', 'Coronel Pringles', 'Coronel Rosales', 'Daireaux', 'Dolores', 'General Alvarado', 'General Alvear', 'General Belgrano', 'General Guido', 'General Lamadrid', 'General Lavalle', 'General Madariaga', 'General Paz', 'General Pueyrredón', 'Gonzales Chaves', 'Guaminí', 'La Costa', 'Las Flores', 'Lezama', 'Lobería', 'Maipú', 'Mar Chiquita', 'Monte', 'Necochea', 'Olavarría', 'Patagones', 'Pellegrini', 'Pila', 'Pinamar', 'Puán', 'Rauch', 'Roque Pérez', 'Saavedra', 'Saladillo', 'Salliqueló', 'Alberti', 'Arrecifes', 'Baradero', 'Bragado', 'Capitán Sarmiento', 'Carlos Casares', 'Carlos Tejedor', 'Carmen de Areco', 'Chacabuco', 'Chivilcoy', 'Colón y Rojas', 'Florentino Ameghino', 'General Arenales', 'General Pinto', 'General Viamonte', 'General Villegas', 'Hipólito Yrigoyen', 'Junín', 'Leandro N. Alem', 'Lincoln', 'Mercedes', 'Navarro', 'Nueve de Julio', 'Pehuajó', 'Pergamino', 'Ramallo', 'Rivadavia', 'Salto', 'San Andrés de Giles', 'San Antonio de Areco', 'San Nicolás', 'San Pedro', 'Suipacha', 'Trenque Lauquen', 'Zárate', 'San Cayetano', 'Tandil', 'Tapalqué', 'Tordillo', 'Tornquist', 'Tres Arroyos', 'Tres Lomas', 'Villa Gesell', 'Villarino'
+    ],
+    'Ciudad Autónoma de Buenos Aires': [
+        'Retiro', 'San Nicolás', 'Puerto Madero', 'San Telmo', 'Montserrat', 'Constitución',
+        'Barracas', 'La Boca', 'Recoleta', 'Balvanera', 'Almagro', 'Caballito', 'Flores',
+        'Parque Chacabuco', 'Boedo', 'San Cristóbal', 'Palermo', 'Villa Crespo',
+        'La Paternal', 'Villa Santa Rita', 'Chacarita', 'Villa Urquiza', 'Villa Pueyrredón',
+        'Núñez', 'Saavedra', 'Coghlan', 'Belgrano', 'Colegiales', 'Villa Ortúzar',
+        'Agronomía', 'Villa del Parque', 'Villa Devoto', 'Villa General Mitre'
+    ],
+    'Córdoba': [
+        'Córdoba', 'Río Cuarto', 'Villa María', 'San Francisco', 'Alta Gracia', 'Villa Carlos Paz', 'Jesús María', 'Cosquín', 'La Falda', 'Villa Allende', 'Río Tercero', 'Río Segundo', 'Bell Ville', 'Marcos Juárez', 'Villa Dolores', 'Cruz del Eje', 'Deán Funes', 'Morteros', 'Arroyito', 'Las Varillas', 'Oncativo', 'Oliva', 'Hernando', 'General Deheza', 'General Cabrera', 'La Calera', 'Unquillo', 'Salsipuedes', 'Río Ceballos', 'Malvinas Argentinas', 'Mendiolaza', 'Colonia Caroya', 'Santa Rosa de Calamuchita', 'Villa General Belgrano', 'Embalse', 'Capilla del Monte', 'Huerta Grande', 'La Cumbre', 'Villa Giardino', 'Tanti', 'Bialet Massé', 'Mayú Sumaj', 'Icho Cruz', 'Cuesta Blanca', 'Nono', 'Mina Clavero', 'Villa Cura Brochero', 'Las Tapias', 'San Javier', 'Yacanto', 'Achiras', 'Adelia María', 'Alejandro Roca', 'Alicia', 'Almafuerte', 'Alpa Corral', 'Anisacate', 'Arias', 'Arroyo Cabral', 'Ausonia', 'Balnearia', 'Brinkmann', 'Bulnes', 'Camilo Aldao', 'Canals', 'Carnerillo', 'Colonia Tirolesa', 'Corral de Bustos', 'Despeñaderos', 'Devoto', 'Elena', 'El Tío', 'Estación Juárez Celman', 'General Baldissera', 'General Levalle', 'Guatimozín', 'Huinca Renancó', 'Idiazábal', 'James Craik', 'La Carlota', 'Laboulaye', 'Laguna Larga', 'Las Higueras', 'Los Cóndores', 'Los Surgentes', 'Monte Buey', 'Monte Maíz', 'Noetinger', 'Porteña', 'Quilino', 'Sampacho', 'San Basilio', 'San José de la Dormida', 'San Marcos Sierras', 'Santa Eufemia', 'Serrano', 'Ucacha', 'Vicuña Mackenna'
+    ],
+    'Santa Fe': [
+        'Santa Fe', 'Rosario', 'Rafaela', 'Venado Tuerto', 'Reconquista', 'Avellaneda', 'Villa Gobernador Gálvez', 'Santo Tomé', 'San Lorenzo', 'Esperanza', 'Casilda', 'Cañada de Gómez', 'Firmat', 'Arroyo Seco', 'Granadero Baigorria', 'Capitán Bermúdez', 'Fray Luis Beltrán', 'Funes', 'Pérez', 'Roldán', 'Carcarañá', 'Coronda', 'Gálvez', 'San Justo', 'San Javier', 'Tostado', 'Vera', 'Las Toscas', 'Calchaquí', 'Malabrigo', 'Romang', 'Villa Ocampo', 'Helvecia', 'San Carlos Centro', 'San Carlos Norte', 'San Carlos Sud', 'Sunchales', 'Humberto Primo', 'Ataliva', 'Lehmann', 'Pilar', 'Nuevo Torino', 'Providencia', 'El Trébol', 'San Jorge', 'Carlos Pellegrini', 'María Susana', 'Los Cardos', 'Crispi', 'Landeta', 'Las Parejas', 'Armstrong', 'Tortugas', 'Villa Eloísa', 'Salto Grande', 'Chabás', 'Arequito', 'Bigand', 'Bombal', 'Carreras', 'Máximo Paz', 'Pavón', 'Alvear', 'Acebal', 'Ibarlucea', 'Pueblo Esther', 'General Lagos', 'Arroyo Leyes', 'Monte Vera', 'Recreo', 'Nelson', 'Llambi Campbell', 'Emilia', 'Laguna Paiva', 'Sauce Viejo', 'Villa Constitución', 'Empalme Villa Constitución', 'Santa Teresa', 'Stephenson', 'Theobald', 'Godoy', 'Cepeda', 'Villa Cañás', 'Teodelina', 'San Gregorio', 'Melincué', 'Wheelwright', 'Hughes', 'Labordeboy', 'Miguel Torres', 'Elortondo', 'Murphy', 'Chovet', 'María Teresa', 'Amenábar', 'Christophersen', 'Carmen', 'San Eduardo', 'Villa Guillermina', 'La Gallareta', 'Villa Ana', 'Tacuarendí', 'Golondrina', 'Los Laureles', 'Guadalupe Norte', 'Berna', 'El Rabón'
+    ],
+    'Corrientes': [
+        'Corrientes', 'Goya', 'Mercedes', 'Paso de los Libres', 'Curuzú Cuatiá', 'Santo Tomé', 'Monte Caseros', 'Bella Vista', 'Esquina', 'Ituzaingó', 'Virasoro', 'San Luis del Palmar', 'Empedrado', 'Saladas', 'Mburucuyá', 'Santa Lucía', 'Lavalle', 'Yapeyú', 'La Cruz', 'San Carlos', 'San Miguel', 'Concepción', 'Tabay', 'Tatacuá', 'Loreto', 'Lomas de Vallejos', 'Itatí', 'Ramada Paso', 'San Cosme', 'Paso de la Patria', 'Caá Catí', 'Berón de Astrada', 'Colonia Libertad', 'Juan Pujol', 'Bonpland', 'Mocoretá', 'Parada Pucheta', 'Tapebicuá', 'Estación Torrent', 'Alvear', 'Guaviraví', 'Yahapé', 'Riachuelo', 'San Lorenzo', 'Derqui', 'Manuel Derqui', 'Pago de los Deseos', 'Tres de Abril', 'Villa Olivari', 'Colonia Liebig', 'Colonia Carlos Pellegrini', 'Itá Ibaté', 'Cruz de los Milagros', 'Felipe Yofre', 'Chavarría', 'Mantilla', '9 de Julio', 'Pedro R. Fernández', 'Perugorría', 'Colonia Pando', 'Santa Rosa', 'San Roque'
+    ],
+    'Entre Ríos': [
+        'Paraná', 'Concordia', 'Gualeguaychú', 'Concepción del Uruguay', 'Gualeguay', 'La Paz', 'Chajarí', 'Federación', 'Colón', 'Villaguay', 'Nogoyá', 'Crespo', 'Victoria', 'Diamante', 'San José de Feliciano', 'Basavilbaso', 'Viale', 'San Salvador', 'Villa Elisa', 'Federal', 'Rosario del Tala', 'Maciá', 'Urdinarrain', 'General Ramírez', 'Hasenkamp', 'Hernandarias', 'Oro Verde', 'Libertador San Martín', 'Seguí', 'Aldea Brasilera', 'Aldea Protestante', 'Aldea San Antonio', 'Aldea San Juan', 'Aldea Spatzenkutter', 'Colonia Avellaneda', 'Colonia Elía', 'Colonia Ensayo', 'Colonia Hocker', 'Colonia San José', 'Colonia Yeruá', 'Conscripto Bernardi', 'El Pingo', 'Estación Camps', 'Estación Escriña', 'Estación Sosa', 'Gilbert', 'Gobernador Mansilla', 'Gobernador Maciá', 'General Campos', 'Los Charrúas', 'Lucas González', 'Pueblo General Belgrano', 'San Benito', 'San Jaime de la Frontera', 'San Gustavo', 'Santa Ana', 'Santa Anita', 'Santa Elena', 'Sauce de Luna', 'Tabossi', 'Ubajay', 'Villa Clara', 'Villa Domínguez', 'Villa Fontana', 'Villa Mantero', 'Villa Paranacito', 'Villa San Marcial', 'Villa Urquiza'
+    ],
+    'Misiones': [
+        'Posadas', 'Oberá', 'Eldorado', 'Puerto Iguazú', 'Apóstoles', 'Leandro N. Alem', 'Jardín América', 'Montecarlo', 'Puerto Rico', 'San Vicente', 'San Pedro', 'Aristóbulo del Valle', 'Campo Grande', 'Campo Ramón', 'Cerro Azul', 'Dos de Mayo', 'El Soberbio', 'Garupá', 'Puerto Esperanza', 'Puerto Libertad', 'Puerto Piray', 'San Ignacio', 'Santa Ana', 'Santa María', 'Santo Pipó', 'Almafuerte', 'Bonpland', 'Caa Yarí', 'Colonia Aurora', 'Colonia Delicia', 'Colonia Polana', 'Colonia Victoria', 'Concepción de la Sierra', 'Corpus', 'Fachinal', 'Florentino Ameghino', 'Gobernador Roca', 'Hipólito Yrigoyen', 'Itacaruaré', 'Loreto', 'Los Helechos', 'Mártires', 'Mojón Grande', 'Olegario Víctor Andrade', 'Panambí', 'Profundidad', 'Ruiz de Montoya', 'San Antonio', 'San Javier', 'San José', 'San Martín', 'Tres Capones', 'Wanda', '9 de Julio', 'Pozo Azul'
+    ],
+    'Chaco': [
+        'Resistencia', 'Barranqueras', 'Fontana', 'Puerto Vilelas', 'Presidencia Roque Sáenz Peña', 'Villa Ángela', 'Charata', 'Las Breñas', 'Castelli', 'General San Martín', 'Machagai', 'Quitilipi', 'Presidencia de la Plaza', 'Puerto Tirol', 'La Verde', 'Basail', 'Colonia Benítez', 'Margarita Belén', 'Lapachito', 'La Escondida', 'Makallé', 'Colonia Popular', 'Avia Terai', 'Napenay', 'Concepción del Bermejo', 'Pampa del Infierno', 'Corzuela', 'Gancedo', 'Hermoso Campo', 'Campo Largo', 'Capitán Solari', 'Colonia Elisa', 'Ciervo Petiso', 'Tres Isletas', 'Miraflores', 'Juan José Castelli', 'Villa Río Bermejito', 'Fuerte Esperanza', 'El Sauzalito', 'Nueva Pompeya', 'General Vedia', 'La Leonesa', 'Las Palmas', 'Puerto Bermejo', 'Charadai', 'Cote Lai', 'Haumonía', 'Pampa Almirón', 'Villa Berthet', 'Samuhú', 'Santa Sylvina', 'San Bernardo', 'La Tigra', 'Los Frentones', 'Colonia Aborigen', 'Colonia Unidas', 'Colonia Baranda', 'Colonia Dora', 'Colonia Juan José Paso', 'Colonia Uriburu', 'Colonia Velaz'
+    ],
+    'Formosa': [
+        'Formosa', 'Clorinda', 'Pirané', 'El Colorado', 'Ingeniero Juárez', 'Las Lomitas', 'Ibarreta', 'Laguna Blanca', 'Laguna Naineck', 'Villa Dos Trece', 'Villa General Güemes', 'Mayor Vicente Villafañe', 'Pozo del Tigre', 'Comandante Fontana', 'San Martín II', 'General Lucio V. Mansilla', 'Misión Laishí', 'Subteniente Perín', 'Riacho He-Hé', 'Siete Palmas', 'Tres Lagunas', 'Colonia Pastoril', 'Colonia Villafañe', 'Fortín Lugones', 'Fortín Sargento 1º Leyes', 'Gran Guardia', 'Herradura', 'Laguna Yema', 'Los Chiriguanos', 'Palma Sola', 'Posta Cambio Zalazar', 'Pozo de Maza', 'San Francisco de Laishí', 'Villa Escolar'
+    ],
+    'Santiago del Estero': [
+        'Santiago del Estero', 'La Banda', 'Termas de Río Hondo', 'Añatuya', 'Frías', 'Loreto', 'Quimilí', 'Bandera', 'Fernández', 'Suncho Corral', 'Monte Quemado', 'Pinto', 'Clodomira', 'Villa Ojo de Agua', 'Campo Gallo', 'Colonia Dora', 'Los Juríes', 'Selva', 'Villa Atamisqui', 'Villa La Punta', 'Villa Mailín', 'Villa Nueva', 'Villa Silípica', 'Gramilla', 'Icaño', 'Los Telares', 'Nueva Esperanza', 'Pozo Hondo', 'Real Sayana', 'San Pedro de Guasayán', 'Sumampa', 'Tapso', 'Tintina', 'Vilmer', 'Yanda', 'El Bobadal', 'El Charco', 'El Mojón', 'El Zanjón', 'Guampacha', 'Huyamampa', 'La Cañada', 'La Dársena', 'Los Núñez', 'Pampa de los Guanacos', 'San José del Boquerón'
+    ],
+    'Tucumán': [
+        'San Miguel de Tucumán', 'Yerba Buena', 'Tafí Viejo', 'Banda del Río Salí', 'Aguilares', 'Concepción', 'Monteros', 'Famaillá', 'Lules', 'Bella Vista', 'Trancas', 'Simoca', 'Graneros', 'Juan Bautista Alberdi', 'La Cocha', 'Burruyacú', 'Cruz Alta', 'Tafí del Valle', 'Amaicha del Valle', 'Colalao del Valle', 'Las Talitas', 'El Manantial', 'Alderetes', 'Río Seco', 'San Andrés', 'San Pablo', 'San José', 'Santa Ana', 'Santa Rosa de Leales', 'Villa Carmela', 'Los Nogales', 'Los Ralos', 'Manuela Pedraza', 'El Bracho', 'La Florida', 'Ranchillos', 'San Pedro de Colalao', 'Medinas', 'Atahona', 'Garmendia', 'Iltico', 'Lamadrid', 'Leales', 'Monte Bello', 'Pueblo Independencia', 'Río Chico', 'San Ignacio', 'Santa Lucía', 'Sargento Moya', 'Teniente Berdina', 'Villa Belgrano'
+    ],
+    'Salta': [
+        'Salta', 'San Ramón de la Nueva Orán', 'Tartagal', 'General Güemes', 'Cafayate', 'Metán', 'Rosario de la Frontera', 'Rosario de Lerma', 'Embarcación', 'Joaquín V. González', 'Campo Quijano', 'Aguaray', 'Colonia Santa Rosa', 'El Carril', 'La Caldera', 'La Merced', 'Vaqueros', 'Cerrillos', 'San Lorenzo', 'Chicoana', 'Guachipas', 'El Bordo', 'El Tala', 'Apolinario Saravia', 'Las Lajitas', 'General Pizarro', 'El Galpón', 'Río Piedras', 'Seclantás', 'Cachi', 'Molinos', 'Angastaco', 'San Carlos', 'Animaná', 'La Poma', 'Payogasta', 'Iruya', 'Santa Victoria Oeste', 'Los Toldos', 'Nazareno', 'La Unión', 'Rivadavia', 'Coronel Moldes', 'La Viña', 'El Potrero', 'Campo Santo', 'El Quebrachal', 'Pichanal', 'Urundel', 'Hipólito Yrigoyen', 'General Ballivián', 'Profesor Salvador Mazza', 'Aguas Blancas'
+    ],
+    'Jujuy': [
+        'San Salvador de Jujuy', 'Palpalá', 'Perico', 'Libertador General San Martín', 'San Pedro de Jujuy', 'La Quiaca', 'Abra Pampa', 'Humahuaca', 'Tilcara', 'Purmamarca', 'Maimará', 'Volcán', 'El Carmen', 'Monterrico', 'Yala', 'San Antonio', 'Calilegua', 'Caimancito', 'Fraile Pintado', 'Yuto', 'Palma Sola', 'Santa Clara', 'El Piquete', 'La Mendieta', 'Rodeíto', 'Vinalito', 'Pampa Blanca', 'Puente Lavayén', 'Susques', 'Cangrejillos', 'Casabindo', 'Cochinoca', 'Rinconada', 'San Francisco', 'Santa Catalina', 'Tres Cruces'
+    ],
+    'Catamarca': [
+        'San Fernando del Valle de Catamarca', 'Valle Viejo', 'Fray Mamerto Esquiú', 'Santa María', 'Belén', 'Andalgalá', 'Tinogasta', 'Fiambalá', 'Recreo', 'Icaño', 'Los Altos', 'Paclín', 'La Puerta', 'El Rodeo', 'Las Juntas', 'Pomán', 'Saujil', 'Mutquín', 'Aconquija', 'Hualfín', 'Puerta de Corral Quemado', 'Villa Vil', 'Antofagasta de la Sierra', 'El Peñón', 'San José', 'Londres', 'Capayán', 'Chumbicha', 'Huillapima', 'Miraflores', 'San Martín', 'Tapso', 'El Alto'
+    ],
+    'La Rioja': [
+        'La Rioja', 'Chilecito', 'Chamical', 'Aimogasta', 'Chepes', 'Villa Unión', 'Famatina', 'Nonogasta', 'Sanagasta', 'Vinchina', 'Villa Castelli', 'Ulapes', 'Malanzán', 'Milagro', 'Olta', 'Tama', 'Pagancillo', 'Anguinán', 'Arauco', 'Chañarmuyo', 'Guandacol', 'Jagüé', 'Los Robles', 'Mazán', 'Patquía', 'Pituil', 'Santa Cruz', 'Sañogasta', 'Vichigasta'
+    ],
+    'San Juan': [
+        'San Juan', 'Rawson', 'Rivadavia', 'Chimbas', 'Santa Lucía', 'Pocito', 'Albardón', 'Angaco', 'Caucete', 'San Martín', '25 de Mayo', '9 de Julio', 'Sarmiento', 'Calingasta', 'Iglesia', 'Jáchal', 'Ullum', 'Zonda', 'Valle Fértil', 'Barreal', 'Tamberías', 'Rodeo', 'Pismanta', 'Las Flores', 'Villa Basilio Nievas', 'Villa Media Agua', 'Villa Aberastain'
+    ],
+    'Mendoza': [
+        'Mendoza', 'San Rafael', 'Godoy Cruz', 'Guaymallén', 'Las Heras', 'Luján de Cuyo', 'Maipú', 'General Alvear', 'Malargüe', 'Tunuyán', 'Tupungato', 'San Martín', 'Rivadavia', 'Junín', 'La Paz', 'Santa Rosa', 'Lavalle', 'San Carlos', 'Uspallata', 'Potrerillos', 'Cacheuta', 'Agrelo', 'Chacras de Coria', 'Vistalba', 'Palmira', 'Fray Luis Beltrán', 'Rodeo del Medio', 'Las Catitas', 'La Dormida', 'Villa Tulumaya', 'Bowen', 'Carmensa', 'Los Molles', 'El Nihuil'
+    ],
+    'San Luis': [
+        'San Luis', 'Villa Mercedes', 'Merlo', 'La Punta', 'Juana Koslay', 'Potrero de los Funes', 'El Volcán', 'Nogolí', 'Quines', 'Candelaria', 'Luján', 'San Martín', 'Concarán', 'Tilísarao', 'Naschel', 'Santa Rosa del Conlara', 'Carpintería', 'Los Molles', 'Papagayos', 'Cortaderas', 'Villa de Praga', 'Anchorena', 'Arizona', 'Batavia', 'Buena Esperanza', 'Fortín El Patria', 'Fraga', 'Juan Jorba', 'Juan Llerena', 'La Toma', 'Lavaisse', 'Leandro N. Alem', 'Nueva Galia', 'Renca', 'Saladillo', 'San Francisco del Monte de Oro', 'Talita', 'Unión', 'Villa del Carmen'
+    ],
+    'La Pampa': [
+        'Santa Rosa', 'General Pico', 'Toay', 'Eduardo Castex', 'Realicó', 'General Acha', 'Victorica', 'Intendente Alvear', 'Macachín', 'Winifreda', 'Quemú Quemú', 'Colonia Barón', 'Catriló', 'Arata', 'Ingeniero Luiggi', 'Bernardo Larroudé', 'Parera', 'Embajador Martini', 'Trenel', 'Lonquimay', 'Anguil', 'Miguel Riglos', 'Doblas', 'Ataliva Roca', 'Guatraché', 'Alpachiri', 'General Campos', 'Puelches', 'La Adela', '25 de Mayo', 'Santa Isabel', 'Carro Quemado', 'Loventuel', 'Naicó', 'Relmo', 'Speluzzi', 'Uriburu', 'Vertiz'
+    ],
+    'Neuquén': [
+        'Neuquén', 'Plottier', 'Centenario', 'Cutral Có', 'Plaza Huincul', 'Zapala', 'San Martín de los Andes', 'Junín de los Andes', 'Chos Malal', 'Villa La Angostura', 'Rincón de los Sauces', 'Añelo', 'Senillosa', 'Vista Alegre', 'Villa El Chocón', 'Picún Leufú', 'Aluminé', 'Las Lajas', 'Loncopué', 'Buta Ranquil', 'El Huecú', 'Andacollo', 'Taquimilán', 'Tricao Malal', 'Barrancas', 'Caviahue', 'Copahue', 'Huinganco', 'Los Miches', 'Manzano Amargo', 'Octavio Pico', 'Paso Aguerre', 'Piedra del Águila', 'Quili Malal', 'San Patricio del Chañar', 'Santo Tomás', 'Varvarco', 'Villa Pehuenia', 'Villa Traful'
+    ],
+    'Río Negro': [
+        'Viedma', 'San Carlos de Bariloche', 'General Roca', 'Cipolletti', 'Allen', 'Villa Regina', 'Cinco Saltos', 'Catriel', 'Choele Choel', 'El Bolsón', 'Ingeniero Jacobacci', 'Luis Beltrán', 'Lamarque', 'Río Colorado', 'San Antonio Oeste', 'Las Grutas', 'Sierra Grande', 'Valcheta', 'Mainqué', 'Chimpay', 'Darwin', 'Coronel Belisle', 'Chichinales', 'Contralmirante Cordero', 'Barda del Medio', 'Campo Grande', 'Cervantes', 'Comallo', 'Dina Huapi', 'Godoy', 'Guardia Mitre', 'Los Menucos', 'Maquinchao', 'Ñorquinco', 'Pilcaniyeu', 'Pomona', 'Río Chico', 'Sargento Vidal', 'Sierra Colorada', 'Stefenelli', 'Villa Llanquín'
+    ],
+    'Chubut': [
+        'Rawson', 'Trelew', 'Puerto Madryn', 'Comodoro Rivadavia', 'Esquel', 'Sarmiento', 'Gaiman', 'Dolavon', '28 de Julio', 'Rada Tilly', 'El Maitén', 'El Hoyo', 'Lago Puelo', 'Epuyén', 'Cholila', 'Tecka', 'Gobernador Costa', 'José de San Martín', 'Río Pico', 'Corcovado', 'Aldea Beleiro', 'Aldea Epulef', 'Buen Pasto', 'Camarones', 'Carrenleufú', 'Colan Conhué', 'Dique Florentino Ameghino', 'Doctor Ricardo Rojas', 'Facundo', 'Gastre', 'Gan Gan', 'Gualjaina', 'Lagunita Salada', 'Paso de Indios', 'Puerto Pirámides', 'Ricardo Rojas', 'Telsen'
+    ],
+    'Santa Cruz': [
+        'Río Gallegos', 'Caleta Olivia', 'El Calafate', 'Pico Truncado', 'Puerto Deseado', 'Las Heras', 'Perito Moreno', 'Puerto San Julián', 'Comandante Luis Piedra Buena', '28 de Noviembre', 'Río Turbio', 'Gobernador Gregores', 'El Chaltén', 'Puerto Santa Cruz', 'Jaramillo', 'Fitz Roy', 'Koluel Kaike', 'Tres Lagos', 'Hipólito Yrigoyen', 'Lago Posadas', 'Los Antiguos', 'Cañadón Seco'
+    ],
+    'Tierra del Fuego, Antártida e Islas del Atlántico Sur': [
+        'Ushuaia', 'Río Grande', 'Tolhuin', 'Puerto Almanza', 'San Sebastián', 'Cullen', 'Estancia Viamonte'
+    ]
+};
+
+// Función para formatear texto a Title Case respetando preposiciones
+function formatTitleCase(text) {
+    const preposiciones = ['de', 'del', 'la', 'las', 'y', 'el', 'los', 'en', 'con', 'por', 'para', 'sin', 'sobre', 'bajo'];
+    
+    return text.toLowerCase().replace(/\b\w+/g, (word, index, fullText) => {
+        // Si es la primera palabra de la frase completa o no es una preposición, capitalizar
+        const isFirstWord = index === 0;
+        if (isFirstWord || !preposiciones.includes(word.toLowerCase())) {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        }
+        return word;
+    });
+}
+
+function filtrarProvincias(texto) {
+    const lista = document.getElementById('provincias-list');
+    
+    if (texto.length < 1) {
+        lista.style.display = 'none';
+        return;
+    }
+    
+    const filtradas = provinciasArgentinas.filter(provincia => 
+        provincia.toLowerCase().includes(texto.toLowerCase())
+    );
+    
+    if (filtradas.length === 0) {
+        lista.style.display = 'none';
+        return;
+    }
+    
+    lista.innerHTML = '';
+    filtradas.forEach(provincia => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item';
+        item.textContent = provincia;
+        item.onclick = function() {
+            document.getElementById('provincia-input').value = provincia;
+            lista.style.display = 'none';
+            // Limpiar localidad cuando se cambia provincia
+            document.getElementById('localidad-input').value = '';
+            document.getElementById('localidades-list').style.display = 'none';
+        };
+        lista.appendChild(item);
+    });
+    
+    lista.style.display = 'block';
+}
+
+function filtrarLocalidades(texto) {
+    const lista = document.getElementById('localidades-list');
+    const provinciaSeleccionada = document.getElementById('provincia-input').value;
+    
+    if (texto.length < 1 || !provinciaSeleccionada) {
+        lista.style.display = 'none';
+        return;
+    }
+    
+    const localidades = localidadesPorProvincia[provinciaSeleccionada] || [];
+    const filtradas = localidades.filter(localidad => 
+        localidad.toLowerCase().includes(texto.toLowerCase())
+    );
+    
+    if (filtradas.length === 0) {
+        lista.style.display = 'none';
+        return;
+    }
+    
+    lista.innerHTML = '';
+    filtradas.forEach(localidad => {
+        const item = document.createElement('div');
+        item.className = 'autocomplete-item';
+        item.textContent = localidad;
+        item.onclick = function() {
+            document.getElementById('localidad-input').value = localidad;
+            lista.style.display = 'none';
+        };
+        lista.appendChild(item);
+    });
+    
+    lista.style.display = 'block';
+}
+
+// Cerrar las listas si se hace click fuera
+document.addEventListener('click', function(e) {
+    const listaProv = document.getElementById('provincias-list');
+    const inputProv = document.getElementById('provincia-input');
+    const listaLoc = document.getElementById('localidades-list');
+    const inputLoc = document.getElementById('localidad-input');
+    
+    if (listaProv && inputProv && e.target !== inputProv) {
+        listaProv.style.display = 'none';
+    }
+    
+    if (listaLoc && inputLoc && e.target !== inputLoc) {
+        listaLoc.style.display = 'none';
+    }
+});
+
+// Event listener para formatear distrito/barrio automáticamente
+document.addEventListener('DOMContentLoaded', function() {
+    const distritoInput = document.getElementById('id_distrito');
+    if (distritoInput) {
+        distritoInput.addEventListener('blur', function() {
+            if (this.value.trim()) {
+                this.value = formatTitleCase(this.value.trim());
+            }
+        });
+    }
+});
+
+// Función para mostrar vista previa de imágenes
+function mostrarVistaPrevia(event) {
+    const files = event.target.files;
+    const vistaPrevia = document.getElementById('vista-previa');
+    const imagenesPreview = document.getElementById('imagenes-preview');
+    
+    if (files.length === 0) {
+        vistaPrevia.classList.add('hidden');
+        return;
+    }
+    
+    // Validar número de archivos
+    if (files.length > 10) {
+        alert('Máximo 10 imágenes permitidas');
+        event.target.value = '';
+        return;
+    }
+    
+    // Limpiar vista previa anterior
+    imagenesPreview.innerHTML = '';
+    
+    // Mostrar cada imagen
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Validar tamaño
+        if (file.size > 5 * 1024 * 1024) {
+            alert(`La imagen "${file.name}" es demasiado grande. Máximo 5MB por imagen.`);
+            continue;
+        }
+        
+        // Validar tipo
+        if (!file.type.startsWith('image/')) {
+            alert(`El archivo "${file.name}" no es una imagen válida.`);
+            continue;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const div = document.createElement('div');
+            div.className = 'relative';
+            
+            div.innerHTML = `
+                <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg border-2 ${i === 0 ? 'border-yellow-500' : 'border-gray-200'}">
+                ${i === 0 ? '<span class="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-semibold">★ Principal</span>' : ''}
+                <span class="absolute top-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded">${i + 1}</span>
+            `;
+            
+            imagenesPreview.appendChild(div);
+        };
+        
+        reader.readAsDataURL(file);
+    }
+    
+    vistaPrevia.classList.remove('hidden');
+}
+</script>
 {% endblock %}

@@ -5,9 +5,10 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.urls import reverse
 from propiedades.models import Propiedad
+from usuarios.models import PublicacionCompanero
 from notificaciones.models import Notificacion
-from .models import SolicitudContacto
-from .forms import SolicitudContactoForm
+from .models import SolicitudContacto, SolicitudContactoCompanero
+from .forms import SolicitudContactoForm, SolicitudContactoCompaneroForm
 
 @login_required
 def solicitar_contacto(request, propiedad_pk):
@@ -16,11 +17,6 @@ def solicitar_contacto(request, propiedad_pk):
     if not request.user.tiene_validaciones_completas():
         messages.warning(request, 'Debes validar tu teléfono y email antes de contactar propietarios')
         return redirect('usuarios:perfil', username=request.user.username)
-    
-    # Verificar perfil completo
-    if not request.user.perfil.perfil_completo:
-        messages.warning(request, 'Completá tu perfil antes de contactar propietarios')
-        return redirect('usuarios:completar_perfil')
     
     propiedad = get_object_or_404(Propiedad, pk=propiedad_pk)
     
@@ -143,5 +139,136 @@ def cambiar_estado_solicitud(request, pk, nuevo_estado):
             )
         
         messages.success(request, 'Estado actualizado correctamente')
-    
+
     return redirect('contactos:solicitudes_recibidas')
+
+
+@login_required
+def solicitar_contacto_companero(request, publicacion_pk):
+    """Solicitar contacto con quien publicó una búsqueda de compañero/a"""
+    if not request.user.tiene_validaciones_completas():
+        messages.warning(request, 'Debes validar tu teléfono y email antes de contactar')
+        return redirect('usuarios:perfil', username=request.user.username)
+
+    publicacion = get_object_or_404(PublicacionCompanero, pk=publicacion_pk)
+
+    if request.user == publicacion.usuario:
+        messages.error(request, 'No puedes contactarte a ti mismo')
+        return redirect('propiedades:detalle_companero', pk=publicacion_pk)
+
+    if request.method == 'POST':
+        form = SolicitudContactoCompaneroForm(request.POST)
+        if form.is_valid():
+            solicitud = form.save(commit=False)
+            solicitud.usuario = request.user
+            solicitud.publicacion = publicacion
+            solicitud.save()
+
+            Notificacion.objects.create(
+                usuario=publicacion.usuario,
+                tipo='contacto',
+                titulo='Nueva solicitud de contacto',
+                mensaje=f'{request.user.get_full_name() or request.user.username} está interesado/a en tu publicación "{publicacion.titulo}"',
+                url=reverse('contactos:solicitudes_recibidas_companero')
+            )
+
+            if publicacion.usuario.recibir_notificaciones:
+                asunto = f'Nueva solicitud de contacto para "{publicacion.titulo}"'
+                mensaje = f"""
+                Hola {publicacion.usuario.first_name},
+
+                {request.user.get_full_name() or request.user.username} está interesado/a en tu publicación "{publicacion.titulo}".
+
+                Mensaje:
+                {solicitud.mensaje}
+
+                Datos de contacto:
+                - Email: {solicitud.email}
+                - Teléfono: {solicitud.telefono or 'No proporcionado'}
+
+                Saludos,
+                Equipo LaColmena
+                """
+
+                send_mail(
+                    asunto,
+                    mensaje,
+                    settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else 'noreply@lacolmena.com',
+                    [publicacion.usuario.email],
+                    fail_silently=True,
+                )
+
+            messages.success(request, '¡Solicitud enviada! Te responderán pronto.')
+            return redirect('propiedades:detalle_companero', pk=publicacion_pk)
+    else:
+        initial = {
+            'email': request.user.email,
+            'telefono': request.user.telefono,
+        }
+        form = SolicitudContactoCompaneroForm(initial=initial)
+
+    context = {
+        'form': form,
+        'publicacion': publicacion,
+    }
+    return render(request, 'contactos/solicitar_companero.html', context)
+
+
+@login_required
+def mis_solicitudes_companero(request):
+    """Ver solicitudes de contacto de compañero/a realizadas por el usuario"""
+    solicitudes = SolicitudContactoCompanero.objects.filter(
+        usuario=request.user
+    ).select_related('publicacion').order_by('-fecha_solicitud')
+
+    return render(request, 'contactos/mis_solicitudes_companero.html', {'solicitudes': solicitudes})
+
+
+@login_required
+def solicitudes_recibidas_companero(request):
+    """Ver solicitudes de contacto de compañero/a recibidas para la publicación propia"""
+    solicitudes = SolicitudContactoCompanero.objects.filter(
+        publicacion__usuario=request.user
+    ).select_related('usuario', 'publicacion').order_by('-fecha_solicitud')
+
+    return render(request, 'contactos/solicitudes_recibidas_companero.html', {'solicitudes': solicitudes})
+
+
+@login_required
+def cambiar_estado_solicitud_companero(request, pk, nuevo_estado):
+    """Cambiar estado de una solicitud de contacto de compañero/a"""
+    solicitud = get_object_or_404(
+        SolicitudContactoCompanero,
+        pk=pk,
+        publicacion__usuario=request.user
+    )
+
+    if nuevo_estado in dict(SolicitudContactoCompanero.ESTADO_CHOICES):
+        solicitud.estado = nuevo_estado
+
+        if nuevo_estado == 'contactado' and not solicitud.fecha_respuesta:
+            from django.utils import timezone
+            solicitud.fecha_respuesta = timezone.now()
+
+        solicitud.save()
+
+        if nuevo_estado == 'contactado':
+            Notificacion.objects.create(
+                usuario=solicitud.usuario,
+                tipo='contacto',
+                titulo='Vieron tu solicitud',
+                mensaje=f'Te han marcado como contactado/a para "{solicitud.publicacion.titulo}".',
+                url=reverse('propiedades:detalle_companero', args=[solicitud.publicacion.pk])
+            )
+        elif nuevo_estado == 'rechazado':
+            Notificacion.objects.create(
+                usuario=solicitud.usuario,
+                tipo='contacto',
+                titulo='Solicitud rechazada',
+                mensaje=f'Tu solicitud para "{solicitud.publicacion.titulo}" fue rechazada.',
+                url=reverse('propiedades:detalle_companero', args=[solicitud.publicacion.pk])
+            )
+
+        messages.success(request, 'Estado actualizado correctamente')
+
+    return redirect('contactos:solicitudes_recibidas_companero')

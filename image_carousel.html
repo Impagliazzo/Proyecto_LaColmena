@@ -1,0 +1,338 @@
+<!-- Sistema de carrusel de imágenes adicionales -->
+<!-- Este código reemplazará el grid de 4 imágenes adicionales actual -->
+
+<!-- Grid de 4 imágenes adicionales con navegación (50% del ancho) -->
+<div class="w-1/2 flex flex-col relative">
+    <!-- Botones de navegación -->
+    <div class="absolute top-1/2 -translate-y-1/2 -left-4 z-20">
+        <button type="button" onclick="previousImagePage()" id="prevButton" 
+                class="bg-gray-800 bg-opacity-75 hover:bg-opacity-90 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110" 
+                style="display: none;">
+            ←
+        </button>
+    </div>
+    <div class="absolute top-1/2 -translate-y-1/2 -right-4 z-20">
+        <button type="button" onclick="nextImagePage()" id="nextButton" 
+                class="bg-gray-800 bg-opacity-75 hover:bg-opacity-90 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110" 
+                style="display: none;">
+            →
+        </button>
+    </div>
+
+    <!-- Páginas de imágenes -->
+    <!-- Página 1: Imágenes 2-5 -->
+    <div id="imagePage1" class="image-page">
+        <!-- Fila superior -->
+        <div class="flex h-1/2">
+            <!-- Imagen 2 -->
+            <div class="w-1/2 border-l border-gray-200 relative group">
+                {% if propiedad.imagenes.all.1 %}
+                    <div class="relative w-full h-full">
+                        <img src="{{ propiedad.imagenes.all.1.imagen.url }}" alt="Imagen 2" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <button type="button" 
+                                onclick="eliminarImagen({{ propiedad.imagenes.all.1.id }}, this)"
+                                class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm shadow-lg hover:scale-110"
+                                title="Eliminar imagen">
+                            ×
+                        </button>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded font-medium">
+                                2/10
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center hover:from-yellow-50 hover:to-orange-100 transition-all duration-300 cursor-pointer border-2 border-dashed border-transparent hover:border-yellow-400">
+                        <label class="cursor-pointer flex items-center justify-center w-full h-full">
+                            <div class="w-14 h-14 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold hover:scale-110 transition-transform duration-300 shadow-lg">
+                                +
+                            </div>
+                            <input type="file" name="imagenes" accept="image/*" class="hidden" onchange="previewImage(this, 1, false)">
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Imagen 3 -->
+            <div class="w-1/2 border-l border-gray-200 relative group">
+                {% if propiedad.imagenes.all.2 %}
+                    <div class="relative w-full h-full">
+                        <img src="{{ propiedad.imagenes.all.2.imagen.url }}" alt="Imagen 3" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <button type="button" 
+                                onclick="eliminarImagen({{ propiedad.imagenes.all.2.id }}, this)"
+                                class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm shadow-lg hover:scale-110"
+                                title="Eliminar imagen">
+                            ×
+                        </button>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded font-medium">
+                                3/10
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center hover:from-yellow-50 hover:to-orange-100 transition-all duration-300 cursor-pointer border-2 border-dashed border-transparent hover:border-yellow-400">
+                        <label class="cursor-pointer flex items-center justify-center w-full h-full">
+                            <div class="w-14 h-14 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold hover:scale-110 transition-transform duration-300 shadow-lg">
+                                +
+                            </div>
+                            <input type="file" name="imagenes" accept="image/*" class="hidden" onchange="previewImage(this, 2, false)">
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Fila inferior -->
+        <div class="flex h-1/2 border-t border-gray-200">
+            <!-- Imagen 4 -->
+            <div class="w-1/2 border-l border-gray-200 relative group">
+                {% if propiedad.imagenes.all.3 %}
+                    <div class="relative w-full h-full">
+                        <img src="{{ propiedad.imagenes.all.3.imagen.url }}" alt="Imagen 4" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <button type="button" 
+                                onclick="eliminarImagen({{ propiedad.imagenes.all.3.id }}, this)"
+                                class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm shadow-lg hover:scale-110"
+                                title="Eliminar imagen">
+                            ×
+                        </button>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded font-medium">
+                                4/10
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center hover:from-yellow-50 hover:to-orange-100 transition-all duration-300 cursor-pointer border-2 border-dashed border-transparent hover:border-yellow-400">
+                        <label class="cursor-pointer flex items-center justify-center w-full h-full">
+                            <div class="w-14 h-14 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold hover:scale-110 transition-transform duration-300 shadow-lg">
+                                +
+                            </div>
+                            <input type="file" name="imagenes" accept="image/*" class="hidden" onchange="previewImage(this, 3, false)">
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Imagen 5 -->
+            <div class="w-1/2 border-l border-gray-200 relative group">
+                {% if propiedad.imagenes.all.4 %}
+                    <div class="relative w-full h-full">
+                        <img src="{{ propiedad.imagenes.all.4.imagen.url }}" alt="Imagen 5" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <button type="button" 
+                                onclick="eliminarImagen({{ propiedad.imagenes.all.4.id }}, this)"
+                                class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm shadow-lg hover:scale-110"
+                                title="Eliminar imagen">
+                            ×
+                        </button>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded font-medium">
+                                5/10
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center hover:from-yellow-50 hover:to-orange-100 transition-all duration-300 cursor-pointer border-2 border-dashed border-transparent hover:border-yellow-400">
+                        <label class="cursor-pointer flex items-center justify-center w-full h-full">
+                            <div class="w-14 h-14 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold hover:scale-110 transition-transform duration-300 shadow-lg">
+                                +
+                            </div>
+                            <input type="file" name="imagenes" accept="image/*" class="hidden" onchange="previewImage(this, 4, false)">
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Página 2: Imágenes 6-9 -->
+    <div id="imagePage2" class="image-page" style="display: none;">
+        <!-- Fila superior -->
+        <div class="flex h-1/2">
+            <!-- Imagen 6 -->
+            <div class="w-1/2 border-l border-gray-200 relative group">
+                {% if propiedad.imagenes.all.5 %}
+                    <div class="relative w-full h-full">
+                        <img src="{{ propiedad.imagenes.all.5.imagen.url }}" alt="Imagen 6" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <button type="button" 
+                                onclick="eliminarImagen({{ propiedad.imagenes.all.5.id }}, this)"
+                                class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm shadow-lg hover:scale-110"
+                                title="Eliminar imagen">
+                            ×
+                        </button>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded font-medium">
+                                6/10
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center hover:from-yellow-50 hover:to-orange-100 transition-all duration-300 cursor-pointer border-2 border-dashed border-transparent hover:border-yellow-400">
+                        <label class="cursor-pointer flex items-center justify-center w-full h-full">
+                            <div class="w-14 h-14 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold hover:scale-110 transition-transform duration-300 shadow-lg">
+                                +
+                            </div>
+                            <input type="file" name="imagenes" accept="image/*" class="hidden" onchange="previewImage(this, 5, false)">
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Imagen 7 -->
+            <div class="w-1/2 border-l border-gray-200 relative group">
+                {% if propiedad.imagenes.all.6 %}
+                    <div class="relative w-full h-full">
+                        <img src="{{ propiedad.imagenes.all.6.imagen.url }}" alt="Imagen 7" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <button type="button" 
+                                onclick="eliminarImagen({{ propiedad.imagenes.all.6.id }}, this)"
+                                class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm shadow-lg hover:scale-110"
+                                title="Eliminar imagen">
+                            ×
+                        </button>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded font-medium">
+                                7/10
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center hover:from-yellow-50 hover:to-orange-100 transition-all duration-300 cursor-pointer border-2 border-dashed border-transparent hover:border-yellow-400">
+                        <label class="cursor-pointer flex items-center justify-center w-full h-full">
+                            <div class="w-14 h-14 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold hover:scale-110 transition-transform duration-300 shadow-lg">
+                                +
+                            </div>
+                            <input type="file" name="imagenes" accept="image/*" class="hidden" onchange="previewImage(this, 6, false)">
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Fila inferior -->
+        <div class="flex h-1/2 border-t border-gray-200">
+            <!-- Imagen 8 -->
+            <div class="w-1/2 border-l border-gray-200 relative group">
+                {% if propiedad.imagenes.all.7 %}
+                    <div class="relative w-full h-full">
+                        <img src="{{ propiedad.imagenes.all.7.imagen.url }}" alt="Imagen 8" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <button type="button" 
+                                onclick="eliminarImagen({{ propiedad.imagenes.all.7.id }}, this)"
+                                class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm shadow-lg hover:scale-110"
+                                title="Eliminar imagen">
+                            ×
+                        </button>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded font-medium">
+                                8/10
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center hover:from-yellow-50 hover:to-orange-100 transition-all duration-300 cursor-pointer border-2 border-dashed border-transparent hover:border-yellow-400">
+                        <label class="cursor-pointer flex items-center justify-center w-full h-full">
+                            <div class="w-14 h-14 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold hover:scale-110 transition-transform duration-300 shadow-lg">
+                                +
+                            </div>
+                            <input type="file" name="imagenes" accept="image/*" class="hidden" onchange="previewImage(this, 7, false)">
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Imagen 9 -->
+            <div class="w-1/2 border-l border-gray-200 relative group">
+                {% if propiedad.imagenes.all.8 %}
+                    <div class="relative w-full h-full">
+                        <img src="{{ propiedad.imagenes.all.8.imagen.url }}" alt="Imagen 9" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <button type="button" 
+                                onclick="eliminarImagen({{ propiedad.imagenes.all.8.id }}, this)"
+                                class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm shadow-lg hover:scale-110"
+                                title="Eliminar imagen">
+                            ×
+                        </button>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded font-medium">
+                                9/10
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center hover:from-yellow-50 hover:to-orange-100 transition-all duration-300 cursor-pointer border-2 border-dashed border-transparent hover:border-yellow-400">
+                        <label class="cursor-pointer flex items-center justify-center w-full h-full">
+                            <div class="w-14 h-14 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold hover:scale-110 transition-transform duration-300 shadow-lg">
+                                +
+                            </div>
+                            <input type="file" name="imagenes" accept="image/*" class="hidden" onchange="previewImage(this, 8, false)">
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Página 3: Imagen 10 -->
+    <div id="imagePage3" class="image-page" style="display: none;">
+        <!-- Fila superior -->
+        <div class="flex h-1/2">
+            <!-- Imagen 10 -->
+            <div class="w-1/2 border-l border-gray-200 relative group">
+                {% if propiedad.imagenes.all.9 %}
+                    <div class="relative w-full h-full">
+                        <img src="{{ propiedad.imagenes.all.9.imagen.url }}" alt="Imagen 10" 
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300"></div>
+                        <button type="button" 
+                                onclick="eliminarImagen({{ propiedad.imagenes.all.9.id }}, this)"
+                                class="absolute top-3 right-3 bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 text-sm shadow-lg hover:scale-110"
+                                title="Eliminar imagen">
+                            ×
+                        </button>
+                        <div class="absolute top-3 left-3">
+                            <span class="bg-gray-800 bg-opacity-75 text-white text-xs px-2 py-1 rounded font-medium">
+                                10/10
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center hover:from-yellow-50 hover:to-orange-100 transition-all duration-300 cursor-pointer border-2 border-dashed border-transparent hover:border-yellow-400">
+                        <label class="cursor-pointer flex items-center justify-center w-full h-full">
+                            <div class="w-14 h-14 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold hover:scale-110 transition-transform duration-300 shadow-lg">
+                                +
+                            </div>
+                            <input type="file" name="imagenes" accept="image/*" class="hidden" onchange="previewImage(this, 9, false)">
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Espacio vacío -->
+            <div class="w-1/2 border-l border-gray-200 bg-gray-50">
+            </div>
+        </div>
+        
+        <!-- Fila inferior -->
+        <div class="flex h-1/2 border-t border-gray-200">
+            <!-- Espacios vacíos -->
+            <div class="w-1/2 border-l border-gray-200 bg-gray-50">
+            </div>
+            <div class="w-1/2 border-l border-gray-200 bg-gray-50">
+            </div>
+        </div>
+    </div>
+</div>

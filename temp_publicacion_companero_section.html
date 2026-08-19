@@ -1,0 +1,329 @@
+
+        
+        <!-- Publicación de Compañero/a (solo para usuarios que tienen lugar) -->
+        {% if es_propio and perfil.perfil_busqueda_completo and perfil.situacion_actual == 'tengo_lugar' %}
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8 border border-gray-100">
+            <div class="px-6 py-4 bg-gradient-to-r from-emerald-50 via-green-50 to-teal-50 border-b border-green-200">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-md">
+                            <span class="text-2xl">🏡</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-900 mb-1">Mi Publicación de Departamento</h2>
+                            <p class="text-green-700 text-sm font-medium">Búsqueda de compañero/a</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8">
+                {% if usuario.publicacion_companero %}
+                    <!-- Mostrar publicación existente -->
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">{{ usuario.publicacion_companero.titulo }}</h3>
+                        <p class="text-gray-700 mb-4">{{ usuario.publicacion_companero.descripcion|truncatewords:50 }}</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                                    <span class="text-xl">💰</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Precio/mes</p>
+                                    <p class="font-bold text-gray-900">${{ usuario.publicacion_companero.precio_mensual|floatformat:0 }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                                    <span class="text-xl">🛏️</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Habitaciones</p>
+                                    <p class="font-bold text-gray-900">{{ usuario.publicacion_companero.habitaciones_disponibles }} disponible/s</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                                    <span class="text-xl">📍</span>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Ubicación</p>
+                                    <p class="font-bold text-gray-900">{{ usuario.publicacion_companero.distrito }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-3">
+                            <a href="{% url 'usuarios:crear_publicacion_companero' %}"
+                               class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 247 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Editar Publicación
+                            </a>
+                            
+                            {% if usuario.publicacion_companero.estado == 'activa' %}
+                            <button onclick="cambiarEstadoPublicacion('pausada')"
+                                    class="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-amber-50 text-amber-700 font-semibold rounded-xl border-2 border-amber-300 transition-all shadow-sm hover:shadow">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Pausar
+                            </button>
+                            {% elif usuario.publicacion_companero.estado == 'pausada' %}
+                            <button onclick="cambiarEstadoPublicacion('activa')"
+                                    class="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-green-50 text-green-700 font-semibold rounded-xl border-2 border-green-300 transition-all shadow-sm hover:shadow">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                                </svg>
+                                Reactivar
+                            </button>
+                            {% endif %}
+                            
+                            <button onclick="cambiarEstadoPublicacion('completada')"
+                                    class="inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-gray-50 text-gray-700 font-semibold rounded-xl border-2 border-gray-300 transition-all shadow-sm hover:shadow">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                Ya encontré compañero/a
+                            </button>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Llamado a la acción para crear publicación -->
+                    <div id="crearPublicacionContainer">
+                        <div id="ctaCrearPublicacion" class="text-center py-12">
+                            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-emerald-100 to-green-100 mb-6">
+                                <span class="text-4xl">📢</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-3">¡Publicá tu departamento!</h3>
+                            <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
+                                Tenés un lugar y buscás compañero/a. Creá una publicación para que otros usuarios puedan conocer tu departamento y contactarte.
+                            </p>
+                            <button onclick="mostrarFormularioPublicacion()"
+                               class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-emerald-500 via-green-600 to-teal-600 hover:from-emerald-600 hover:via-green-700 hover:to-teal-700 text-white font-bold text-lg rounded-xl transition-all shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Crear Publicación
+                            </button>
+                        </div>
+
+                        <!-- Formulario inline (oculto por defecto) -->
+                        <div id="formularioPublicacion" class="hidden">
+                            <div class="mb-6 flex items-center justify-between">
+                                <h3 class="text-2xl font-bold text-gray-900">Crear Publicación de Departamento</h3>
+                                <button onclick="ocultarFormularioPublicacion()"
+                                        class="text-gray-400 hover:text-gray-600 transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form id="formPublicacionCompanero" method="POST" action="{% url 'usuarios:crear_publicacion_companero' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Título -->
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Título de la publicación *
+                                        </label>
+                                        <input type="text" name="titulo" required
+                                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                               placeholder="Ej: Departamento 2 ambientes en Palermo">
+                                    </div>
+
+                                    <!-- Descripción -->
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Descripción *
+                                        </label>
+                                        <textarea name="descripcion" rows="4" required
+                                                  class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                                  placeholder="Describe tu departamento, servicios, ubicación, etc."></textarea>
+                                    </div>
+
+                                    <!-- Precio mensual -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Precio mensual (ARS) *
+                                        </label>
+                                        <input type="number" name="precio_mensual" required min="0" step="0.01"
+                                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                               placeholder="50000">
+                                    </div>
+
+                                    <!-- Tipo de vivienda -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Tipo de vivienda *
+                                        </label>
+                                        <select name="tipo_vivienda" required
+                                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                                            <option value="">Seleccionar...</option>
+                                            <option value="departamento">Departamento</option>
+                                            <option value="casa">Casa</option>
+                                            <option value="ph">PH</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Zona -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Zona *
+                                        </label>
+                                        <input type="text" name="zona" required
+                                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                               placeholder="Ej: Capital Federal">
+                                    </div>
+
+                                    <!-- Barrio -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Barrio *
+                                        </label>
+                                        <input type="text" name="barrio" required
+                                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                               placeholder="Ej: Palermo">
+                                    </div>
+
+                                    <!-- Habitaciones totales -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Habitaciones totales *
+                                        </label>
+                                        <input type="number" name="habitaciones_totales" required min="1"
+                                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                               placeholder="2">
+                                    </div>
+
+                                    <!-- Baños -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Baños *
+                                        </label>
+                                        <input type="number" name="banos_totales" required min="1"
+                                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                               placeholder="1">
+                                    </div>
+
+                                    <!-- Género buscado -->
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Género buscado *
+                                        </label>
+                                        <select name="genero_buscado" required
+                                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                                            <option value="">Seleccionar...</option>
+                                            <option value="masculino">Masculino</option>
+                                            <option value="femenino">Femenino</option>
+                                            <option value="indistinto">Indistinto</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Dirección completa (opcional) -->
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                            Dirección completa (opcional)
+                                        </label>
+                                        <input type="text" name="direccion_completa"
+                                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                               placeholder="Calle y número (se mostrará solo si lo deseas)">
+                                    </div>
+                                </div>
+
+                                <!-- Botones -->
+                                <div class="mt-8 flex gap-4">
+                                    <button type="submit"
+                                            class="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl">
+                                        Publicar Departamento
+                                    </button>
+                                    <button type="button" onclick="ocultarFormularioPublicacion()"
+                                            class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <script>
+        // Mostrar formulario inline
+        function mostrarFormularioPublicacion() {
+            document.getElementById('ctaCrearPublicacion').classList.add('hidden');
+            document.getElementById('formularioPublicacion').classList.remove('hidden');
+            // Scroll suave al formulario
+            document.getElementById('formularioPublicacion').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Ocultar formulario inline
+        function ocultarFormularioPublicacion() {
+            document.getElementById('formularioPublicacion').classList.add('hidden');
+            document.getElementById('ctaCrearPublicacion').classList.remove('hidden');
+        }
+
+        // Cambiar estado de publicación existente
+        function cambiarEstadoPublicacion(nuevoEstado) {
+            const mensajes = {
+                'activa': '¿Querés reactivar tu publicación?',
+                'pausada': '¿Querés pausar tu publicación temporalmente?',
+                'completada': '¿Ya encontraste compañero/a?'
+            };
+            
+            if (confirm(mensajes[nuevoEstado])) {
+                fetch('/usuarios/publicacion-companero/cambiar-estado/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `estado=${nuevoEstado}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                });
+            }
+        }
+
+        // Manejar envío del formulario con AJAX (opcional)
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formPublicacionCompanero');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Permitir envío normal del formulario
+                    // Si quieres AJAX, descomenta lo siguiente:
+                    /*
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + (data.error || 'Error al crear publicación'));
+                        }
+                    });
+                    */
+                });
+            }
+        });
+        </script>
+        {% endif %}

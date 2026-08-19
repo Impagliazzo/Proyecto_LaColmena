@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Solicitudes - LaColmena{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 min-h-screen py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Mis Solicitudes de Contacto</h1>
+            <p class="text-gray-600 mt-2">Publicaciones de compañero/a que contactaste</p>
+        </div>
+
+        {% if solicitudes %}
+        <div class="space-y-4">
+            {% for solicitud in solicitudes %}
+            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <!-- Imagen de la publicación -->
+                        <div class="flex-shrink-0">
+                            <a href="{% url 'propiedades:detalle_companero' solicitud.publicacion.pk %}">
+                                {% if solicitud.publicacion.imagen_principal %}
+                                <img src="{{ solicitud.publicacion.imagen_principal.imagen.url }}"
+                                     alt="{{ solicitud.publicacion.titulo }}"
+                                     class="w-full md:w-48 h-32 object-cover rounded-lg">
+                                {% else %}
+                                <div class="w-full md:w-48 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-user-friends text-white text-4xl opacity-50"></i>
+                                </div>
+                                {% endif %}
+                            </a>
+                        </div>
+
+                        <!-- Información -->
+                        <div class="flex-1">
+                            <div class="flex items-start justify-between mb-3">
+                                <div>
+                                    <a href="{% url 'propiedades:detalle_companero' solicitud.publicacion.pk %}"
+                                       class="text-xl font-semibold text-gray-900 hover:text-yellow-600 transition mb-1 inline-block">
+                                        {{ solicitud.publicacion.titulo }}
+                                    </a>
+                                    <p class="text-gray-600 text-sm">
+                                        <i class="fas fa-calendar mr-1"></i>
+                                        Enviada el {{ solicitud.fecha_solicitud|date:"d/m/Y H:i" }}
+                                    </p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-sm font-semibold
+                                    {% if solicitud.estado == 'pendiente' %}bg-yellow-100 text-yellow-800
+                                    {% elif solicitud.estado == 'contactado' %}bg-blue-100 text-blue-800
+                                    {% elif solicitud.estado == 'rechazado' %}bg-red-100 text-red-800
+                                    {% endif %}">
+                                    {% if solicitud.estado == 'pendiente' %}Pendiente
+                                    {% elif solicitud.estado == 'contactado' %}Contactado
+                                    {% elif solicitud.estado == 'rechazado' %}Rechazado
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="text-gray-700 text-sm">
+                                    <strong>Tu mensaje:</strong><br>
+                                    {{ solicitud.mensaje }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-white rounded-xl shadow-md p-12 text-center">
+            <div class="mb-6">
+                <i class="fas fa-inbox text-gray-300 text-6xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">No has enviado ninguna solicitud todavía</h3>
+            <p class="text-gray-600 mb-6">Explorá el feed de compañero/a y contactá a quien te interese</p>
+            <a href="{% url 'propiedades:buscar_companero' %}"
+               class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition">
+                <i class="fas fa-search mr-2"></i> Buscar Compañero/a
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
