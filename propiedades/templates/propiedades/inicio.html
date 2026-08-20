@@ -486,11 +486,6 @@
                                     <i class="fas fa-home text-gray-300 text-4xl"></i>
                                 </div>
                                 {% endif %}
-                                {% if propiedad.tiene_destacado_activo %}
-                                <span class="absolute top-2.5 left-2.5 bg-yellow-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow flex items-center gap-1">
-                                    <i class="fas fa-star text-[10px]"></i> DESTACADA
-                                </span>
-                                {% endif %}
                                 {% if user.is_authenticated %}
                                 <a href="{% url 'propiedades:toggle_favorito' propiedad.pk %}" class="absolute top-2.5 right-2.5 bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 w-7 h-7 rounded-full flex items-center justify-center shadow transition text-sm">
                                     <i class="fas fa-heart"></i>

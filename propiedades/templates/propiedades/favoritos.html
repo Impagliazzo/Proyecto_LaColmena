@@ -40,7 +40,7 @@
                 <div class="p-5">
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="text-2xl font-bold text-gray-900">
-                            {{ favorito.propiedad.get_moneda_simbolo }}{{ favorito.propiedad.precio|floatformat:0 }}
+                            {{ favorito.propiedad.get_moneda_simbolo }}{{ favorito.propiedad.precio|floatformat:0 }}{% if favorito.propiedad.operacion == 'alquiler' %}<span class="text-sm font-normal text-gray-500">/mes</span>{% endif %}
                         </h3>
                         <a href="{% url 'propiedades:toggle_favorito' favorito.propiedad.pk %}" 
                            class="text-red-500 hover:text-red-600 transition">

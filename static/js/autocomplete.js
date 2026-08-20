@@ -129,7 +129,15 @@ function crearAutocomplete(opciones) {
             } else {
                 el.textContent = etiquetaDe(item);
             }
-            el.addEventListener('click', () => seleccionar(item));
+            // mousedown (no click): el click dispara primero un blur en el
+            // input (el ítem no es un elemento enfocable), que cerraba el
+            // listado antes de que el click llegara a procesarse. Con
+            // preventDefault en mousedown el input nunca pierde el foco y la
+            // selección con mouse queda igual de confiable que con teclado.
+            el.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                seleccionar(item);
+            });
             lista.appendChild(el);
         });
         lista.style.display = 'block';

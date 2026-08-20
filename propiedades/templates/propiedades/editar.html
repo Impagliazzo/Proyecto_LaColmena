@@ -58,7 +58,7 @@
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Precio mensual</label>
+                            <label id="label-precio" class="block text-sm font-medium text-gray-700 mb-2">Precio mensual</label>
                             <div class="flex gap-2">
                                 <div class="w-32 flex-shrink-0">
                                     {{ form.moneda }}
@@ -448,6 +448,21 @@ crearSelectorUbicacion({
     urlLocalidades: '{% url "ubicaciones:localidades_sugerencias" %}',
     urlDistritos: '{% url "ubicaciones:distritos_sugerencias" %}',
 });
+
+// La etiqueta del precio depende de la operación: en alquiler el precio es
+// mensual, en venta es un monto único.
+(function () {
+    const operacionSelect = document.getElementById('id_operacion');
+    const labelPrecio = document.getElementById('label-precio');
+    if (!operacionSelect || !labelPrecio) return;
+
+    function actualizarLabelPrecio() {
+        labelPrecio.textContent = operacionSelect.value === 'venta' ? 'Precio' : 'Precio mensual';
+    }
+
+    operacionSelect.addEventListener('change', actualizarLabelPrecio);
+    actualizarLabelPrecio();
+})();
 
 // 🎨 SISTEMA DE GESTIÓN DE IMÁGENES - SIN RECARGA 🚀
 // Estado global para almacenar las imágenes en memoria
