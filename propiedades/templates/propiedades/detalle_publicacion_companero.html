@@ -81,12 +81,12 @@
                 <!-- Características Principales -->
                 <div class="grid grid-cols-2 {% if es_propia %}md:grid-cols-4{% else %}md:grid-cols-3{% endif %} gap-4 mb-8">
                     <div class="bg-gray-50 p-4 rounded-lg text-center">
-                        <i class="fas fa-bed text-yellow-500 text-2xl mb-2"></i>
+                        {% icono "dormitorios" clase="text-2xl mb-2" %}
                         <p class="text-gray-600 text-sm">Habitaciones</p>
                         <p class="font-semibold text-gray-900">{{ publicacion.habitaciones_disponibles }}/{{ publicacion.habitaciones_totales }}</p>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg text-center">
-                        <i class="fas fa-bath text-yellow-500 text-2xl mb-2"></i>
+                        {% icono "banos" clase="text-2xl mb-2" %}
                         <p class="text-gray-600 text-sm">Baños</p>
                         <p class="font-semibold text-gray-900">{{ publicacion.banos }}</p>
                     </div>
@@ -110,12 +110,12 @@
                     <div class="flex flex-wrap gap-2">
                         {% if publicacion.amoblado %}
                         <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-couch mr-1"></i> Amoblado
+                            {% icono "amoblado" clase="mr-1" %} Amoblado
                         </span>
                         {% endif %}
                         {% if publicacion.balcon %}
                         <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-door-open mr-1"></i> Balcón
+                            {% icono "balcon" clase="mr-1" %} Balcón
                         </span>
                         {% endif %}
                         {% if publicacion.cocina %}
@@ -125,27 +125,27 @@
                         {% endif %}
                         {% if publicacion.wifi %}
                         <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-wifi mr-1"></i> WiFi
+                            {% icono "wifi" clase="mr-1" %} WiFi
                         </span>
                         {% endif %}
                         {% if publicacion.lavarropas %}
                         <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-tshirt mr-1"></i> Lavarropas
+                            {% icono "lavanderia" clase="mr-1" %} Lavarropas
                         </span>
                         {% endif %}
                         {% if publicacion.aire_acondicionado %}
                         <span class="bg-cyan-100 text-cyan-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-snowflake mr-1"></i> Aire acondicionado
+                            {% icono "aire_acondicionado" clase="mr-1" %} Aire acondicionado
                         </span>
                         {% endif %}
                         {% if publicacion.calefaccion %}
                         <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-temperature-high mr-1"></i> Calefacción
+                            {% icono "calefaccion" clase="mr-1" %} Calefacción
                         </span>
                         {% endif %}
                         {% if publicacion.expensas_incluidas %}
                         <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-file-invoice-dollar mr-1"></i> Expensas incluidas
+                            {% icono "expensas" clase="mr-1" %} Expensas incluidas
                         </span>
                         {% endif %}
                         {% if publicacion.servicios_incluidos %}
@@ -172,7 +172,7 @@
                         </span>
                         {% endif %}
                         <span class="{% if publicacion.acepta_mascotas %}bg-purple-100 text-purple-800{% else %}bg-gray-100 text-gray-500{% endif %} px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-paw mr-1"></i> {% if publicacion.acepta_mascotas %}Acepta mascotas{% else %}No acepta mascotas{% endif %}
+                            {% icono "mascotas" clase="mr-1" %} {% if publicacion.acepta_mascotas %}Acepta mascotas{% else %}No acepta mascotas{% endif %}
                         </span>
                         <span class="{% if publicacion.fumador_acepto %}bg-green-100 text-green-800{% else %}bg-gray-100 text-gray-500{% endif %} px-3 py-1 rounded-full text-sm">
                             <i class="fas fa-smoking mr-1"></i> {% if publicacion.fumador_acepto %}Acepta fumadores{% else %}No acepta fumadores{% endif %}

@@ -77,10 +77,15 @@ class Propiedad(models.Model):
         ('terreno', 'Terreno'),
         ('oficina', 'Oficina'),
     ]
-    
+
     OPERACION_CHOICES = [
         ('alquiler', 'Alquiler'),
         ('venta', 'Venta'),
+    ]
+
+    MONEDA_CHOICES = [
+        ('ARS', '$ ARS'),
+        ('USD', 'US$ USD'),
     ]
     
     TIPO_CONTACTO_CHOICES = [
@@ -105,11 +110,12 @@ class Propiedad(models.Model):
     tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
     operacion = models.CharField(max_length=20, choices=OPERACION_CHOICES, default='alquiler')
     precio = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    moneda = models.CharField(max_length=3, choices=MONEDA_CHOICES, default='ARS')
     incluye_expensas = models.BooleanField(default=False, help_text='¿El precio incluye gastos de expensas?')
     tipo_contacto = models.CharField(max_length=20, choices=TIPO_CONTACTO_CHOICES, default='dueno')
     
     # Ubicación
-    provincia = models.CharField(max_length=100, default='Buenos Aires')
+    provincia = models.ForeignKey('ubicaciones.Provincia', on_delete=models.PROTECT, related_name='propiedades')
     ciudad = models.CharField(max_length=100)
     distrito = models.CharField(max_length=100)
     direccion = models.CharField(max_length=255)
@@ -134,11 +140,21 @@ class Propiedad(models.Model):
     aire_acondicionado = models.BooleanField(default=False)
     calefaccion = models.BooleanField(default=False)
     ascensor = models.BooleanField(default=False)
-    
+    terraza = models.BooleanField(default=False)
+    wifi = models.BooleanField(default=False)
+    lavanderia = models.BooleanField(default=False, help_text='Tiene lavadero o lavandería')
+
     # Edificio
     seguridad = models.BooleanField(default=False, help_text='Tiene seguridad o portero')
     amenities = models.BooleanField(default=False, help_text='Tiene amenities (pileta, gym, SUM)')
     accesibilidad = models.BooleanField(default=False, help_text='Apto para movilidad reducida')
+    piscina = models.BooleanField(default=False)
+    gimnasio = models.BooleanField(default=False)
+    sauna = models.BooleanField(default=False)
+    jacuzzi = models.BooleanField(default=False)
+    quincho = models.BooleanField(default=False)
+    solarium = models.BooleanField(default=False)
+    area_deportiva = models.BooleanField(default=False, help_text='Cuenta con área o cancha deportiva')
     
     # Estado y estadísticas
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='activa')
@@ -164,7 +180,11 @@ class Propiedad(models.Model):
         """Incrementa el contador de vistas"""
         self.vistas += 1
         self.save(update_fields=['vistas'])
-    
+
+    def get_moneda_simbolo(self):
+        """Símbolo a anteponer al precio según la moneda"""
+        return 'US$' if self.moneda == 'USD' else '$'
+
     @property
     def imagen_principal(self):
         """Retorna la primera imagen o None"""

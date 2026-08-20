@@ -728,7 +728,7 @@ class PublicacionCompanero(models.Model):
     )
     
     # Ubicación
-    provincia = models.CharField(max_length=100, default='Buenos Aires')
+    provincia = models.ForeignKey('ubicaciones.Provincia', on_delete=models.PROTECT, related_name='publicaciones_companero')
     ciudad = models.CharField(max_length=100, verbose_name='Ciudad')
     distrito = models.CharField(max_length=100, verbose_name='Barrio/Distrito')
     direccion = models.CharField(
@@ -760,12 +760,17 @@ class PublicacionCompanero(models.Model):
     calefaccion = models.BooleanField(default=False, verbose_name='Calefacción')
     
     # Información económica
+    MONEDA_CHOICES = [
+        ('ARS', '$ ARS'),
+        ('USD', 'US$ USD'),
+    ]
     precio_mensual = models.DecimalField(
-        max_digits=10, 
+        max_digits=10,
         decimal_places=2,
         verbose_name='Precio mensual por persona',
         help_text='Precio que pagaría cada persona por mes'
     )
+    moneda = models.CharField(max_length=3, choices=MONEDA_CHOICES, default='ARS')
     expensas_incluidas = models.BooleanField(
         default=False,
         verbose_name='Expensas incluidas en el precio'
@@ -828,9 +833,13 @@ class PublicacionCompanero(models.Model):
         self.vistas += 1
         self.save(update_fields=['vistas'])
     
+    def get_moneda_simbolo(self):
+        """Símbolo a anteponer al precio según la moneda"""
+        return 'US$' if self.moneda == 'USD' else '$'
+
     def get_precio_display(self):
         """Retorna el precio formateado"""
-        precio = f'${self.precio_mensual:,.0f}'
+        precio = f'{self.get_moneda_simbolo()}{self.precio_mensual:,.0f}'
         if self.expensas_incluidas and self.servicios_incluidos:
             return f'{precio} (todo incluido)'
         elif self.expensas_incluidas:

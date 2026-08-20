@@ -569,40 +569,10 @@
         display: none;
     }
     
-    /* Autocomplete */
-    .autocomplete-list {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: white;
-        border: 3px solid #f59e0b;
-        border-top: none;
-        border-radius: 0 0 16px 16px;
-        max-height: 300px;
-        overflow-y: auto;
-        z-index: 1000;
-        display: none;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-    
-    .autocomplete-item {
-        padding: 1rem 1.5rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border-bottom: 1px solid #f3f4f6;
-    }
-    
-    .autocomplete-item:hover {
-        background: #fef3c7;
-        color: #92400e;
-        font-weight: 600;
-    }
-    
-    .autocomplete-item:last-child {
-        border-bottom: none;
-    }
-    
+    /* Autocompletado: clases .autocomplete-list/.autocomplete-item ahora
+       definidas globalmente en base.html (este campo es la referencia del
+       patrón único del sitio) — no redefinir acá. */
+
     /* Notificaciones profesionales - coherente con LaColmena */
     .notification-container {
         position: fixed;
@@ -898,15 +868,12 @@
                             ¿En qué universidad estudias?
                         </label>
                         <div style="position: relative;">
-                            <input type="text" 
-                                   name="universidad" 
+                            <input type="text"
+                                   name="universidad"
                                    id="{{ form.universidad.id_for_label }}"
                                    value="{{ form.universidad.value|default:'' }}"
                                    placeholder="Empieza a escribir..."
-                                   autocomplete="off"
-                                   onkeyup="filtrarUniversidades(this.value)"
-                                   onfocus="document.getElementById('universidades-list').style.display='none'">
-                            <div id="universidades-list" class="autocomplete-list"></div>
+                                   autocomplete="off">
                         </div>
                         {% if form.universidad.errors %}
                             <p class="error-text">{{ form.universidad.errors.0 }}</p>
@@ -1496,45 +1463,12 @@ const universidadesArgentinas = [
     'Universidad Metropolitana para la Educación y el Trabajo (UMET)'
 ];
 
-function filtrarUniversidades(texto) {
-    const lista = document.getElementById('universidades-list');
-    
-    if (texto.length < 2) {
-        lista.style.display = 'none';
-        return;
-    }
-    
-    const filtradas = universidadesArgentinas.filter(uni => 
+crearAutocomplete({
+    input: document.getElementById('id_universidad'),
+    minChars: 2,
+    obtenerSugerencias: (texto) => universidadesArgentinas.filter(uni =>
         uni.toLowerCase().includes(texto.toLowerCase())
-    );
-    
-    if (filtradas.length === 0) {
-        lista.style.display = 'none';
-        return;
-    }
-    
-    lista.innerHTML = '';
-    filtradas.forEach(uni => {
-        const item = document.createElement('div');
-        item.className = 'autocomplete-item';
-        item.textContent = uni;
-        item.onclick = function() {
-            document.getElementById('id_universidad').value = uni;
-            lista.style.display = 'none';
-        };
-        lista.appendChild(item);
-    });
-    
-    lista.style.display = 'block';
-}
-
-// Cerrar la lista si se hace click fuera
-document.addEventListener('click', function(e) {
-    const lista = document.getElementById('universidades-list');
-    const input = document.getElementById('id_universidad');
-    if (lista && input && e.target !== input) {
-        lista.style.display = 'none';
-    }
+    ),
 });
 </script>
 {% endblock %}

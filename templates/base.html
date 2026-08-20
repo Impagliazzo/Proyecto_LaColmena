@@ -17,7 +17,12 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
+    <!-- Autocompletado único del sitio (motor compartido, ver static/js/autocomplete.js) -->
+    <script src="{% static 'js/autocomplete.js' %}"></script>
+    <!-- Selector de ubicación único (Provincia → Localidad → Distrito/Barrio, ver static/js/ubicacion.js) -->
+    <script src="{% static 'js/ubicacion.js' %}"></script>
+
     <style>
         /* REDUCCIÓN GLOBAL AL 80% - Aplicado a todo el sitio */
         body {
@@ -84,7 +89,53 @@
         .bg-white:not(nav) {
             border-radius: 0.8rem !important;
         }
-        
+
+        /* Autocompletado único del sitio — patrón visual y de comportamiento
+           oficial, tomado del campo "universidad" en
+           completar_perfil_busqueda.html. Todo autocompletado del sitio usa
+           estas clases (ver static/js/autocomplete.js); no crear variantes
+           visuales nuevas por contexto. */
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 3px solid #f59e0b;
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .autocomplete-item {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover,
+        .autocomplete-item.is-active {
+            background: #fef3c7;
+            color: #92400e;
+            font-weight: 600;
+        }
+
+        .autocomplete-empty,
+        .autocomplete-loading {
+            padding: 1rem 1.5rem;
+            color: #6b7280;
+            text-align: center;
+        }
+
         /* Ocultar flechitas de inputs numéricos */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {

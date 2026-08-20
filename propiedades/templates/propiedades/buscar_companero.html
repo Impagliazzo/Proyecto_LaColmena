@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="bg-gray-50 min-h-screen py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-gray-900">🤝 Encuentra tu compañero/a ideal</h1>
@@ -29,61 +29,87 @@
         {% else %}
 
         <!-- Búsqueda -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <form method="GET" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-                    <div>
-                        {{ form.busqueda }}
-                    </div>
-                    <div>
-                        {{ form.ciudad }}
-                    </div>
-                    <div>
+        <div class="bg-white rounded-lg shadow-md p-5 mb-8">
+            <form method="GET" class="flex flex-nowrap items-end gap-x-2 overflow-x-auto pb-1" id="form-busqueda-companero">
+                <div class="campo-busqueda-companero flex-1 min-w-[280px]">
+                    <label for="id_busqueda" class="block text-xs font-medium text-gray-500 mb-1.5">Ubicación</label>
+                    <input type="text" name="busqueda" id="id_busqueda"
+                           value="{{ request.GET.busqueda }}"
+                           placeholder="Buscar por ubicación, barrio o zona"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div class="campo-busqueda-companero w-[210px] flex-shrink-0">
+                    <label for="{{ form.provincia.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Provincia</label>
+                    {{ form.provincia }}
+                </div>
+                <div class="campo-busqueda-companero w-[140px] flex-shrink-0">
+                    <label for="{{ form.ciudad.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Ciudad</label>
+                    {{ form.ciudad }}
+                </div>
+                <div class="campo-busqueda-companero w-[140px] flex-shrink-0">
+                    <label for="{{ form.distrito.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Barrio / Distrito</label>
+                    {{ form.distrito }}
+                </div>
+                <div class="campo-busqueda-companero w-[130px] flex-shrink-0">
+                    <label for="{{ form.moneda.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Moneda</label>
+                    {{ form.moneda }}
+                </div>
+                <div class="campo-busqueda-companero w-[190px] flex-shrink-0">
+                    <label class="block text-xs font-medium text-gray-500 mb-1.5">Precio</label>
+                    <div class="flex items-center gap-1">
                         {{ form.precio_min }}
-                    </div>
-                    <div>
+                        <span class="text-gray-300">-</span>
                         {{ form.precio_max }}
                     </div>
-                    <div>
-                        <button type="submit"
-                                class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-8 rounded-lg transition">
-                            <i class="fas fa-search mr-2"></i> Buscar
-                        </button>
-                    </div>
+                </div>
+                <div class="flex-shrink-0">
+                    <button type="submit"
+                            class="btn-busqueda-companero flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-5 rounded-lg transition whitespace-nowrap">
+                        <i class="fas fa-search mr-2"></i> Buscar
+                    </button>
                 </div>
             </form>
         </div>
 
-        <!-- Filtros rápidos -->
-        <div class="flex overflow-x-auto space-x-4 mb-8 pb-2">
-            <a href="{% url 'propiedades:buscar_companero' %}"
-               class="flex-shrink-0 px-6 py-3 {% if not request.GET.habitaciones_disponibles and not request.GET.acepta_mascotas and not request.GET.fumador_acepto %}bg-yellow-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                Todas
-            </a>
-            <a href="{% url 'propiedades:buscar_companero' %}?habitaciones_disponibles=1"
-               class="flex-shrink-0 px-6 py-3 {% if request.GET.habitaciones_disponibles == '1' %}bg-blue-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                <i class="fas fa-bed mr-1"></i> Con lugar disponible
-            </a>
-            <a href="{% url 'propiedades:buscar_companero' %}?acepta_mascotas=1"
-               class="flex-shrink-0 px-6 py-3 {% if request.GET.acepta_mascotas %}bg-purple-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                <i class="fas fa-paw mr-1"></i> Acepta mascotas
-            </a>
-            <a href="{% url 'propiedades:buscar_companero' %}?fumador_acepto=1"
-               class="flex-shrink-0 px-6 py-3 {% if request.GET.fumador_acepto %}bg-green-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                <i class="fas fa-smoking mr-1"></i> Acepta fumadores
-            </a>
-        </div>
+        <style>
+            #form-busqueda-companero .campo-busqueda-companero input[type="text"],
+            #form-busqueda-companero .campo-busqueda-companero input[type="number"],
+            #form-busqueda-companero .campo-busqueda-companero select,
+            #form-busqueda-companero .btn-busqueda-companero {
+                height: 42px;
+                box-sizing: border-box;
+            }
+        </style>
 
-        <!-- Contador + toggle de filtros -->
-        <div class="mb-6 flex items-center justify-between">
-            <p class="text-gray-600">
-                Se encontraron <span class="font-semibold">{{ page_obj.paginator.count }}</span> publicaciones
-            </p>
-            <button onclick="toggleFiltros()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition flex items-center space-x-2">
+        <!-- Filtros rápidos + toggle de filtros -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-3">
+            <div class="flex overflow-x-auto space-x-4 pb-2 flex-1 min-w-0">
+                <a href="{% url 'propiedades:buscar_companero' %}"
+                   class="flex-shrink-0 px-6 py-3 {% if not request.GET.habitaciones_disponibles and not request.GET.acepta_mascotas and not request.GET.fumador_acepto %}bg-yellow-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    Todas
+                </a>
+                <a href="{% url 'propiedades:buscar_companero' %}?habitaciones_disponibles=1"
+                   class="flex-shrink-0 px-6 py-3 {% if request.GET.habitaciones_disponibles == '1' %}bg-blue-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    {% icono "dormitorios" clase="mr-1" %} Con lugar disponible
+                </a>
+                <a href="{% url 'propiedades:buscar_companero' %}?acepta_mascotas=1"
+                   class="flex-shrink-0 px-6 py-3 {% if request.GET.acepta_mascotas %}bg-purple-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    {% icono "mascotas" clase="mr-1" %} Acepta mascotas
+                </a>
+                <a href="{% url 'propiedades:buscar_companero' %}?fumador_acepto=1"
+                   class="flex-shrink-0 px-6 py-3 {% if request.GET.fumador_acepto %}bg-green-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    <i class="fas fa-smoking mr-1"></i> Acepta fumadores
+                </a>
+            </div>
+            <button onclick="toggleFiltros()" class="flex-shrink-0 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-6 rounded-lg transition flex items-center space-x-2 whitespace-nowrap">
                 <i class="fas fa-filter"></i>
                 <span>Filtros</span>
             </button>
         </div>
+
+        <p class="text-gray-600 mb-6">
+            Se encontraron <span class="font-semibold">{{ page_obj.paginator.count }}</span> publicaciones
+        </p>
 
         <!-- Panel de filtros -->
         <div id="panel-filtros" class="hidden bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -137,16 +163,16 @@
 
                     <div class="flex items-center flex-wrap gap-3 text-gray-600 text-sm">
                         <span class="flex items-center">
-                            <i class="fas fa-bed text-yellow-500 mr-1"></i>
+                            {% icono "dormitorios" clase="mr-1" %}
                             {{ publicacion.habitaciones_disponibles }}/{{ publicacion.habitaciones_totales }}
                         </span>
                         <span class="flex items-center">
-                            <i class="fas fa-bath text-yellow-500 mr-1"></i>
+                            {% icono "banos" clase="mr-1" %}
                             {{ publicacion.banos }}
                         </span>
                         {% if publicacion.acepta_mascotas %}
                         <span class="flex items-center" title="Acepta mascotas">
-                            <i class="fas fa-paw text-purple-800 mr-1"></i>
+                            {% icono "mascotas" clase="mr-1" %}
                         </span>
                         {% endif %}
                         {% if publicacion.fumador_acepto %}
@@ -156,7 +182,7 @@
                         {% endif %}
                         {% if publicacion.amoblado %}
                         <span class="flex items-center" title="Amoblado">
-                            <i class="fas fa-couch text-blue-800 mr-1"></i>
+                            {% icono "amoblado" clase="mr-1" %}
                         </span>
                         {% endif %}
                     </div>

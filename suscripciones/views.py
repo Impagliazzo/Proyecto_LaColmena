@@ -32,11 +32,6 @@ def suscribirse(request, plan_id):
         messages.warning(request, 'Debes ser propietario para suscribirte')
         return redirect('usuarios:convertir_propietario')
     
-    # Verificar perfil completo
-    if not request.user.perfil.perfil_completo:
-        messages.warning(request, 'Completá tu perfil antes de cambiar de plan')
-        return redirect('usuarios:completar_perfil')
-    
     # Verificar si ya tiene una suscripción activa
     suscripcion_existente = Suscripcion.objects.filter(
         usuario=request.user,

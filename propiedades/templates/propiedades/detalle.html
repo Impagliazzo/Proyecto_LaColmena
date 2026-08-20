@@ -91,17 +91,17 @@
                 <!-- Características Principales -->
                 <div class="grid grid-cols-2 {% if user == propiedad.propietario and not preview_mode %}md:grid-cols-4{% else %}md:grid-cols-3{% endif %} gap-4 mb-8">
                     <div class="bg-gray-50 p-4 rounded-lg text-center">
-                        <i class="fas fa-ruler-combined text-yellow-500 text-2xl mb-2"></i>
+                        {% icono "superficie" clase="text-2xl mb-2" %}
                         <p class="text-gray-600 text-sm">Área</p>
                         <p class="font-semibold text-gray-900">{{ propiedad.area }}m²</p>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg text-center">
-                        <i class="fas fa-bed text-yellow-500 text-2xl mb-2"></i>
+                        {% icono "dormitorios" clase="text-2xl mb-2" %}
                         <p class="text-gray-600 text-sm">Habitaciones</p>
                         <p class="font-semibold text-gray-900">{{ propiedad.habitaciones }}</p>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-lg text-center">
-                        <i class="fas fa-bath text-yellow-500 text-2xl mb-2"></i>
+                        {% icono "banos" clase="text-2xl mb-2" %}
                         <p class="text-gray-600 text-sm">Baños</p>
                         <p class="font-semibold text-gray-900">{{ propiedad.banos }}</p>
                     </div>
@@ -120,22 +120,22 @@
                     <div class="flex flex-wrap gap-2">
                         {% if propiedad.amoblado %}
                         <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-couch mr-1"></i> Amoblado
+                            {% icono "amoblado" clase="mr-1" %} Amoblado
                         </span>
                         {% endif %}
                         {% if propiedad.estacionamiento %}
                         <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-car mr-1"></i> Estacionamiento
+                            {% icono "estacionamiento" clase="mr-1" %} Estacionamiento
                         </span>
                         {% endif %}
                         {% if propiedad.mascotas %}
                         <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-paw mr-1"></i> Acepta mascotas
+                            {% icono "mascotas" clase="mr-1" %} Acepta mascotas
                         </span>
                         {% endif %}
                         {% if propiedad.incluye_expensas %}
                         <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">
-                            <i class="fas fa-file-invoice-dollar mr-1"></i> Incluye expensas
+                            {% icono "expensas" clase="mr-1" %} Incluye expensas
                         </span>
                         {% endif %}
                         <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">
@@ -207,7 +207,7 @@
             <div class="lg:col-span-1">
                 <div class="bg-white border-2 border-gray-200 rounded-xl p-6 sticky top-4">
                     <div class="text-4xl font-bold text-gray-900 mb-4">
-                        ${{ propiedad.precio|floatformat:0 }}<span class="text-lg text-gray-600">/mes</span>
+                        {{ propiedad.get_moneda_simbolo }}{{ propiedad.precio|floatformat:0 }}<span class="text-lg text-gray-600">/mes</span>
                     </div>
                     
                     <!-- Propietario -->
@@ -299,7 +299,7 @@
                     </a>
                     <div class="p-4">
                         <div class="text-2xl font-bold text-gray-900 mb-2">
-                            ${{ similar.precio|floatformat:0 }}
+                            {{ similar.get_moneda_simbolo }}{{ similar.precio|floatformat:0 }}
                         </div>
                         <a href="{% url 'propiedades:detalle' similar.pk %}">
                             <h4 class="text-lg font-semibold text-gray-800 mb-2 hover:text-yellow-600 transition">

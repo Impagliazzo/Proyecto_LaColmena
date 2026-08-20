@@ -4,90 +4,157 @@
 
 {% block content %}
 <div class="{% if request.GET.especial_estudiantes %}py-8{% else %}bg-gray-50 min-h-screen py-8{% endif %}" {% if request.GET.especial_estudiantes %}style="background: linear-gradient(180deg, #e0e7ff 0%, #c7d2fe 40%, #a78bfa 80%, #8b5cf6 100%); min-height: 100vh;"{% endif %}>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Filtros -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <form method="GET" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-                    <div>
-                        {{ form.busqueda }}
-                    </div>
-                    <div>
-                        {{ form.tipo }}
-                    </div>
-                    <div>
-                        {{ form.ciudad }}
-                    </div>
-                    <div>
+        <div class="bg-white rounded-lg shadow-md p-5 mb-8">
+            <form method="GET" class="flex flex-nowrap items-end gap-x-2 overflow-x-auto pb-1" id="form-busqueda-principal">
+                <div class="campo-busqueda-principal flex-1 min-w-[220px]">
+                    <label for="id_busqueda" class="block text-xs font-medium text-gray-500 mb-1.5">Ubicación</label>
+                    <input type="text" name="busqueda" id="id_busqueda"
+                           value="{{ request.GET.busqueda }}"
+                           placeholder="Buscar por ubicación, barrio o zona"
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div class="campo-busqueda-principal w-[150px] flex-shrink-0">
+                    <label for="{{ form.operacion.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Operación</label>
+                    {{ form.operacion }}
+                </div>
+                <div class="campo-busqueda-principal w-[190px] flex-shrink-0">
+                    <label for="{{ form.tipo.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Tipo de propiedad</label>
+                    {{ form.tipo }}
+                </div>
+                <div class="campo-busqueda-principal w-[210px] flex-shrink-0">
+                    <label for="{{ form.provincia.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Provincia</label>
+                    {{ form.provincia }}
+                </div>
+                <div class="campo-busqueda-principal w-[140px] flex-shrink-0">
+                    <label for="{{ form.ciudad.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Ciudad</label>
+                    {{ form.ciudad }}
+                </div>
+                <div class="campo-busqueda-principal w-[140px] flex-shrink-0">
+                    <label for="{{ form.distrito.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Barrio / Distrito</label>
+                    {{ form.distrito }}
+                </div>
+                <div class="campo-busqueda-principal w-[130px] flex-shrink-0">
+                    <label for="{{ form.moneda.id_for_label }}" class="block text-xs font-medium text-gray-500 mb-1.5">Moneda</label>
+                    {{ form.moneda }}
+                </div>
+                <div class="campo-busqueda-principal w-[200px] flex-shrink-0">
+                    <label class="block text-xs font-medium text-gray-500 mb-1.5">Precio</label>
+                    <div class="flex items-center gap-1">
                         {{ form.precio_min }}
-                    </div>
-                    <div>
+                        <span class="text-gray-300">-</span>
                         {{ form.precio_max }}
                     </div>
-                    <div>
-                        <button type="submit" 
-                                class="w-full {% if request.GET.especial_estudiantes %}bg-purple-600 hover:bg-purple-700{% else %}bg-yellow-500 hover:bg-yellow-600{% endif %} text-white font-semibold py-2 px-8 rounded-lg transition">
-                            <i class="fas fa-search mr-2"></i> Buscar
-                        </button>
-                    </div>
+                </div>
+                <div class="flex gap-2 flex-shrink-0">
+                    <button type="submit"
+                            class="btn-busqueda-principal flex items-center justify-center {% if request.GET.especial_estudiantes %}bg-purple-600 hover:bg-purple-700{% else %}bg-yellow-500 hover:bg-yellow-600{% endif %} text-white font-semibold px-5 rounded-lg transition whitespace-nowrap">
+                        <i class="fas fa-search mr-2"></i> Buscar
+                    </button>
+                    <a href="{% url 'propiedades:listado' %}"
+                       title="Restablece toda la búsqueda: ubicación, operación, tipo, moneda, precios y filtros avanzados"
+                       class="btn-busqueda-principal flex items-center justify-center bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold px-4 rounded-lg transition whitespace-nowrap">
+                        Limpiar
+                    </a>
                 </div>
             </form>
         </div>
-        
-        <!-- Filtros rápidos por tipo -->
-        {% if not request.GET.especial_estudiantes %}
-        <div class="flex overflow-x-auto space-x-4 mb-8 pb-2">
-            <a href="{% url 'propiedades:listado' %}" 
-               class="flex-shrink-0 px-6 py-3 {% if not request.GET.tipo %}bg-yellow-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                Todas
-            </a>
-            <a href="{% url 'propiedades:listado' %}?tipo=departamento" 
-               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'departamento' %}bg-blue-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                Departamentos
-            </a>
-            <a href="{% url 'propiedades:listado' %}?tipo=casa" 
-               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'casa' %}bg-green-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                Casas
-            </a>
-            <a href="{% url 'propiedades:listado' %}?tipo=cuarto" 
-               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'cuarto' %}bg-purple-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                Cuartos
-            </a>
-            <a href="{% url 'propiedades:listado' %}?tipo=local" 
-               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'local' %}bg-pink-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                Locales
-            </a>
-            <a href="{% url 'propiedades:listado' %}?tipo=oficina" 
-               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'oficina' %}bg-orange-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                Oficinas
-            </a>
-            <a href="{% url 'propiedades:listado' %}?tipo=terreno" 
-               class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'terreno' %}bg-yellow-600 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
-                Terrenos
-            </a>
-        </div>
-        {% endif %}
-        
-        <!-- Filtros adicionales -->
-        <div class="mb-6 flex items-center justify-between">
-            <div>
-                <p class="{% if request.GET.especial_estudiantes %}text-gray-800{% else %}text-gray-600{% endif %}">
-                    Se encontraron <span class="font-semibold">{{ page_obj.paginator.count }}</span> propiedades
-                </p>
+
+        <style>
+            #form-busqueda-principal .campo-busqueda-principal input[type="text"],
+            #form-busqueda-principal .campo-busqueda-principal input[type="number"],
+            #form-busqueda-principal .campo-busqueda-principal select,
+            #form-busqueda-principal .btn-busqueda-principal {
+                height: 42px;
+                box-sizing: border-box;
+            }
+        </style>
+
+        <!-- Filtros rápidos por tipo + orden + vista -->
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-3">
+            {% if not request.GET.especial_estudiantes %}
+            <div class="flex overflow-x-auto space-x-4 pb-2 flex-1 min-w-0">
+                <a href="{% url 'propiedades:listado' %}"
+                   class="flex-shrink-0 px-6 py-3 {% if not request.GET.tipo %}bg-yellow-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    Todas
+                </a>
+                <a href="{% url 'propiedades:listado' %}?tipo=departamento"
+                   class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'departamento' %}bg-blue-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    Departamentos
+                </a>
+                <a href="{% url 'propiedades:listado' %}?tipo=casa"
+                   class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'casa' %}bg-green-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    Casas
+                </a>
+                <a href="{% url 'propiedades:listado' %}?tipo=cuarto"
+                   class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'cuarto' %}bg-purple-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    Cuartos
+                </a>
+                <a href="{% url 'propiedades:listado' %}?tipo=local"
+                   class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'local' %}bg-pink-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    Locales
+                </a>
+                <a href="{% url 'propiedades:listado' %}?tipo=oficina"
+                   class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'oficina' %}bg-orange-500 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    Oficinas
+                </a>
+                <a href="{% url 'propiedades:listado' %}?tipo=terreno"
+                   class="flex-shrink-0 px-6 py-3 {% if request.GET.tipo == 'terreno' %}bg-yellow-600 text-white{% else %}bg-white hover:bg-gray-100{% endif %} rounded-lg shadow-md transition text-center font-medium">
+                    Terrenos
+                </a>
             </div>
-            <div>
-                <button onclick="toggleFiltros()" class="{% if request.GET.especial_estudiantes %}bg-purple-600 hover:bg-purple-700{% else %}bg-yellow-500 hover:bg-yellow-600{% endif %} text-white font-semibold py-2 px-6 rounded-lg transition flex items-center space-x-2">
+            {% endif %}
+
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <label for="select-orden" class="text-sm text-gray-600 whitespace-nowrap">Ordenar por:</label>
+                    <select id="select-orden" onchange="cambiarOrden(this.value)"
+                            class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500">
+                        <option value="recientes" {% if orden == 'recientes' %}selected{% endif %}>Más recientes</option>
+                        <option value="antiguos" {% if orden == 'antiguos' %}selected{% endif %}>Más antiguos</option>
+                    </select>
+                </div>
+                <div class="flex items-center border border-gray-300 rounded-lg overflow-hidden flex-shrink-0">
+                    <button type="button" id="btn-vista-grid" onclick="cambiarVista('grid')"
+                            class="px-3 py-2 bg-yellow-500 text-white transition" title="Ver en cuadrícula">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button type="button" id="btn-vista-lista" onclick="cambiarVista('lista')"
+                            class="px-3 py-2 bg-white text-gray-600 hover:bg-gray-100 transition" title="Ver en lista">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+                <button onclick="toggleFiltros()" class="{% if request.GET.especial_estudiantes %}bg-purple-600 hover:bg-purple-700{% else %}bg-yellow-500 hover:bg-yellow-600{% endif %} text-white font-semibold py-2 px-6 rounded-lg transition flex items-center space-x-2 whitespace-nowrap">
                     <i class="fas fa-filter"></i>
                     <span>Filtros</span>
                 </button>
             </div>
         </div>
-        
+
+        <p class="{% if request.GET.especial_estudiantes %}text-gray-800{% else %}text-gray-600{% endif %} mb-6">
+            Se encontraron <span class="font-semibold">{{ page_obj.paginator.count }}</span> propiedades
+        </p>
+
         <!-- Panel de filtros desplegable -->
         <div id="panel-filtros" class="hidden bg-white rounded-lg shadow-lg p-6 mb-6">
             <form method="GET" id="form-filtros-adicionales">
                 {% if request.GET.especial_estudiantes %}
                 <input type="hidden" name="especial_estudiantes" value="1">
+                {% endif %}
+                <!-- Los filtros de la barra superior viajan como campos ocultos para
+                     que "Aplicar filtros" los combine en vez de descartarlos. -->
+                <input type="hidden" name="busqueda" value="{{ request.GET.busqueda }}">
+                <input type="hidden" name="tipo" value="{{ request.GET.tipo }}">
+                <input type="hidden" name="operacion" value="{{ request.GET.operacion }}">
+                <input type="hidden" name="provincia" value="{{ request.GET.provincia }}">
+                <input type="hidden" name="ciudad" value="{{ request.GET.ciudad }}">
+                <input type="hidden" name="distrito" value="{{ request.GET.distrito }}">
+                <input type="hidden" name="moneda" value="{{ request.GET.moneda }}">
+                <input type="hidden" name="precio_min" value="{{ request.GET.precio_min }}">
+                <input type="hidden" name="precio_max" value="{{ request.GET.precio_max }}">
+                {% if request.GET.categoria %}
+                <input type="hidden" name="categoria" value="{{ request.GET.categoria }}">
                 {% endif %}
                 
                 <!-- Espacios -->
@@ -95,7 +162,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                     <div>
                         <label class="block text-sm text-gray-600 mb-2">
-                            <i class="fas fa-bed text-gray-400 mr-1"></i> Habitaciones
+                            {% icono "dormitorios" clase="mr-1" %} Habitaciones
                         </label>
                         <select name="habitaciones" id="habitaciones" 
                                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg {% if request.GET.especial_estudiantes %}focus:border-purple-500 focus:ring-1 focus:ring-purple-500{% else %}focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500{% endif %} transition">
@@ -109,7 +176,7 @@
                     
                     <div>
                         <label class="block text-sm text-gray-600 mb-2">
-                            <i class="fas fa-bath text-gray-400 mr-1"></i> Baños
+                            {% icono "banos" clase="mr-1" %} Baños
                         </label>
                         <select name="banos" id="banos" 
                                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg {% if request.GET.especial_estudiantes %}focus:border-purple-500 focus:ring-1 focus:ring-purple-500{% else %}focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500{% endif %} transition">
@@ -123,7 +190,7 @@
                     
                     <div>
                         <label class="block text-sm text-gray-600 mb-2">
-                            <i class="fas fa-ruler-combined text-gray-400 mr-1"></i> Área mínima (m²)
+                            {% icono "superficie" clase="mr-1" %} Área mínima (m²)
                         </label>
                         <input type="number" name="area_min" id="area_min" value="{{ request.GET.area_min }}"
                                placeholder="50"
@@ -132,7 +199,7 @@
                     
                     <div>
                         <label class="block text-sm text-gray-600 mb-2">
-                            <i class="fas fa-ruler-combined text-gray-400 mr-1"></i> Área máxima (m²)
+                            {% icono "superficie" clase="mr-1" %} Área máxima (m²)
                         </label>
                         <input type="number" name="area_max" id="area_max" value="{{ request.GET.area_max }}"
                                placeholder="200"
@@ -145,7 +212,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="amoblado" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="La propiedad incluye muebles">
-                            <i class="fas fa-couch text-gray-400 mr-2 text-sm"></i> Amoblado
+                            {% icono "amoblado" clase="mr-2 text-sm" %} Amoblado
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="amoblado" id="amoblado" value="1" {% if request.GET.amoblado %}checked{% endif %} class="sr-only peer">
@@ -155,7 +222,7 @@
                     
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="mascotas" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Se permiten mascotas en la propiedad">
-                            <i class="fas fa-paw text-gray-400 mr-2 text-sm"></i> Mascotas
+                            {% icono "mascotas" clase="mr-2 text-sm" %} Mascotas
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="mascotas" id="mascotas" value="1" {% if request.GET.mascotas %}checked{% endif %} class="sr-only peer">
@@ -165,7 +232,7 @@
                     
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="estacionamiento" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Incluye cochera o espacio para estacionar">
-                            <i class="fas fa-car text-gray-400 mr-2 text-sm"></i> Estacionamiento
+                            {% icono "estacionamiento" clase="mr-2 text-sm" %} Estacionamiento
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="estacionamiento" id="estacionamiento" value="1" {% if request.GET.estacionamiento %}checked{% endif %} class="sr-only peer">
@@ -175,7 +242,7 @@
                     
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="incluye_expensas" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="El precio incluye los gastos comunes del edificio">
-                            <i class="fas fa-receipt text-gray-400 mr-2 text-sm"></i> Inc. expensas
+                            {% icono "expensas" clase="mr-2 text-sm" %} Inc. expensas
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="incluye_expensas" id="incluye_expensas" value="1" {% if request.GET.incluye_expensas %}checked{% endif %} class="sr-only peer">
@@ -189,7 +256,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="balcon" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Tiene balcón o terraza">
-                            <i class="fas fa-door-open text-gray-400 mr-2 text-sm"></i> Balcón
+                            {% icono "balcon" clase="mr-2 text-sm" %} Balcón
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="balcon" id="balcon" value="1" {% if request.GET.balcon %}checked{% endif %} class="sr-only peer">
@@ -199,7 +266,7 @@
                     
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="patio" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Tiene patio o jardín">
-                            <i class="fas fa-tree text-gray-400 mr-2 text-sm"></i> Patio
+                            {% icono "patio" clase="mr-2 text-sm" %} Patio
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="patio" id="patio" value="1" {% if request.GET.patio %}checked{% endif %} class="sr-only peer">
@@ -209,7 +276,7 @@
                     
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="parrilla" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Cuenta con parrilla o asador">
-                            <i class="fas fa-fire text-gray-400 mr-2 text-sm"></i> Parrilla
+                            {% icono "parrilla" clase="mr-2 text-sm" %} Parrilla
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="parrilla" id="parrilla" value="1" {% if request.GET.parrilla %}checked{% endif %} class="sr-only peer">
@@ -219,7 +286,7 @@
                     
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="aire_acondicionado" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Cuenta con aire acondicionado">
-                            <i class="fas fa-snowflake text-gray-400 mr-2 text-sm"></i> Aire acond.
+                            {% icono "aire_acondicionado" clase="mr-2 text-sm" %} Aire acond.
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="aire_acondicionado" id="aire_acondicionado" value="1" {% if request.GET.aire_acondicionado %}checked{% endif %} class="sr-only peer">
@@ -229,7 +296,7 @@
                     
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="calefaccion" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Cuenta con sistema de calefacción">
-                            <i class="fas fa-temperature-high text-gray-400 mr-2 text-sm"></i> Calefacción
+                            {% icono "calefaccion" clase="mr-2 text-sm" %} Calefacción
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="calefaccion" id="calefaccion" value="1" {% if request.GET.calefaccion %}checked{% endif %} class="sr-only peer">
@@ -239,44 +306,134 @@
                     
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="ascensor" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="El edificio tiene ascensor">
-                            <i class="fas fa-elevator text-gray-400 mr-2 text-sm"></i> Ascensor
+                            {% icono "ascensor" clase="mr-2 text-sm" %} Ascensor
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="ascensor" id="ascensor" value="1" {% if request.GET.ascensor %}checked{% endif %} class="sr-only peer">
                             <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
                         </label>
                     </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="terraza" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Tiene terraza">
+                            {% icono "terraza" clase="mr-2 text-sm" %} Terraza
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="terraza" id="terraza" value="1" {% if request.GET.terraza %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="wifi" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Incluye conexión Wi-Fi">
+                            {% icono "wifi" clase="mr-2 text-sm" %} Wi-Fi
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="wifi" id="wifi" value="1" {% if request.GET.wifi %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="lavanderia" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Tiene lavadero o lavandería">
+                            {% icono "lavanderia" clase="mr-2 text-sm" %} Lavandería
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="lavanderia" id="lavanderia" value="1" {% if request.GET.lavanderia %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
                 </div>
-                
+
                 <!-- Edificio -->
                 <h3 class="text-sm font-semibold text-gray-700 mb-3 uppercase tracking-wide">Edificio</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="seguridad" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Tiene seguridad privada o portero">
-                            <i class="fas fa-shield-alt text-gray-400 mr-2 text-sm"></i> Seguridad
+                            {% icono "seguridad" clase="mr-2 text-sm" %} Seguridad
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="seguridad" id="seguridad" value="1" {% if request.GET.seguridad %}checked{% endif %} class="sr-only peer">
                             <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
                         </label>
                     </div>
-                    
-                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
-                        <label for="amenities" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Amenities: pileta, gimnasio, salón de usos múltiples, etc.">
-                            <i class="fas fa-swimming-pool text-gray-400 mr-2 text-sm"></i> Amenities
-                        </label>
-                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
-                            <input type="checkbox" name="amenities" id="amenities" value="1" {% if request.GET.amenities %}checked{% endif %} class="sr-only peer">
-                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
-                        </label>
-                    </div>
-                    
+
                     <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
                         <label for="accesibilidad" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="Apto para personas con movilidad reducida">
-                            <i class="fas fa-wheelchair text-gray-400 mr-2 text-sm"></i> Accesibilidad
+                            {% icono "accesibilidad" clase="mr-2 text-sm" %} Accesibilidad
                         </label>
                         <label class="relative inline-flex items-center cursor-pointer ml-auto">
                             <input type="checkbox" name="accesibilidad" id="accesibilidad" value="1" {% if request.GET.accesibilidad %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="piscina" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="El edificio cuenta con piscina">
+                            {% icono "piscina" clase="mr-2 text-sm" %} Piscina
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="piscina" id="piscina" value="1" {% if request.GET.piscina %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="gimnasio" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="El edificio cuenta con gimnasio">
+                            {% icono "gimnasio" clase="mr-2 text-sm" %} Gimnasio
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="gimnasio" id="gimnasio" value="1" {% if request.GET.gimnasio %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="sauna" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="El edificio cuenta con sauna">
+                            {% icono "sauna" clase="mr-2 text-sm" %} Sauna
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="sauna" id="sauna" value="1" {% if request.GET.sauna %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="jacuzzi" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="El edificio cuenta con jacuzzi">
+                            {% icono "jacuzzi" clase="mr-2 text-sm" %} Jacuzzi
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="jacuzzi" id="jacuzzi" value="1" {% if request.GET.jacuzzi %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="quincho" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="El edificio cuenta con quincho">
+                            {% icono "quincho" clase="mr-2 text-sm" %} Quincho
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="quincho" id="quincho" value="1" {% if request.GET.quincho %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="solarium" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="El edificio cuenta con solarium">
+                            {% icono "solarium" clase="mr-2 text-sm" %} Solarium
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="solarium" id="solarium" value="1" {% if request.GET.solarium %}checked{% endif %} class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center rounded-lg px-3 py-2 transition-colors duration-150 {% if request.GET.especial_estudiantes %}hover:bg-purple-100{% else %}hover:bg-yellow-100{% endif %}">
+                        <label for="area_deportiva" class="text-sm text-gray-700 cursor-pointer flex items-center mr-3" title="El edificio cuenta con área o cancha deportiva">
+                            {% icono "area_deportiva" clase="mr-2 text-sm" %} Área deportiva
+                        </label>
+                        <label class="relative inline-flex items-center cursor-pointer ml-auto">
+                            <input type="checkbox" name="area_deportiva" id="area_deportiva" value="1" {% if request.GET.area_deportiva %}checked{% endif %} class="sr-only peer">
                             <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 {% if request.GET.especial_estudiantes %}peer-focus:ring-purple-300{% else %}peer-focus:ring-yellow-300{% endif %} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all {% if request.GET.especial_estudiantes %}peer-checked:bg-purple-600{% else %}peer-checked:bg-yellow-500{% endif %}"></div>
                         </label>
                     </div>
@@ -313,21 +470,27 @@
                     </div>
                 </details>
                 
-                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-                    <button type="button" onclick="limpiarFiltros()" 
-                            class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 px-5 rounded-lg transition">
-                        <i class="fas fa-undo mr-1.5 text-xs"></i>Limpiar
-                    </button>
-                    <button type="submit" 
-                            class="{% if request.GET.especial_estudiantes %}bg-purple-600 hover:bg-purple-700{% else %}bg-yellow-500 hover:bg-yellow-600{% endif %} text-white text-sm font-medium py-2 px-5 rounded-lg transition">
-                        <i class="fas fa-check mr-1.5 text-xs"></i>Aplicar filtros
-                    </button>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <p class="text-xs text-gray-400">
+                        Solo restablece estos filtros avanzados. La búsqueda de arriba (ubicación, operación, tipo, moneda y precio) no se modifica.
+                    </p>
+                    <div class="flex space-x-3 flex-shrink-0">
+                        <button type="button" onclick="limpiarFiltros()"
+                                title="Restablece únicamente los filtros avanzados de este panel"
+                                class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 px-5 rounded-lg transition">
+                            <i class="fas fa-undo mr-1.5 text-xs"></i>Limpiar filtros avanzados
+                        </button>
+                        <button type="submit"
+                                class="{% if request.GET.especial_estudiantes %}bg-purple-600 hover:bg-purple-700{% else %}bg-yellow-500 hover:bg-yellow-600{% endif %} text-white text-sm font-medium py-2 px-5 rounded-lg transition">
+                            <i class="fas fa-check mr-1.5 text-xs"></i>Aplicar filtros
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
         
         <!-- Grid de Propiedades -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div id="grid-propiedades" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {% for propiedad in page_obj %}
             <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1">
                 <div class="relative">
@@ -355,7 +518,7 @@
                 <div class="p-5">
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="text-2xl font-bold text-gray-900">
-                            ${{ propiedad.precio|floatformat:0 }}
+                            {{ propiedad.get_moneda_simbolo }}{{ propiedad.precio|floatformat:0 }}
                         </h3>
                         {% if user.is_authenticated %}
                         <a href="{% url 'propiedades:toggle_favorito' propiedad.pk %}" 
@@ -378,30 +541,30 @@
                     
                     <div class="flex items-center flex-wrap gap-3 text-gray-600 text-sm">
                         <span class="flex items-center">
-                            <i class="fas fa-ruler-combined text-yellow-500 mr-1"></i>
+                            {% icono "superficie" clase="mr-1" %}
                             {{ propiedad.area }}m²
                         </span>
                         <span class="flex items-center">
-                            <i class="fas fa-bed text-yellow-500 mr-1"></i>
+                            {% icono "dormitorios" clase="mr-1" %}
                             {{ propiedad.habitaciones }}
                         </span>
                         <span class="flex items-center">
-                            <i class="fas fa-bath text-yellow-500 mr-1"></i>
+                            {% icono "banos" clase="mr-1" %}
                             {{ propiedad.banos }}
                         </span>
                         {% if propiedad.mascotas %}
                         <span class="flex items-center" title="Acepta mascotas">
-                            <i class="fas fa-paw text-purple-800 mr-1"></i>
+                            {% icono "mascotas" clase="mr-1" %}
                         </span>
                         {% endif %}
                         {% if propiedad.amoblado %}
                         <span class="flex items-center" title="Amoblado">
-                            <i class="fas fa-couch text-green-800 mr-1"></i>
+                            {% icono "amoblado" clase="mr-1" %}
                         </span>
                         {% endif %}
                         {% if propiedad.estacionamiento %}
                         <span class="flex items-center" title="Tiene estacionamiento">
-                            <i class="fas fa-car text-blue-800 mr-1"></i>
+                            {% icono "estacionamiento" clase="mr-1" %}
                         </span>
                         {% endif %}
                     </div>
@@ -473,6 +636,34 @@ function limpiarFiltros() {
     
     const numbers = form.querySelectorAll('input[type="number"]');
     numbers.forEach(input => input.value = '');
+}
+
+function cambiarOrden(valor) {
+    const params = new URLSearchParams(window.location.search);
+    params.set('orden', valor);
+    window.location.search = params.toString();
+}
+
+function cambiarVista(vista) {
+    const grid = document.getElementById('grid-propiedades');
+    const btnGrid = document.getElementById('btn-vista-grid');
+    const btnLista = document.getElementById('btn-vista-lista');
+    const activo = ['bg-yellow-500', 'text-white'];
+    const inactivo = ['bg-white', 'text-gray-600', 'hover:bg-gray-100'];
+
+    if (vista === 'lista') {
+        grid.classList.remove('md:grid-cols-2', 'lg:grid-cols-3');
+        btnLista.classList.add(...activo);
+        btnLista.classList.remove(...inactivo);
+        btnGrid.classList.add(...inactivo);
+        btnGrid.classList.remove(...activo);
+    } else {
+        grid.classList.add('md:grid-cols-2', 'lg:grid-cols-3');
+        btnGrid.classList.add(...activo);
+        btnGrid.classList.remove(...inactivo);
+        btnLista.classList.add(...inactivo);
+        btnLista.classList.remove(...activo);
+    }
 }
 </script>
 

@@ -13,7 +13,7 @@ class ImagenPropiedadInline(admin.TabularInline):
 
 @admin.register(Propiedad)
 class PropiedadAdmin(admin.ModelAdmin):
-    list_display = ['titulo', 'propietario', 'tipo', 'precio', 'ciudad', 'estado', 'vistas', 'fecha_publicacion']
+    list_display = ['titulo', 'propietario', 'tipo', 'precio', 'moneda', 'ciudad', 'estado', 'vistas', 'fecha_publicacion']
     list_filter = ['estado', 'tipo', 'ciudad', 'destacada']
     search_fields = ['titulo', 'descripcion', 'ciudad', 'distrito']
     inlines = [ImagenPropiedadInline]

@@ -58,7 +58,7 @@ class ImagenPublicacionCompaneroInline(admin.TabularInline):
 
 @admin.register(PublicacionCompanero)
 class PublicacionCompaneroAdmin(admin.ModelAdmin):
-    list_display = ['titulo', 'usuario', 'ciudad', 'precio_mensual', 'estado', 'vistas', 'fecha_creacion']
+    list_display = ['titulo', 'usuario', 'ciudad', 'precio_mensual', 'moneda', 'estado', 'vistas', 'fecha_creacion']
     list_filter = ['estado', 'ciudad', 'preferencia_genero']
     search_fields = ['titulo', 'descripcion', 'usuario__username', 'ciudad', 'distrito']
     inlines = [ImagenPublicacionCompaneroInline]

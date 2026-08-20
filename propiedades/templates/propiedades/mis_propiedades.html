@@ -132,7 +132,7 @@
                                     </div>
                                     <div class="text-right">
                                         <p class="text-2xl font-bold text-gray-900">
-                                            ${{ propiedad.precio|floatformat:0 }}
+                                            {{ propiedad.get_moneda_simbolo }}{{ propiedad.precio|floatformat:0 }}
                                         </p>
                                         <p class="text-sm text-gray-600">/mes</p>
                                     </div>
@@ -254,7 +254,7 @@
                                         {% csrf_token %}
                                         {% if propiedad.especial_estudiantes %}
                                         <button type="submit" class="bg-purple-500 hover:bg-purple-600 text-white text-sm font-semibold py-2 px-4 rounded-lg transition">
-                                            <i class="fas fa-graduation-cap mr-1"></i>Estudiantes
+                                            {% icono "ideal_estudiantes" clase="mr-1" %}Estudiantes
                                         </button>
                                         <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
                                             <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">
@@ -264,7 +264,7 @@
                                         </div>
                                         {% else %}
                                         <button type="submit" class="bg-gray-300 hover:bg-gray-400 text-gray-700 text-sm font-semibold py-2 px-4 rounded-lg transition">
-                                            <i class="far fa-graduation-cap mr-1"></i>Estudiantes
+                                            {% icono "ideal_estudiantes" clase="mr-1" %}Estudiantes
                                         </button>
                                         <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block z-50">
                                             <div class="bg-gray-800 text-white text-xs rounded-lg py-2 px-3 whitespace-nowrap shadow-xl font-medium">

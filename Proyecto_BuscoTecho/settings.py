@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     # Apps del proyecto
+    'ubicaciones',
     'usuarios',
     'propiedades',
     'contactos',
@@ -68,6 +69,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+            ],
+            'builtins': [
+                'propiedades.templatetags.iconos',
             ],
         },
     },

@@ -385,7 +385,7 @@ class PublicacionCompaneroForm(forms.ModelForm):
             'titulo', 'descripcion', 'provincia', 'ciudad', 'distrito', 'direccion',
             'habitaciones_totales', 'habitaciones_disponibles', 'banos', 'amoblado',
             'balcon', 'cocina', 'wifi', 'lavarropas', 'aire_acondicionado', 'calefaccion',
-            'precio_mensual', 'expensas_incluidas', 'servicios_incluidos',
+            'moneda', 'precio_mensual', 'expensas_incluidas', 'servicios_incluidos',
             'preferencia_genero', 'acepta_mascotas', 'fumador_acepto',
             'fecha_disponibilidad'
         ]
@@ -397,10 +397,13 @@ class PublicacionCompaneroForm(forms.ModelForm):
                 'rows': 6,
                 'placeholder': 'Contanos sobre el departamento, la zona, y qué buscás en un compañero/a...'
             }),
-            'provincia': forms.TextInput(),
-            'ciudad': forms.TextInput(attrs={'placeholder': 'Ej: Ciudad de Buenos Aires'}),
-            'distrito': forms.TextInput(attrs={'placeholder': 'Ej: Palermo'}),
-            'direccion': forms.TextInput(attrs={'placeholder': 'Ej: Cerca de Av. Santa Fe y Av. Scalabrini Ortiz'}),
+            # El campo visible de provincia es un autocomplete de LaColmena
+            # (ver static/js/ubicacion.js); este input oculto guarda el id
+            # de ubicaciones.Provincia realmente seleccionado.
+            'provincia': forms.HiddenInput(),
+            'ciudad': forms.TextInput(attrs={'placeholder': 'Ej: Ciudad de Buenos Aires', 'autocomplete': 'off'}),
+            'distrito': forms.TextInput(attrs={'placeholder': 'Ej: Palermo', 'autocomplete': 'off'}),
+            'direccion': forms.TextInput(attrs={'placeholder': 'Ej: Cerca de Av. Santa Fe y Av. Scalabrini Ortiz', 'autocomplete': 'off'}),
             'fecha_disponibilidad': forms.DateInput(attrs={
                 'type': 'date',
                 'placeholder': 'Desde cuándo está disponible'
@@ -424,6 +427,7 @@ class PublicacionCompaneroForm(forms.ModelForm):
             'aire_acondicionado': 'Aire acondicionado',
             'calefaccion': 'Calefacción',
             'precio_mensual': 'Precio por persona',
+            'moneda': 'Moneda',
             'expensas_incluidas': 'Expensas incluidas',
             'servicios_incluidos': 'Servicios incluidos (luz, gas, agua, internet)',
             'preferencia_genero': 'Preferencia de género',
@@ -482,16 +486,21 @@ class PublicacionCompaneroForm(forms.ModelForm):
         return disponibles
     
     def clean_precio_mensual(self):
-        """Validar que el precio sea razonable"""
+        """Validar que el precio sea razonable (los límites dependen de la moneda)"""
         precio = self.cleaned_data.get('precio_mensual')
-        
+
         if not precio:
             raise forms.ValidationError('El precio mensual es obligatorio.')
-        
-        if precio < 1000:
+
+        if self.cleaned_data.get('moneda') == 'USD':
+            minimo, maximo = 10, 5000
+        else:
+            minimo, maximo = 1000, 1000000
+
+        if precio < minimo:
             raise forms.ValidationError('El precio parece demasiado bajo. Verificá que sea correcto.')
-        
-        if precio > 1000000:
+
+        if precio > maximo:
             raise forms.ValidationError('El precio parece demasiado alto. Verificá que sea correcto.')
-        
+
         return precio

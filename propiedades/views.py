@@ -127,22 +127,35 @@ def listado_propiedades(request):
             propiedades = propiedades.filter(
                 Q(titulo__icontains=busqueda) |
                 Q(descripcion__icontains=busqueda) |
+                Q(provincia__nombre__icontains=busqueda) |
                 Q(ciudad__icontains=busqueda) |
                 Q(distrito__icontains=busqueda)
             )
-        
+
         tipo = form.cleaned_data.get('tipo')
         if tipo:
             propiedades = propiedades.filter(tipo=tipo)
-        
+
+        provincia = form.cleaned_data.get('provincia')
+        if provincia:
+            propiedades = propiedades.filter(provincia=provincia)
+
         ciudad = form.cleaned_data.get('ciudad')
         if ciudad:
             propiedades = propiedades.filter(ciudad__icontains=ciudad)
-        
+
+        distrito = form.cleaned_data.get('distrito')
+        if distrito:
+            propiedades = propiedades.filter(distrito__icontains=distrito)
+
+        moneda = form.cleaned_data.get('moneda')
+        if moneda:
+            propiedades = propiedades.filter(moneda=moneda)
+
         precio_min = form.cleaned_data.get('precio_min')
         if precio_min:
             propiedades = propiedades.filter(precio__gte=precio_min)
-        
+
         precio_max = form.cleaned_data.get('precio_max')
         if precio_max:
             propiedades = propiedades.filter(precio__lte=precio_max)
@@ -218,17 +231,52 @@ def listado_propiedades(request):
     
     if request.GET.get('ascensor'):
         propiedades = propiedades.filter(ascensor=True)
-    
+
+    if request.GET.get('terraza'):
+        propiedades = propiedades.filter(terraza=True)
+
+    if request.GET.get('wifi'):
+        propiedades = propiedades.filter(wifi=True)
+
+    if request.GET.get('lavanderia'):
+        propiedades = propiedades.filter(lavanderia=True)
+
     # Filtros de edificio
     if request.GET.get('seguridad'):
         propiedades = propiedades.filter(seguridad=True)
-    
-    if request.GET.get('amenities'):
-        propiedades = propiedades.filter(amenities=True)
-    
+
     if request.GET.get('accesibilidad'):
         propiedades = propiedades.filter(accesibilidad=True)
-    
+
+    if request.GET.get('piscina'):
+        propiedades = propiedades.filter(piscina=True)
+
+    if request.GET.get('gimnasio'):
+        propiedades = propiedades.filter(gimnasio=True)
+
+    if request.GET.get('sauna'):
+        propiedades = propiedades.filter(sauna=True)
+
+    if request.GET.get('jacuzzi'):
+        propiedades = propiedades.filter(jacuzzi=True)
+
+    if request.GET.get('quincho'):
+        propiedades = propiedades.filter(quincho=True)
+
+    if request.GET.get('solarium'):
+        propiedades = propiedades.filter(solarium=True)
+
+    if request.GET.get('area_deportiva'):
+        propiedades = propiedades.filter(area_deportiva=True)
+
+    # Orden
+    orden = request.GET.get('orden', 'recientes')
+    if orden == 'antiguos':
+        propiedades = propiedades.order_by('fecha_publicacion')
+    else:
+        orden = 'recientes'
+        propiedades = propiedades.order_by('-fecha_publicacion')
+
     # Paginación
     paginator = Paginator(propiedades, 12)
     page_number = request.GET.get('page')
@@ -238,6 +286,7 @@ def listado_propiedades(request):
         'page_obj': page_obj,
         'form': form,
         'categorias': Categoria.objects.all(),
+        'orden': orden,
     }
     return render(request, 'propiedades/listado.html', context)
 
@@ -1036,12 +1085,22 @@ def buscar_companero(request):
                 publicaciones = publicaciones.filter(
                     Q(titulo__icontains=busqueda) |
                     Q(descripcion__icontains=busqueda) |
+                    Q(provincia__nombre__icontains=busqueda) |
                     Q(ciudad__icontains=busqueda) |
                     Q(distrito__icontains=busqueda)
                 )
+            provincia = form.cleaned_data.get('provincia')
+            if provincia:
+                publicaciones = publicaciones.filter(provincia=provincia)
             ciudad = form.cleaned_data.get('ciudad')
             if ciudad:
                 publicaciones = publicaciones.filter(ciudad__icontains=ciudad)
+            distrito = form.cleaned_data.get('distrito')
+            if distrito:
+                publicaciones = publicaciones.filter(distrito__icontains=distrito)
+            moneda = form.cleaned_data.get('moneda')
+            if moneda:
+                publicaciones = publicaciones.filter(moneda=moneda)
             precio_min = form.cleaned_data.get('precio_min')
             if precio_min:
                 publicaciones = publicaciones.filter(precio_mensual__gte=precio_min)
@@ -1270,11 +1329,27 @@ def sugerencias_ubicacion(request):
     
     # Filtrar solo propiedades activas
     propiedades_activas = Propiedad.objects.filter(estado='activa')
-    
+
     sugerencias = []
     ciudades_agregadas = set()
     distritos_agregados = set()
-    
+
+    # Buscar provincias con propiedades activas
+    from ubicaciones.models import Provincia
+    provincias = Provincia.objects.filter(
+        nombre__icontains=query,
+        propiedades__estado='activa'
+    ).annotate(count=Count('propiedades', filter=Q(propiedades__estado='activa'))).distinct()[:5]
+
+    for provincia in provincias:
+        sugerencias.append({
+            'texto': provincia.nombre,
+            'texto_completo': provincia.nombre,
+            'tipo': 'provincia',
+            'count': provincia.count,
+            'icono': 'fa-map'
+        })
+
     # Buscar ciudades con propiedades activas
     ciudades = propiedades_activas.filter(
         ciudad__icontains=query

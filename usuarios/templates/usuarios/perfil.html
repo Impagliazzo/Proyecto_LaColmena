@@ -1095,7 +1095,7 @@
                                     </div>
                                     <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Precio/mes</p>
                                 </div>
-                                <p class="text-4xl font-bold text-gray-900 mb-1">${{ usuario.publicacion_companero.precio_mensual|floatformat:0 }}</p>
+                                <p class="text-4xl font-bold text-gray-900 mb-1">{{ usuario.publicacion_companero.get_moneda_simbolo }}{{ usuario.publicacion_companero.precio_mensual|floatformat:0 }}</p>
                                 <p class="text-sm text-gray-500">por persona</p>
                             </div>
                             
@@ -1103,7 +1103,7 @@
                             <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:border-gray-300 transition-all hover:shadow-lg">
                                 <div class="flex items-center gap-3 mb-5">
                                     <div class="w-11 h-11 rounded-xl bg-blue-500 flex items-center justify-center">
-                                        <span class="text-2xl">🛏️</span>
+                                        {% icono "dormitorios" clase="text-2xl" %}
                                     </div>
                                     <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Habitaciones</p>
                                 </div>
@@ -1115,7 +1115,7 @@
                             <div class="bg-white rounded-2xl p-6 border border-gray-200 hover:border-gray-300 transition-all hover:shadow-lg">
                                 <div class="flex items-center gap-3 mb-5">
                                     <div class="w-11 h-11 rounded-xl bg-purple-500 flex items-center justify-center">
-                                        <span class="text-2xl">🚿</span>
+                                        {% icono "banos" clase="text-2xl" %}
                                     </div>
                                     <p class="text-xs font-bold text-gray-500 uppercase tracking-wider">Baños</p>
                                 </div>
@@ -1138,17 +1138,13 @@
                                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                                 {% if usuario.publicacion_companero.amoblado %}
                                 <div class="flex items-center gap-2 text-gray-700">
-                                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
+                                    {% icono "amoblado" clase="w-5 h-5" %}
                                     <span class="text-sm">Amoblado</span>
                                 </div>
                                 {% endif %}
                                 {% if usuario.publicacion_companero.wifi %}
                                 <div class="flex items-center gap-2 text-gray-700">
-                                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
+                                    {% icono "wifi" clase="w-5 h-5" %}
                                     <span class="text-sm">WiFi</span>
                                 </div>
                                 {% endif %}
@@ -1162,33 +1158,25 @@
                                 {% endif %}
                                 {% if usuario.publicacion_companero.balcon %}
                                 <div class="flex items-center gap-2 text-gray-700">
-                                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
+                                    {% icono "balcon" clase="w-5 h-5" %}
                                     <span class="text-sm">Balcón/Terraza</span>
                                 </div>
                                 {% endif %}
                                 {% if usuario.publicacion_companero.lavarropas %}
                                 <div class="flex items-center gap-2 text-gray-700">
-                                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
+                                    {% icono "lavanderia" clase="w-5 h-5" %}
                                     <span class="text-sm">Lavarropas</span>
                                 </div>
                                 {% endif %}
                                 {% if usuario.publicacion_companero.aire_acondicionado %}
                                 <div class="flex items-center gap-2 text-gray-700">
-                                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
+                                    {% icono "aire_acondicionado" clase="w-5 h-5" %}
                                     <span class="text-sm">Aire acondicionado</span>
                                 </div>
                                 {% endif %}
                                 {% if usuario.publicacion_companero.calefaccion %}
                                 <div class="flex items-center gap-2 text-gray-700">
-                                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
+                                    {% icono "calefaccion" clase="w-5 h-5" %}
                                     <span class="text-sm">Calefacción</span>
                                 </div>
                                 {% endif %}
@@ -1388,33 +1376,35 @@
                                     </div>
 
                                     <!-- Provincia -->
-                                    <div>
+                                    <div class="relative">
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                                             Provincia *
                                         </label>
-                                        <input type="text" name="provincia" required value="Buenos Aires"
+                                        <input type="text" id="provincia-busqueda-inline" required
                                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                                               placeholder="Ej: Buenos Aires">
+                                               placeholder="Escribí para buscar tu provincia..."
+                                               autocomplete="off">
+                                        <input type="hidden" name="provincia" id="id_provincia_inline">
                                     </div>
 
                                     <!-- Ciudad -->
-                                    <div>
+                                    <div class="relative">
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                                             Ciudad *
                                         </label>
-                                        <input type="text" name="ciudad" required
+                                        <input type="text" name="ciudad" id="id_ciudad_inline" required
                                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                                               placeholder="Ej: Ciudad de Buenos Aires">
+                                               placeholder="Ej: Ciudad de Buenos Aires" autocomplete="off">
                                     </div>
 
                                     <!-- Barrio/Distrito -->
-                                    <div>
+                                    <div class="relative">
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                                             Barrio/Distrito *
                                         </label>
-                                        <input type="text" name="distrito" required
+                                        <input type="text" name="distrito" id="id_distrito_inline" required
                                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                                               placeholder="Ej: Palermo">
+                                               placeholder="Ej: Palermo" autocomplete="off">
                                     </div>
 
                                     <!-- Dirección aproximada -->
@@ -1430,11 +1420,18 @@
                                     <!-- Precio mensual -->
                                     <div>
                                         <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                            Precio mensual por persona (ARS) *
+                                            Precio mensual por persona *
                                         </label>
-                                        <input type="number" name="precio_mensual" required min="0" step="0.01"
-                                               class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                                               placeholder="50000">
+                                        <div class="flex gap-2">
+                                            <select name="moneda" id="id_moneda_inline"
+                                                    class="w-32 flex-shrink-0 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+                                                <option value="ARS">$ ARS</option>
+                                                <option value="USD">US$ USD</option>
+                                            </select>
+                                            <input type="number" name="precio_mensual" id="id_precio_mensual_inline" required min="0" step="0.01"
+                                                   class="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
+                                                   placeholder="50000">
+                                        </div>
                                     </div>
 
                                     <!-- Habitaciones totales -->
@@ -1674,6 +1671,16 @@
         </div>
 
         <script>
+        crearSelectorUbicacion({
+            provinciaTexto: document.getElementById('provincia-busqueda-inline'),
+            provinciaId: document.getElementById('id_provincia_inline'),
+            localidadInput: document.getElementById('id_ciudad_inline'),
+            distritoInput: document.getElementById('id_distrito_inline'),
+            urlProvincias: '{% url "ubicaciones:provincias_sugerencias" %}',
+            urlLocalidades: '{% url "ubicaciones:localidades_sugerencias" %}',
+            urlDistritos: '{% url "ubicaciones:distritos_sugerencias" %}',
+        });
+
         // Mostrar formulario inline
         function mostrarFormularioPublicacion() {
             const ctaElement = document.getElementById('ctaCrearPublicacion');
@@ -1734,11 +1741,13 @@
             const form = document.getElementById('formPublicacionCompanero');
             form.querySelector('[name="titulo"]').value = "{{ usuario.publicacion_companero.titulo|escapejs }}";
             form.querySelector('[name="descripcion"]').value = "{{ usuario.publicacion_companero.descripcion|escapejs }}";
-            form.querySelector('[name="provincia"]').value = "{{ usuario.publicacion_companero.provincia|escapejs }}";
+            document.getElementById('provincia-busqueda-inline').value = "{{ usuario.publicacion_companero.provincia.nombre|default:''|escapejs }}";
+            document.getElementById('id_provincia_inline').value = "{{ usuario.publicacion_companero.provincia_id|default:''|escapejs }}";
             form.querySelector('[name="ciudad"]').value = "{{ usuario.publicacion_companero.ciudad|escapejs }}";
             form.querySelector('[name="distrito"]').value = "{{ usuario.publicacion_companero.distrito|escapejs }}";
             form.querySelector('[name="direccion"]').value = "{{ usuario.publicacion_companero.direccion|escapejs }}";
             form.querySelector('[name="precio_mensual"]').value = {{ usuario.publicacion_companero.precio_mensual|unlocalize }};
+            form.querySelector('[name="moneda"]').value = "{{ usuario.publicacion_companero.moneda|default:'ARS'|escapejs }}";
             form.querySelector('[name="habitaciones_totales"]').value = "{{ usuario.publicacion_companero.habitaciones_totales }}";
             form.querySelector('[name="habitaciones_disponibles"]').value = "{{ usuario.publicacion_companero.habitaciones_disponibles }}";
             form.querySelector('[name="banos"]').value = "{{ usuario.publicacion_companero.banos }}";
@@ -2470,7 +2479,7 @@
                         <div class="mb-4 pb-4 border-b border-gray-100">
                             <div class="flex items-baseline gap-2">
                                 <span class="text-3xl font-black bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                                    ${{ propiedad.precio|floatformat:0 }}
+                                    {{ propiedad.get_moneda_simbolo }}{{ propiedad.precio|floatformat:0 }}
                                 </span>
                                 <span class="text-gray-500 text-sm font-medium">
                                     {% if propiedad.operacion == 'alquilar' %}/mes{% endif %}

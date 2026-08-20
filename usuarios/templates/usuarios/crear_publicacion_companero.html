@@ -73,15 +73,20 @@
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label class="block text-sm font-semibold text-gray-700 mb-2">{{ form.provincia.label }}</label>
+                        <div class="relative">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Provincia *</label>
+                            <input type="text" id="provincia-busqueda" required
+                                   value="{{ form.instance.provincia.nombre|default:'' }}"
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                                   placeholder="Escribí para buscar tu provincia..."
+                                   autocomplete="off">
                             {{ form.provincia }}
                         </div>
-                        <div>
+                        <div class="relative">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">{{ form.ciudad.label }}</label>
                             {{ form.ciudad }}
                         </div>
-                        <div>
+                        <div class="relative">
                             <label class="block text-sm font-semibold text-gray-700 mb-2">{{ form.distrito.label }}</label>
                             {{ form.distrito }}
                         </div>
@@ -92,6 +97,18 @@
                         </div>
                     </div>
                 </div>
+
+                <script>
+                crearSelectorUbicacion({
+                    provinciaTexto: document.getElementById('provincia-busqueda'),
+                    provinciaId: document.getElementById('id_provincia'),
+                    localidadInput: document.getElementById('id_ciudad'),
+                    distritoInput: document.getElementById('id_distrito'),
+                    urlProvincias: '{% url "ubicaciones:provincias_sugerencias" %}',
+                    urlLocalidades: '{% url "ubicaciones:localidades_sugerencias" %}',
+                    urlDistritos: '{% url "ubicaciones:distritos_sugerencias" %}',
+                });
+                </script>
 
                 <!-- Características del Espacio -->
                 <div class="border-t border-gray-200 pt-8">
@@ -165,7 +182,14 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">{{ form.precio_mensual.label }} *</label>
-                            {{ form.precio_mensual }}
+                            <div class="flex gap-2">
+                                <div class="w-32 flex-shrink-0">
+                                    {{ form.moneda }}
+                                </div>
+                                <div class="flex-1">
+                                    {{ form.precio_mensual }}
+                                </div>
+                            </div>
                             <p class="mt-1 text-sm text-gray-500">Precio que pagaría cada persona por mes</p>
                         </div>
                         <div>

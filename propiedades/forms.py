@@ -3,29 +3,42 @@ from django import forms
 from django.core.exceptions import ValidationError
 from .models import Propiedad, ImagenPropiedad, Valoracion
 from usuarios.models import PublicacionCompanero
+from ubicaciones.models import Provincia
 
 class PropiedadForm(forms.ModelForm):
     """Formulario para crear/editar propiedades"""
     class Meta:
         model = Propiedad
         fields = [
-            'titulo', 'descripcion', 'tipo', 'operacion', 'precio', 
+            'titulo', 'descripcion', 'tipo', 'operacion', 'precio', 'moneda',
             'incluye_expensas', 'tipo_contacto',
             'provincia', 'ciudad', 'distrito', 'direccion',
             'area', 'habitaciones', 'banos',
             'estacionamiento', 'amoblado', 'mascotas',
             'balcon', 'patio', 'parrilla', 'aire_acondicionado', 'calefaccion', 'ascensor',
-            'seguridad', 'amenities', 'accesibilidad',
+            'terraza', 'wifi', 'lavanderia',
+            'seguridad', 'accesibilidad', 'piscina', 'gimnasio', 'sauna', 'jacuzzi',
+            'quincho', 'solarium', 'area_deportiva',
             'especial_estudiantes'
         ]
         widgets = {
             'descripcion': forms.Textarea(attrs={'rows': 5}),
+            # El campo visible de provincia es un autocomplete de LaColmena
+            # (ver static/js/ubicacion.js); este input oculto es el que
+            # realmente guarda el id de ubicaciones.Provincia seleccionado.
+            'provincia': forms.HiddenInput(),
+            'ciudad': forms.TextInput(attrs={'placeholder': 'Ej: Merlo', 'autocomplete': 'off'}),
+            'distrito': forms.TextInput(attrs={'placeholder': 'Ej: Centro', 'autocomplete': 'off'}),
+            'direccion': forms.TextInput(attrs={'autocomplete': 'off'}),
         }
         labels = {
             'especial_estudiantes': 'Especial para estudiantes',
             'aire_acondicionado': 'Aire acondicionado',
             'calefaccion': 'Calefacción',
             'balcon': 'Balcón',
+            'wifi': 'Wi-Fi',
+            'lavanderia': 'Lavandería',
+            'area_deportiva': 'Área deportiva',
         }
         help_texts = {
             'especial_estudiantes': 'Marca esta opción si tu propiedad está dirigida especialmente a estudiantes',
@@ -78,6 +91,14 @@ class BusquedaForm(forms.Form):
             'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
         })
     )
+    provincia = forms.ModelChoiceField(
+        queryset=Provincia.objects.all(),
+        required=False,
+        empty_label='Todas las provincias',
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+        })
+    )
     ciudad = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
@@ -85,11 +106,25 @@ class BusquedaForm(forms.Form):
             'placeholder': 'Ciudad'
         })
     )
+    distrito = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
+            'placeholder': 'Barrio / Distrito'
+        })
+    )
+    moneda = forms.ChoiceField(
+        required=False,
+        choices=Propiedad.MONEDA_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+        })
+    )
     precio_min = forms.DecimalField(
         required=False,
         widget=forms.NumberInput(attrs={
             'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
-            'placeholder': 'Precio mínimo',
+            'placeholder': 'Mínimo',
             'style': 'appearance: textfield; -moz-appearance: textfield; -webkit-appearance: none;'
         })
     )
@@ -97,7 +132,7 @@ class BusquedaForm(forms.Form):
         required=False,
         widget=forms.NumberInput(attrs={
             'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
-            'placeholder': 'Precio máximo',
+            'placeholder': 'Máximo',
             'style': 'appearance: textfield; -moz-appearance: textfield; -webkit-appearance: none;'
         })
     )
@@ -112,6 +147,14 @@ class BusquedaCompaneroForm(forms.Form):
             'placeholder': 'Palermo, 2 ambientes...'
         })
     )
+    provincia = forms.ModelChoiceField(
+        queryset=Provincia.objects.all(),
+        required=False,
+        empty_label='Todas las provincias',
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+        })
+    )
     ciudad = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
@@ -119,11 +162,25 @@ class BusquedaCompaneroForm(forms.Form):
             'placeholder': 'Ciudad'
         })
     )
+    distrito = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
+            'placeholder': 'Barrio / Distrito'
+        })
+    )
+    moneda = forms.ChoiceField(
+        required=False,
+        choices=PublicacionCompanero.MONEDA_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500'
+        })
+    )
     precio_min = forms.DecimalField(
         required=False,
         widget=forms.NumberInput(attrs={
             'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
-            'placeholder': 'Precio mínimo',
+            'placeholder': 'Mínimo',
             'style': 'appearance: textfield; -moz-appearance: textfield; -webkit-appearance: none;'
         })
     )
@@ -131,7 +188,7 @@ class BusquedaCompaneroForm(forms.Form):
         required=False,
         widget=forms.NumberInput(attrs={
             'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
-            'placeholder': 'Precio máximo',
+            'placeholder': 'Máximo',
             'style': 'appearance: textfield; -moz-appearance: textfield; -webkit-appearance: none;'
         })
     )

@@ -346,7 +346,7 @@
                 <div class="p-5">
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="text-2xl font-bold text-gray-900">
-                            ${{ propiedad.precio|floatformat:0 }}
+                            {{ propiedad.get_moneda_simbolo }}{{ propiedad.precio|floatformat:0 }}
                         </h3>
                         {% if user.is_authenticated %}
                         <a href="{% url 'propiedades:toggle_favorito' propiedad.pk %}" class="text-gray-400 hover:text-red-500 transition">
@@ -368,30 +368,30 @@
                     
                     <div class="flex items-center flex-wrap gap-3 text-gray-600 text-sm">
                         <span class="flex items-center">
-                            <i class="fas fa-ruler-combined text-yellow-500 mr-1"></i>
+                            {% icono "superficie" clase="mr-1" %}
                             {{ propiedad.area }}m²
                         </span>
                         <span class="flex items-center">
-                            <i class="fas fa-bed text-yellow-500 mr-1"></i>
+                            {% icono "dormitorios" clase="mr-1" %}
                             {{ propiedad.habitaciones }}
                         </span>
                         <span class="flex items-center">
-                            <i class="fas fa-bath text-yellow-500 mr-1"></i>
+                            {% icono "banos" clase="mr-1" %}
                             {{ propiedad.banos }}
                         </span>
                         {% if propiedad.mascotas %}
                         <span class="flex items-center" title="Acepta mascotas">
-                            <i class="fas fa-paw text-purple-800 mr-1"></i>
+                            {% icono "mascotas" clase="mr-1" %}
                         </span>
                         {% endif %}
                         {% if propiedad.amoblado %}
                         <span class="flex items-center" title="Amoblado">
-                            <i class="fas fa-couch text-green-800 mr-1"></i>
+                            {% icono "amoblado" clase="mr-1" %}
                         </span>
                         {% endif %}
                         {% if propiedad.estacionamiento %}
                         <span class="flex items-center" title="Tiene estacionamiento">
-                            <i class="fas fa-car text-blue-800 mr-1"></i>
+                            {% icono "estacionamiento" clase="mr-1" %}
                         </span>
                         {% endif %}
                     </div>
@@ -408,137 +408,205 @@
 </div>
 
 <!-- Sección para Estudiantes -->
-<div class="py-6" style="background: transparent;">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl">
-            <div class="bg-gradient-to-br from-blue-600 via-purple-600 to-purple-700 rounded-3xl shadow-xl p-8 sm:p-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div class="text-white">
-                    <div class="bg-blue-500 inline-block px-4 py-2 rounded-full text-sm font-semibold mb-4">
-                        Especial Estudiantes
+<div class="py-12" style="background-color: #FFF7E6;">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div>
+                <div class="relative -top-16 inline-flex items-center gap-2 bg-yellow-50 text-yellow-700 border border-yellow-200 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase mb-4">
+                    {% icono "ideal_estudiantes" clase="text-sm" %}
+                    Especial estudiantes
+                </div>
+                <div class="relative -top-16">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight mb-2">
+                    ¿Sos estudiante?<br>
+                    <span class="text-yellow-500">Tu lugar, cerca de todo</span>
+                </h2>
+                <div class="w-12 h-1 bg-yellow-500 rounded-full mb-4"></div>
+                <p class="text-gray-600 text-sm mb-6 max-w-md">
+                    Descubrí espacios exclusivos, amoblados y bien ubicados cerca de tu universidad.
+                </p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                    <div>
+                        <i class="fas fa-map-marker-alt text-yellow-500 text-lg mb-1.5 block"></i>
+                        <p class="text-xs text-gray-600 leading-snug">Cerca de la universidad</p>
                     </div>
-                    <h2 class="text-4xl font-bold mb-3">¿Sos estudiante?</h2>
-                    <p class="text-base mb-6">
-                        Conoce espacios exclusivos, amoblados y bien ubicados cerca de tu universidad!
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="{% url 'propiedades:listado' %}?especial_estudiantes=1" 
-                           class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition text-center">
-                            Ver Propiedades Estudiantes
-                        </a>
-                        <a href="{% url 'propiedades:estudiantes' %}" 
-                           class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition text-center">
-                            Más información
-                        </a>
+                    <div>
+                        <span class="text-yellow-500 text-lg mb-1.5 block">{% icono "amoblado" %}</span>
+                        <p class="text-xs text-gray-600 leading-snug">Amoblados y listos para vos</p>
+                    </div>
+                    <div>
+                        <span class="text-yellow-500 text-lg mb-1.5 block">{% icono "wifi" %}</span>
+                        <p class="text-xs text-gray-600 leading-snug">Wi-Fi rápido incluido</p>
+                    </div>
+                    <div>
+                        <span class="text-yellow-500 text-lg mb-1.5 block">{% icono "seguridad" %}</span>
+                        <p class="text-xs text-gray-600 leading-snug">Ambientes seguros</p>
                     </div>
                 </div>
-                
-                <div class="relative">
-                    {% if propiedades_estudiantes %}
-                        <div class="relative group">
-                            {% if propiedades_estudiantes|length > 1 %}
-                            <button id="btn-prev-estudiante" class="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <button id="btn-next-estudiante" class="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                            {% endif %}
-                            
-                            <div id="contenedor-propiedad-estudiante">
-                            {% for propiedad in propiedades_estudiantes %}
-                            <div class="propiedad-item" data-index="{{ forloop.counter0 }}" style="{% if forloop.counter0 > 0 %}display:none;{% endif %}">
-                            <a href="{% url 'propiedades:detalle' propiedad.pk %}" 
-                               class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition block">
-                                <div class="relative">
-                                    {% if propiedad.imagen_principal %}
-                                    <img src="{{ propiedad.imagen_principal.imagen.url }}" 
-                                         alt="{{ propiedad.titulo }}" 
-                                         class="w-full h-64 object-cover">
-                                    {% else %}
-                                    <div class="w-full h-64 bg-gray-200 flex items-center justify-center">
-                                        <i class="fas fa-home text-gray-400 text-6xl"></i>
+
+                <div class="absolute left-0 top-[385px] flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'propiedades:listado' %}?especial_estudiantes=1"
+                       class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2.5 rounded-xl font-semibold text-sm shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fas fa-search"></i> Ver propiedades para estudiantes
+                    </a>
+                    <a href="{% url 'propiedades:estudiantes' %}"
+                       class="border-2 border-gray-200 text-gray-700 px-5 py-2.5 rounded-xl font-semibold text-sm hover:border-yellow-400 hover:text-yellow-600 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-info-circle"></i> Más información
+                    </a>
+                </div>
+                </div>
+            </div>
+
+            <div class="relative">
+                {% if propiedades_estudiantes %}
+                    <div class="relative group">
+                        {% if propiedades_estudiantes|length > 1 %}
+                        <button id="btn-prev-estudiante" class="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 text-sm flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button id="btn-next-estudiante" class="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full w-8 h-8 text-sm flex items-center justify-center shadow-lg transition-all opacity-0 group-hover:opacity-100">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        {% endif %}
+
+                        <div id="contenedor-propiedad-estudiante">
+                        {% for propiedad in propiedades_estudiantes %}
+                        <div class="propiedad-item" data-index="{{ forloop.counter0 }}" style="{% if forloop.counter0 > 0 %}display:none;{% endif %}">
+                        <a href="{% url 'propiedades:detalle' propiedad.pk %}"
+                           class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition block">
+                            <div class="relative">
+                                {% if propiedad.imagen_principal %}
+                                <img src="{{ propiedad.imagen_principal.imagen.url }}"
+                                     alt="{{ propiedad.titulo }}"
+                                     class="w-full aspect-[4/3] object-cover">
+                                {% else %}
+                                <div class="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center">
+                                    <i class="fas fa-home text-gray-300 text-4xl"></i>
+                                </div>
+                                {% endif %}
+                                {% if propiedad.tiene_destacado_activo %}
+                                <span class="absolute top-2.5 left-2.5 bg-yellow-500 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow flex items-center gap-1">
+                                    <i class="fas fa-star text-[10px]"></i> DESTACADA
+                                </span>
+                                {% endif %}
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'propiedades:toggle_favorito' propiedad.pk %}" class="absolute top-2.5 right-2.5 bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 w-7 h-7 rounded-full flex items-center justify-center shadow transition text-sm">
+                                    <i class="fas fa-heart"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                            <div class="p-4">
+                                <div class="flex items-baseline gap-2 mb-1">
+                                    <span class="text-xl font-bold text-gray-900">{{ propiedad.get_moneda_simbolo }}{{ propiedad.precio|floatformat:0 }}</span>
+                                    <span class="text-xs text-gray-400">{{ propiedad.moneda }}{% if propiedad.operacion == 'alquiler' %} / mes{% endif %}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 mb-3">
+                                    <p class="text-gray-500 text-xs flex items-center min-w-0">
+                                        <i class="fas fa-map-marker-alt mr-1 text-gray-400 flex-shrink-0"></i>
+                                        <span class="truncate">{{ propiedad.distrito }}, {{ propiedad.ciudad }}</span>
+                                    </p>
+                                    <span class="border border-yellow-300 text-yellow-600 text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
+                                        {{ propiedad.get_tipo_display }} en {{ propiedad.get_operacion_display|lower }}
+                                    </span>
+                                </div>
+                                <div class="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                                    <div class="flex-1 min-w-[56px] text-center">
+                                        {% icono "superficie" clase="text-sm mb-0.5" %}
+                                        <p class="font-semibold text-gray-900 text-xs">{{ propiedad.area }}m²</p>
+                                        <p class="text-[10px] text-gray-500">Superficie</p>
+                                    </div>
+                                    <div class="flex-1 min-w-[56px] text-center">
+                                        {% icono "dormitorios" clase="text-sm mb-0.5" %}
+                                        <p class="font-semibold text-gray-900 text-xs">{{ propiedad.habitaciones }}</p>
+                                        <p class="text-[10px] text-gray-500">Dormitorios</p>
+                                    </div>
+                                    <div class="flex-1 min-w-[56px] text-center">
+                                        {% icono "banos" clase="text-sm mb-0.5" %}
+                                        <p class="font-semibold text-gray-900 text-xs">{{ propiedad.banos }}</p>
+                                        <p class="text-[10px] text-gray-500">Baños</p>
+                                    </div>
+                                    {% if propiedad.mascotas %}
+                                    <div class="flex-1 min-w-[56px] text-center">
+                                        {% icono "mascotas" clase="text-sm mb-0.5" %}
+                                        <p class="font-semibold text-gray-900 text-xs">Pet</p>
+                                        <p class="text-[10px] text-gray-500">friendly</p>
+                                    </div>
+                                    {% endif %}
+                                    {% if propiedad.estacionamiento %}
+                                    <div class="flex-1 min-w-[56px] text-center">
+                                        {% icono "estacionamiento" clase="text-sm mb-0.5" %}
+                                        <p class="font-semibold text-gray-900 text-xs">Cochera</p>
+                                        <p class="text-[10px] text-gray-500">incluida</p>
                                     </div>
                                     {% endif %}
                                 </div>
-                                <div class="p-6">
-                                    <div class="text-3xl font-bold text-blue-600 mb-3">${{ propiedad.precio|floatformat:0 }}</div>
-                                    <div class="text-gray-600 mb-4 flex items-center">
-                                        <i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>
-                                        {{ propiedad.distrito }}, {{ propiedad.ciudad }}
-                                    </div>
-                                    <div class="flex flex-wrap gap-2 items-center text-gray-600 text-sm">
-                                        <span class="flex items-center">
-                                            <i class="fas fa-ruler-combined text-yellow-500 mr-1"></i>
-                                            {{ propiedad.area }}m²
-                                        </span>
-                                        <span class="flex items-center">
-                                            <i class="fas fa-bed text-yellow-500 mr-1"></i>
-                                            {{ propiedad.habitaciones }}
-                                        </span>
-                                        <span class="flex items-center">
-                                            <i class="fas fa-bath text-yellow-500 mr-1"></i>
-                                            {{ propiedad.banos }}
-                                        </span>
-                                        {% if propiedad.mascotas %}
-                                        <span class="flex items-center" title="Acepta mascotas">
-                                            <i class="fas fa-paw text-purple-800"></i>
-                                        </span>
-                                        {% endif %}
-                                        {% if propiedad.amoblado %}
-                                        <span class="flex items-center" title="Amoblado">
-                                            <i class="fas fa-couch text-green-800"></i>
-                                        </span>
-                                        {% endif %}
-                                        {% if propiedad.estacionamiento %}
-                                        <span class="flex items-center" title="Tiene estacionamiento">
-                                            <i class="fas fa-car text-blue-800"></i>
-                                        </span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </a>
                             </div>
-                            {% endfor %}
-                            </div>
+                        </a>
                         </div>
-                    {% else %}
-                        <!-- Ejemplo de demostración -->
-                        <div class="bg-white rounded-xl overflow-hidden shadow-lg">
-                            <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
-                                <i class="fas fa-home text-gray-400 text-6xl"></i>
+                        {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Ejemplo de demostración -->
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100">
+                        <div class="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center">
+                            <i class="fas fa-home text-gray-300 text-4xl"></i>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-baseline gap-2 mb-1">
+                                <span class="text-xl font-bold text-gray-900">$1.500.000</span>
+                                <span class="text-xs text-gray-400">ARS / mes</span>
                             </div>
-                            <div class="p-6">
-                                <div class="text-3xl font-bold text-blue-600 mb-3">$1 500 000</div>
-                                <div class="text-gray-600 mb-4 flex items-center">
-                                    <i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>
-                                    Cmdt. Fernandez., Presidencia Roque Saenz Pena
+                            <p class="text-gray-500 text-xs flex items-center mb-3">
+                                <i class="fas fa-map-marker-alt mr-1 text-gray-400"></i>
+                                Cmdt. Fernandez., Presidencia Roque Saenz Peña
+                            </p>
+                            <div class="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+                                <div class="flex-1 min-w-[56px] text-center">
+                                    {% icono "superficie" clase="text-sm mb-0.5" %}
+                                    <p class="font-semibold text-gray-900 text-xs">5,00m²</p>
+                                    <p class="text-[10px] text-gray-500">Superficie</p>
                                 </div>
-                                <div class="flex flex-wrap gap-2 items-center text-gray-600 text-sm">
-                                    <span class="flex items-center">
-                                        <i class="fas fa-ruler-combined text-yellow-500 mr-1"></i>
-                                        5,00m²
-                                    </span>
-                                    <span class="flex items-center">
-                                        <i class="fas fa-bed text-yellow-500 mr-1"></i>
-                                        2
-                                    </span>
-                                    <span class="flex items-center">
-                                        <i class="fas fa-bath text-yellow-500 mr-1"></i>
-                                        1
-                                    </span>
-                                    <span class="flex items-center" title="Acepta mascotas">
-                                        <i class="fas fa-paw text-purple-800"></i>
-                                    </span>
-                                    <span class="flex items-center" title="Amoblado">
-                                        <i class="fas fa-couch text-green-800"></i>
-                                    </span>
+                                <div class="flex-1 min-w-[56px] text-center">
+                                    {% icono "dormitorios" clase="text-sm mb-0.5" %}
+                                    <p class="font-semibold text-gray-900 text-xs">2</p>
+                                    <p class="text-[10px] text-gray-500">Dormitorios</p>
+                                </div>
+                                <div class="flex-1 min-w-[56px] text-center">
+                                    {% icono "banos" clase="text-sm mb-0.5" %}
+                                    <p class="font-semibold text-gray-900 text-xs">1</p>
+                                    <p class="text-[10px] text-gray-500">Baños</p>
+                                </div>
+                                <div class="flex-1 min-w-[56px] text-center">
+                                    {% icono "mascotas" clase="text-sm mb-0.5" %}
+                                    <p class="font-semibold text-gray-900 text-xs">Pet</p>
+                                    <p class="text-[10px] text-gray-500">friendly</p>
                                 </div>
                             </div>
                         </div>
-                    {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-8 bg-yellow-50 border border-yellow-100 rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-yellow-400 text-white rounded-xl w-10 h-10 flex items-center justify-center text-lg flex-shrink-0">
+                    {% icono "ideal_estudiantes" color="white" %}
+                </div>
+                <div>
+                    <p class="font-bold text-gray-900 text-sm">Encontrá tu espacio ideal para estudiar, descansar y crecer.</p>
+                    <p class="text-gray-600 text-xs">Propiedades pensadas para estudiantes como vos.</p>
                 </div>
             </div>
+            <div class="hidden sm:flex items-center gap-4 text-yellow-400 text-lg opacity-70 flex-shrink-0">
+                <i class="fas fa-book"></i>
+                <i class="fas fa-seedling"></i>
+                <i class="fas fa-mug-hot"></i>
+            </div>
+        </div>
         </div>
     </div>
 </div>
@@ -627,51 +695,41 @@
 document.addEventListener('DOMContentLoaded', function() {
     const inputBusqueda = document.getElementById('id_busqueda');
     if (!inputBusqueda) return;
-    
-    // Crear contenedor para sugerencias
-    const sugerenciasContainer = document.createElement('div');
-    sugerenciasContainer.id = 'sugerencias-ubicacion';
-    sugerenciasContainer.className = 'absolute z-50 w-full bg-white rounded-xl shadow-2xl mt-2 hidden max-h-96 overflow-hidden border border-gray-200';
-    sugerenciasContainer.style.boxShadow = '0 10px 40px rgba(0, 0, 0, 0.15)';
-    inputBusqueda.parentElement.classList.add('relative');
-    inputBusqueda.parentElement.appendChild(sugerenciasContainer);
-    
-    let timeoutId = null;
-    
-    // Función para obtener sugerencias
-    async function obtenerSugerencias(query) {
-        if (query.length < 1) {
-            sugerenciasContainer.classList.add('hidden');
-            return;
-        }
-        
-        try {
+
+    crearAutocomplete({
+        input: inputBusqueda,
+        minChars: 1,
+        debounceMs: 300,
+        obtenerEtiqueta: (sugerencia) => sugerencia.texto_completo,
+        obtenerSugerencias: async (query) => {
             const response = await fetch(`{% url 'propiedades:sugerencias_ubicacion' %}?q=${encodeURIComponent(query)}`);
             const data = await response.json();
-            
-            if (data.sugerencias && data.sugerencias.length > 0) {
-                mostrarSugerencias(data.sugerencias, null);
-            } else if (data.mensaje) {
-                mostrarSugerencias([], data.mensaje);
-            } else {
-                sugerenciasContainer.classList.add('hidden');
-            }
-        } catch (error) {
-            console.error('Error al obtener sugerencias:', error);
-            sugerenciasContainer.classList.add('hidden');
-        }
-    }
-    
-    // Función para mostrar sugerencias
-    function mostrarSugerencias(sugerencias, mensaje) {
-        sugerenciasContainer.innerHTML = '';
-        
-        if (mensaje && sugerencias.length === 0) {
-            // Mostrar mensaje cuando no hay resultados
-            const mensajeDiv = document.createElement('div');
-            mensajeDiv.className = 'p-5';
-            mensajeDiv.innerHTML = `
-                <div class="flex items-start space-x-3 bg-yellow-50 rounded-lg p-4 border border-yellow-100">
+            // Se guarda el mensaje de "sin resultados" para que textoVacio lo use.
+            inputBusqueda._mensajeSinResultados = data.mensaje || null;
+            return data.sugerencias || [];
+        },
+        renderItem: (sugerencia) => `
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3 flex-1 min-w-0">
+                    <div class="flex-shrink-0 w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i class="fas ${sugerencia.icono} text-yellow-600 text-sm"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-gray-900 font-semibold text-[15px] truncate">${sugerencia.texto_completo}</div>
+                        <div class="text-[11px] text-gray-500 mt-0.5 uppercase tracking-wider font-medium">${sugerencia.tipo === 'provincia' ? 'Provincia' : sugerencia.tipo === 'ciudad' ? 'Ciudad' : 'Barrio'}</div>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 flex flex-col items-end">
+                    <div class="text-base font-bold text-gray-900">${sugerencia.count}</div>
+                    <div class="text-[10px] text-gray-500 uppercase tracking-wide font-medium mt-0.5">${sugerencia.count === 1 ? 'disponible' : 'disponibles'}</div>
+                </div>
+            </div>
+        `,
+        textoVacio: () => {
+            const mensaje = inputBusqueda._mensajeSinResultados;
+            if (!mensaje) return null;
+            return `
+                <div class="flex items-start space-x-3 text-left">
                     <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
                         <i class="fas fa-info-circle text-yellow-600 text-sm"></i>
                     </div>
@@ -681,145 +739,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
-            sugerenciasContainer.appendChild(mensajeDiv);
-            sugerenciasContainer.classList.remove('hidden');
-            return;
-        }
-        
-        // Crear contenedor scrollable
-        const scrollContainer = document.createElement('div');
-        scrollContainer.className = 'max-h-96 overflow-y-auto';
-        
-        sugerencias.forEach((sugerencia, index) => {
-            const item = document.createElement('div');
-            const isLast = index === sugerencias.length - 1;
-            const roundedClass = isLast ? 'rounded-b-xl' : '';
-            item.className = `px-5 py-4 hover:bg-gradient-to-r hover:from-yellow-50 hover:to-yellow-50/50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-all duration-200 group ${roundedClass}`;
-            item.setAttribute('data-sugerencia', index);
-            
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'flex items-center justify-between gap-4';
-            
-            const leftSection = document.createElement('div');
-            leftSection.className = 'flex items-center gap-3 flex-1 min-w-0';
-            
-            // Icono con círculo de fondo
-            const iconContainer = document.createElement('div');
-            iconContainer.className = 'flex-shrink-0 w-10 h-10 bg-yellow-100 group-hover:bg-yellow-200 rounded-full flex items-center justify-center transition-colors duration-200';
-            
-            const icono = document.createElement('i');
-            icono.className = `fas ${sugerencia.icono} text-yellow-600 group-hover:text-yellow-700 text-sm transition-colors duration-200`;
-            iconContainer.appendChild(icono);
-            
-            const textoContainer = document.createElement('div');
-            textoContainer.className = 'flex-1 min-w-0';
-            
-            const texto = document.createElement('div');
-            texto.className = 'text-gray-900 font-semibold text-[15px] truncate group-hover:text-gray-950 transition-colors duration-200';
-            texto.textContent = sugerencia.texto_completo;
-            
-            const tipoLabel = document.createElement('div');
-            tipoLabel.className = 'text-[11px] text-gray-500 mt-0.5 uppercase tracking-wider font-medium';
-            tipoLabel.textContent = sugerencia.tipo === 'ciudad' ? 'Ciudad' : 'Barrio';
-            
-            textoContainer.appendChild(texto);
-            textoContainer.appendChild(tipoLabel);
-            
-            leftSection.appendChild(iconContainer);
-            leftSection.appendChild(textoContainer);
-            
-            // Badge mejorado
-            const badgeContainer = document.createElement('div');
-            badgeContainer.className = 'flex-shrink-0 flex flex-col items-end';
-            
-            const badge = document.createElement('div');
-            badge.className = 'text-base font-bold text-gray-900 group-hover:text-yellow-700 transition-colors duration-200';
-            badge.textContent = sugerencia.count;
-            
-            const badgeLabel = document.createElement('div');
-            badgeLabel.className = 'text-[10px] text-gray-500 uppercase tracking-wide font-medium mt-0.5';
-            badgeLabel.textContent = sugerencia.count === 1 ? 'disponible' : 'disponibles';
-            
-            badgeContainer.appendChild(badge);
-            badgeContainer.appendChild(badgeLabel);
-            
-            contentDiv.appendChild(leftSection);
-            contentDiv.appendChild(badgeContainer);
-            item.appendChild(contentDiv);
-            
-            item.addEventListener('click', function() {
-                inputBusqueda.value = sugerencia.texto_completo;
-                sugerenciasContainer.classList.add('hidden');
-            });
-            
-            scrollContainer.appendChild(item);
-        });
-        
-        sugerenciasContainer.appendChild(scrollContainer);
-        sugerenciasContainer.classList.remove('hidden');
-    }
-    
-    // Event listener para input
-    inputBusqueda.addEventListener('input', function(e) {
-        clearTimeout(timeoutId);
-        const query = e.target.value.trim();
-        
-        if (query.length === 0) {
-            sugerenciasContainer.classList.add('hidden');
-            return;
-        }
-        
-        timeoutId = setTimeout(() => {
-            obtenerSugerencias(query);
-        }, 300); // Esperar 300ms después de que el usuario deje de escribir
+        },
     });
-    
-    // Cerrar sugerencias al hacer click fuera
-    document.addEventListener('click', function(e) {
-        if (!inputBusqueda.contains(e.target) && !sugerenciasContainer.contains(e.target)) {
-            sugerenciasContainer.classList.add('hidden');
-        }
-    });
-    
-    // Mostrar sugerencias al hacer focus si hay texto
-    inputBusqueda.addEventListener('focus', function() {
-        const query = inputBusqueda.value.trim();
-        if (query.length > 0) {
-            obtenerSugerencias(query);
-        }
-    });
-    
-    // Navegación con teclado (opcional pero útil)
-    let selectedIndex = -1;
-    inputBusqueda.addEventListener('keydown', function(e) {
-        const items = sugerenciasContainer.querySelectorAll('[data-sugerencia]');
-        
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
-            updateSelection(items);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            selectedIndex = Math.max(selectedIndex - 1, -1);
-            updateSelection(items);
-        } else if (e.key === 'Enter' && selectedIndex >= 0) {
-            e.preventDefault();
-            items[selectedIndex].click();
-        } else if (e.key === 'Escape') {
-            sugerenciasContainer.classList.add('hidden');
-            selectedIndex = -1;
-        }
-    });
-    
-    function updateSelection(items) {
-        items.forEach((item, index) => {
-            if (index === selectedIndex) {
-                item.classList.add('bg-yellow-50');
-            } else {
-                item.classList.remove('bg-yellow-50');
-            }
-        });
-    }
 });
 </script>
 {% endblock %}
