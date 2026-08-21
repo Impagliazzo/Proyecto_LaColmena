@@ -134,7 +134,9 @@
                                         <p class="text-2xl font-bold text-gray-900">
                                             {{ propiedad.get_moneda_simbolo }}{{ propiedad.precio|floatformat:0 }}
                                         </p>
+                                        {% if propiedad.operacion == 'alquiler' %}
                                         <p class="text-sm text-gray-600">/mes</p>
+                                        {% endif %}
                                     </div>
                                 </div>
                                 
