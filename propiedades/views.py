@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods
 from .models import Propiedad, Categoria, Favorito, Valoracion, ImagenPropiedad, ReporteValoracion, Destacado
 from .forms import PropiedadForm, BusquedaForm, ValoracionForm
+from .categorias import CATEGORIAS
 import json
 
 @login_required
@@ -97,9 +98,23 @@ def inicio(request):
         especial_estudiantes=True
     ).select_related('propietario').prefetch_related('imagenes')[:4])
     
-    # Categorías
-    categorias = Categoria.objects.all()
-    
+    # Categorías (tarjetas de "Buscar por categoría"): una por cada tipo real de
+    # propiedad, con conteo y foto de la publicación activa más reciente de ese
+    # tipo. Si todavía no hay ninguna con foto, imagen_url queda en None y el
+    # template muestra el fondo de color + ícono como respaldo.
+    categorias = []
+    for tipo, info in CATEGORIAS.items():
+        propiedades_tipo = Propiedad.objects.filter(tipo=tipo, estado='activa')
+        con_imagen = propiedades_tipo.filter(imagenes__isnull=False).order_by('-fecha_publicacion').first()
+        categorias.append({
+            'tipo': tipo,
+            'nombre': info['nombre_plural'],
+            'icono': info['icono'],
+            'color': info['color'],
+            'count': propiedades_tipo.count(),
+            'imagen_url': con_imagen.imagen_principal.imagen.url if con_imagen else None,
+        })
+
     # Formulario de búsqueda
     form = BusquedaForm(request.GET)
     

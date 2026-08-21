@@ -1,0 +1,94 @@
+{% comment %}
+Tarjeta de propiedad unificada. Sistema visual base: sección "Especial estudiantes" de inicio.html.
+Parámetros:
+  propiedad (requerido)
+  badge_texto (opcional) — si se pasa, se muestra en lugar del tipo+operación (ej. "Especial estudiantes").
+  favorito (opcional) — objeto Favorito; si se pasa, se muestra el footer con fecha + botones y el
+                         corazón queda siempre activo (para la vista de Favoritos).
+{% endcomment %}
+<div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition">
+    <a href="{% url 'propiedades:detalle' propiedad.pk %}" class="block">
+    <div class="relative">
+        {% if propiedad.imagen_principal %}
+        <img src="{{ propiedad.imagen_principal.imagen.url }}"
+             alt="{{ propiedad.titulo }}"
+             class="w-full aspect-[4/3] object-cover">
+        {% else %}
+        <div class="w-full aspect-[4/3] bg-gray-100 flex items-center justify-center">
+            <i class="fas fa-home text-gray-300 text-4xl"></i>
+        </div>
+        {% endif %}
+        {% if badge_texto %}
+        <span class="absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 bg-yellow-50 text-yellow-700 border border-yellow-200 text-[11px] font-bold px-2.5 py-1 rounded-full shadow uppercase tracking-wide">
+            {% icono "ideal_estudiantes" clase="text-xs" %} {{ badge_texto }}
+        </span>
+        {% else %}
+        {% badge_propiedad propiedad %}
+        {% endif %}
+        {% if user.is_authenticated %}
+        <a href="{% url 'propiedades:toggle_favorito' propiedad.pk %}"
+           class="absolute top-2.5 right-2.5 bg-white/90 hover:bg-white w-7 h-7 rounded-full flex items-center justify-center shadow transition text-sm {% if favorito %}text-red-500{% else %}text-gray-700 hover:text-red-500{% endif %}">
+            <i class="fas fa-heart"></i>
+        </a>
+        {% endif %}
+    </div>
+    <div class="p-4">
+        <div class="flex items-baseline gap-2 mb-1">
+            <span class="text-xl font-bold text-gray-900">{{ propiedad.get_moneda_simbolo }}{{ propiedad.precio|floatformat:0 }}</span>
+            <span class="text-xs text-gray-400">{{ propiedad.moneda }}{% if propiedad.operacion == 'alquiler' %} / mes{% endif %}</span>
+        </div>
+        <p class="text-gray-500 text-xs flex items-center mb-3 min-w-0">
+            <i class="fas fa-map-marker-alt mr-1 text-gray-400 flex-shrink-0"></i>
+            <span class="truncate">{{ propiedad.distrito }}, {{ propiedad.ciudad }}</span>
+        </p>
+        <div class="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+            <div class="flex-1 min-w-[56px] text-center">
+                {% icono "superficie" clase="text-sm mb-0.5" %}
+                <p class="font-semibold text-gray-900 text-xs">{{ propiedad.area }}m²</p>
+                <p class="text-[10px] text-gray-500">Superficie</p>
+            </div>
+            <div class="flex-1 min-w-[56px] text-center">
+                {% icono "dormitorios" clase="text-sm mb-0.5" %}
+                <p class="font-semibold text-gray-900 text-xs">{{ propiedad.habitaciones }}</p>
+                <p class="text-[10px] text-gray-500">Dormitorios</p>
+            </div>
+            <div class="flex-1 min-w-[56px] text-center">
+                {% icono "banos" clase="text-sm mb-0.5" %}
+                <p class="font-semibold text-gray-900 text-xs">{{ propiedad.banos }}</p>
+                <p class="text-[10px] text-gray-500">Baños</p>
+            </div>
+            {% if propiedad.mascotas %}
+            <div class="flex-1 min-w-[56px] text-center">
+                {% icono "mascotas" clase="text-sm mb-0.5" %}
+                <p class="font-semibold text-gray-900 text-xs">Pet</p>
+                <p class="text-[10px] text-gray-500">friendly</p>
+            </div>
+            {% endif %}
+            {% if propiedad.estacionamiento %}
+            <div class="flex-1 min-w-[56px] text-center">
+                {% icono "estacionamiento" clase="text-sm mb-0.5" %}
+                <p class="font-semibold text-gray-900 text-xs">Cochera</p>
+                <p class="text-[10px] text-gray-500">incluida</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    </a>
+    {% if favorito %}
+    <div class="px-4 pb-4">
+        <div class="flex gap-2 pt-1">
+            <a href="{% url 'propiedades:detalle' propiedad.pk %}"
+               class="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white text-center font-semibold text-sm py-2 rounded-xl transition">
+                Ver detalles
+            </a>
+            <a href="{% url 'contactos:solicitar' propiedad.pk %}"
+               class="flex-1 border-2 border-gray-200 text-gray-700 hover:border-yellow-400 hover:text-yellow-600 text-center font-semibold text-sm py-2 rounded-xl transition">
+                Contactar
+            </a>
+        </div>
+        <p class="text-gray-400 text-[11px] mt-2.5">
+            <i class="far fa-clock mr-1"></i>Agregado el {{ favorito.fecha_agregado|date:"d/m/Y" }}
+        </p>
+    </div>
+    {% endif %}
+</div>
