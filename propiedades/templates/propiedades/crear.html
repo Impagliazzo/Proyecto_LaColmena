@@ -116,7 +116,14 @@
                 
                 <!-- Ubicación -->
                 <div class="border-t border-gray-200 pt-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Ubicación</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Ubicación</h3>
+                        <button type="button" data-usar-mapa-direccion
+                                class="flex items-center gap-2 text-sm font-semibold text-yellow-600 hover:text-yellow-700 border border-yellow-300 hover:border-yellow-400 rounded-lg px-3 py-1.5 transition">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Usar el mapa
+                        </button>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="relative">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Provincia *</label>
@@ -352,41 +359,109 @@
                 
                 <!-- Imágenes -->
                 <div class="border-t border-gray-200 pt-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Imágenes</h3>
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
-                            <p class="text-sm text-yellow-800">
-                                <strong>Consejo:</strong> La primera imagen que subas será la imagen principal. Puedes cambiarla después al editar la publicación.
-                            </p>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">
+                        <i class="fas fa-images text-yellow-500 mr-2"></i>
+                        Gestión de Imágenes
+                    </h3>
+
+                    <!-- Componente de carga de imágenes (mismo widget que "Editar publicación") -->
+                    <div id="image-manager" class="flex gap-3 mb-6">
+                        <!-- Imagen Principal (50%) -->
+                        <div class="w-1/2 flex-shrink-0">
+                            <div id="main-image-slot"
+                                 data-slot="0"
+                                 class="relative w-full h-96 bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-xl border-2 border-dashed border-gray-300 hover:border-yellow-400 flex items-center justify-center cursor-pointer transition-all duration-300 group overflow-hidden">
+                                <div class="upload-placeholder text-center">
+                                    <div class="bg-yellow-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-lg">
+                                        <i class="fas fa-plus text-white text-3xl"></i>
+                                    </div>
+                                    <p class="text-gray-600 font-semibold text-lg">Foto Principal</p>
+                                    <p class="text-gray-400 text-sm mt-1">1/10</p>
+                                    <p class="text-gray-500 text-xs mt-2">Click para agregar</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cuadrícula de 4 imágenes (50%) -->
+                        <div class="w-1/2 grid grid-cols-2 gap-3 flex-shrink-0">
+                            <div id="image-slot-1"
+                                 data-slot="1"
+                                 class="relative h-[11.25rem] bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-xl border-2 border-dashed border-gray-300 hover:border-yellow-400 flex items-center justify-center cursor-pointer transition-all duration-300 group overflow-hidden">
+                                <div class="upload-placeholder text-center">
+                                    <div class="bg-yellow-500 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md">
+                                        <i class="fas fa-plus text-white text-xl"></i>
+                                    </div>
+                                    <p class="text-gray-400 text-xs font-medium">2/10</p>
+                                </div>
+                            </div>
+
+                            <div id="image-slot-2"
+                                 data-slot="2"
+                                 class="relative h-[11.25rem] bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-xl border-2 border-dashed border-gray-300 hover:border-yellow-400 flex items-center justify-center cursor-pointer transition-all duration-300 group overflow-hidden">
+                                <div class="upload-placeholder text-center">
+                                    <div class="bg-yellow-500 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md">
+                                        <i class="fas fa-plus text-white text-xl"></i>
+                                    </div>
+                                    <p class="text-gray-400 text-xs font-medium">3/10</p>
+                                </div>
+                            </div>
+
+                            <div id="image-slot-3"
+                                 data-slot="3"
+                                 class="relative h-[11.25rem] bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-xl border-2 border-dashed border-gray-300 hover:border-yellow-400 flex items-center justify-center cursor-pointer transition-all duration-300 group overflow-hidden">
+                                <div class="upload-placeholder text-center">
+                                    <div class="bg-yellow-500 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md">
+                                        <i class="fas fa-plus text-white text-xl"></i>
+                                    </div>
+                                    <p class="text-gray-400 text-xs font-medium">4/10</p>
+                                </div>
+                            </div>
+
+                            <div id="image-slot-4"
+                                 data-slot="4"
+                                 class="relative h-[11.25rem] bg-gradient-to-br from-gray-100 to-gray-200 hover:from-gray-200 hover:to-gray-300 rounded-xl border-2 border-dashed border-gray-300 hover:border-yellow-400 flex items-center justify-center cursor-pointer transition-all duration-300 group overflow-hidden">
+                                <div class="upload-placeholder text-center">
+                                    <div class="bg-yellow-500 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform shadow-md">
+                                        <i class="fas fa-plus text-white text-xl"></i>
+                                    </div>
+                                    <p class="text-gray-400 text-xs font-medium">5/10</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Subir imágenes *
-                        </label>
-                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-yellow-500 transition-colors">
-                            <input type="file" name="imagenes" id="imagenes-input" multiple accept="image/*" required
-                                   class="hidden" onchange="mostrarVistaPrevia(event)">
-                            <label for="imagenes-input" class="cursor-pointer">
-                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                                <p class="text-lg font-medium text-gray-600 mb-1">Haz clic para subir imágenes</p>
-                                <p class="text-sm text-gray-500">o arrastra y suelta archivos aquí</p>
-                            </label>
+
+                    <!-- Input oculto para seleccionar archivos -->
+                    <input type="file"
+                           id="hidden-image-input"
+                           name="imagenes"
+                           accept="image/jpeg,image/jpg,image/png"
+                           class="hidden">
+
+                    <!-- Indicador de imágenes pendientes -->
+                    <div id="pending-images-indicator" class="hidden bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-blue-700">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <span class="text-sm font-medium">
+                                    <span id="pending-count">0</span> imagen(es) lista(s) para subir
+                                </span>
+                            </div>
+                            <button type="button"
+                                    onclick="clearAllPendingImages()"
+                                    class="text-blue-600 hover:text-blue-800 text-xs font-medium">
+                                <i class="fas fa-times-circle mr-1"></i>
+                                Limpiar todo
+                            </button>
                         </div>
-                        
-                        <!-- Vista previa de imágenes -->
-                        <div id="vista-previa" class="mt-4 hidden">
-                            <p class="text-sm font-medium text-gray-700 mb-2">Imágenes seleccionadas:</p>
-                            <div id="imagenes-preview" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
-                        </div>
-                        
-                        <p class="mt-2 text-sm text-gray-500">
-                            <i class="fas fa-info-circle mr-1"></i>
-                            Formatos aceptados: JPG, PNG. Tamaño máximo: 5MB por imagen. Máximo 10 imágenes.
-                        </p>
                     </div>
+
+                    <p class="text-sm text-gray-500 flex items-center">
+                        <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                        <span>
+                            JPG o PNG, máximo 5MB por imagen.
+                            <strong class="text-gray-700">Debes subir al menos 1 imagen (la de "Foto Principal") para publicar.</strong>
+                        </span>
+                    </p>
                 </div>
                 
                 <!-- Botones -->
@@ -423,7 +498,7 @@ function formatTitleCase(text) {
     });
 }
 
-crearSelectorUbicacion({
+const selectorUbicacion = crearSelectorUbicacion({
     provinciaTexto: document.getElementById('provincia-busqueda'),
     provinciaId: document.getElementById('id_provincia'),
     localidadInput: document.getElementById('id_ciudad'),
@@ -432,6 +507,66 @@ crearSelectorUbicacion({
     urlLocalidades: '{% url "ubicaciones:localidades_sugerencias" %}',
     urlDistritos: '{% url "ubicaciones:distritos_sugerencias" %}',
 });
+
+// "Usar el mapa": reutiliza el mismo modal/mapa de "Mi ubicación" del
+// navbar (ver static/js/mi_ubicacion.js), pero en modo "direccion" (busca
+// calles puntuales vía Nominatim en vez de solo ciudad/provincia) y con un
+// callback propio que completa los campos de este formulario en vez de
+// guardar la cookie de ubicación general del sitio.
+(function () {
+    const btnUsarMapa = document.querySelector('[data-usar-mapa-direccion]');
+    if (!btnUsarMapa) return;
+
+    async function resolverIdProvincia(nombre) {
+        const url = '{% url "ubicaciones:provincias_sugerencias" %}?q=' + encodeURIComponent(nombre);
+        const resp = await fetch(url);
+        const datos = await resp.json();
+        return (datos.resultados || [])[0] || null;
+    }
+
+    btnUsarMapa.addEventListener('click', async function () {
+        if (!window.LaColmenaUbicacion) {
+            // No debería pasar nunca (mi_ubicacion.js siempre define esto),
+            // salvo que el navegador esté sirviendo una copia vieja en
+            // caché de ese archivo - se avisa explícito en vez de fallar
+            // en silencio, que es mucho más difícil de diagnosticar.
+            alert('No se pudo cargar el selector de mapa. Recargá la página (Ctrl+Shift+R) e intentá de nuevo.');
+            return;
+        }
+        window.LaColmenaUbicacion.abrirModal({
+            modo: 'direccion',
+            titulo: 'Ubicá tu propiedad en el mapa',
+            descripcion: 'Buscá la dirección o hacé clic en el mapa para marcarla con precisión.',
+            onConfirmar: async function (loc) {
+                if (loc.provincia) {
+                    try {
+                        const provincia = await resolverIdProvincia(loc.provincia);
+                        // Pasa por el motor de autocompletado (no se escribe
+                        // el input a mano) para que el campo "estricto" no lo
+                        // termine revirtiendo la próxima vez que pierda el foco.
+                        if (provincia) selectorUbicacion.aplicarProvincia(provincia);
+                    } catch (e) {
+                        // Si esto falla (sin red, provincia sin match, etc.)
+                        // no debe impedir que se completen ciudad/distrito/
+                        // dirección de abajo - antes se cortaba todo acá.
+                        console.error('No se pudo autocompletar la provincia desde el mapa:', e);
+                    }
+                }
+                // Van DESPUÉS a propósito: seleccionar una provincia limpia
+                // ciudad/distrito como efecto secundario (ver
+                // static/js/ubicacion.js), así que estos valores tienen que
+                // pisar esa limpieza (y quedar completos aunque lo de arriba
+                // haya fallado), no al revés. Siempre se reemplaza (incluso
+                // con '' si el mapa no resolvió el dato) para no dejar un
+                // distrito/dirección viejo que ya no corresponde al punto
+                // nuevo del mapa.
+                document.getElementById('id_ciudad').value = loc.ciudad || '';
+                document.getElementById('id_distrito').value = loc.distrito || '';
+                document.getElementById('id_direccion').value = loc.direccion || '';
+            },
+        });
+    });
+})();
 
 // La etiqueta del precio depende de la operación: en alquiler el precio es
 // mensual, en venta es un monto único.
@@ -460,61 +595,255 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Función para mostrar vista previa de imágenes
-function mostrarVistaPrevia(event) {
-    const files = event.target.files;
-    const vistaPrevia = document.getElementById('vista-previa');
-    const imagenesPreview = document.getElementById('imagenes-preview');
-    
-    if (files.length === 0) {
-        vistaPrevia.classList.add('hidden');
-        return;
-    }
-    
-    // Validar número de archivos
-    if (files.length > 10) {
-        alert('Máximo 10 imágenes permitidas');
-        event.target.value = '';
-        return;
-    }
-    
-    // Limpiar vista previa anterior
-    imagenesPreview.innerHTML = '';
-    
-    // Mostrar cada imagen
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        
-        // Validar tamaño
+// Gestion de imagenes por slots (mismo componente que "Editar publicación",
+// ver propiedades/templates/propiedades/editar.html) - a diferencia de esa
+// version, aca no hay imagenes ya guardadas en el servidor: es una
+// propiedad nueva, asi que "removeImage" siempre es un descarte local y
+// nunca llama a un endpoint de borrado.
+const ImageManager = {
+    images: [], // Array de {file: File, preview: string, slot: number}
+    maxImages: 10,
+    currentSlot: null,
+
+    init() {
+        this.setupFileInput();
+        this.renderAllSlots();
+    },
+
+    setupFileInput() {
+        const input = document.getElementById('hidden-image-input');
+        input.addEventListener('change', (e) => {
+            isOpeningFile = false;
+            if (e.target.files.length > 0) {
+                this.handleFiles([e.target.files[0]]);
+            }
+            e.target.value = '';
+        });
+        input.addEventListener('cancel', () => {
+            isOpeningFile = false;
+        });
+    },
+
+    handleFiles(files) {
+        files.forEach(file => {
+            if (!this.validateFile(file)) return;
+
+            if (this.images.length >= this.maxImages) {
+                this.showNotification('⚠️ Máximo 10 imágenes permitidas', 'warning');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imageData = {
+                    file: file,
+                    preview: e.target.result,
+                    slot: this.currentSlot !== null ? this.currentSlot : this.getNextAvailableSlot(),
+                };
+
+                // Si el slot ya tenia una imagen pendiente, se reemplaza.
+                const existingIndex = this.images.findIndex(img => img.slot === imageData.slot);
+                if (existingIndex >= 0) {
+                    this.images[existingIndex] = imageData;
+                } else {
+                    this.images.push(imageData);
+                }
+
+                this.renderSlot(imageData.slot);
+                this.updatePendingIndicator();
+                this.showNotification('✅ Imagen agregada correctamente', 'success');
+            };
+            reader.readAsDataURL(file);
+        });
+    },
+
+    validateFile(file) {
+        if (!file.type.match('image/(jpeg|jpg|png)')) {
+            this.showNotification('❌ Solo se permiten imágenes JPG o PNG', 'error');
+            return false;
+        }
         if (file.size > 5 * 1024 * 1024) {
-            alert(`La imagen "${file.name}" es demasiado grande. Máximo 5MB por imagen.`);
-            continue;
+            this.showNotification('❌ La imagen es muy grande (máx. 5MB)', 'error');
+            return false;
         }
-        
-        // Validar tipo
-        if (!file.type.startsWith('image/')) {
-            alert(`El archivo "${file.name}" no es una imagen válida.`);
-            continue;
+        return true;
+    },
+
+    getNextAvailableSlot() {
+        for (let i = 0; i < this.maxImages; i++) {
+            if (!this.images.some(img => img.slot === i)) return i;
         }
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const div = document.createElement('div');
-            div.className = 'relative';
-            
-            div.innerHTML = `
-                <img src="${e.target.result}" class="w-full h-32 object-cover rounded-lg border-2 ${i === 0 ? 'border-yellow-500' : 'border-gray-200'}">
-                ${i === 0 ? '<span class="absolute top-2 left-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full font-semibold">★ Principal</span>' : ''}
-                <span class="absolute top-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded">${i + 1}</span>
+        return 0;
+    },
+
+    removeImage(slot) {
+        this.images = this.images.filter(img => img.slot !== slot);
+        this.renderSlot(slot);
+        this.updatePendingIndicator();
+        this.showNotification('🗑️ Imagen eliminada', 'info');
+    },
+
+    renderSlot(slotIndex) {
+        const slotId = slotIndex === 0 ? 'main-image-slot' : `image-slot-${slotIndex}`;
+        const slot = document.getElementById(slotId);
+        if (!slot) return;
+
+        const image = this.images.find(img => img.slot === slotIndex);
+
+        if (image) {
+            const isMain = slotIndex === 0;
+
+            slot.innerHTML = `
+                <img src="${image.preview}"
+                     class="absolute inset-0 w-full h-full object-cover rounded-xl"
+                     alt="Imagen ${slotIndex + 1}">
+
+                ${isMain ? '<span class="absolute top-3 left-3 bg-yellow-500 text-white text-sm px-3 py-1.5 rounded-full font-bold shadow-lg z-10 flex items-center"><i class="fas fa-star mr-1"></i> PRINCIPAL</span>' : ''}
+
+                <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-40 transition-all duration-300 rounded-xl group">
+                    <button type="button"
+                            onclick="event.stopPropagation(); ImageManager.removeImage(${slotIndex})"
+                            class="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white ${isMain ? 'w-10 h-10' : 'w-8 h-8'} rounded-full flex items-center justify-center shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110 z-20">
+                        <i class="fas fa-trash-alt ${isMain ? 'text-lg' : 'text-sm'}"></i>
+                    </button>
+
+                    <div class="absolute bottom-3 right-3 bg-gray-900 bg-opacity-80 text-white px-2 py-1 rounded-lg text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                        ${slotIndex + 1}/10
+                    </div>
+                </div>
             `;
-            
-            imagenesPreview.appendChild(div);
+            slot.onclick = null;
+            slot.classList.remove('cursor-pointer', 'border-dashed', 'hover:border-yellow-400');
+        } else {
+            const labels = ['1/10', '2/10', '3/10', '4/10', '5/10', '6/10', '7/10', '8/10', '9/10', '10/10'];
+            const isMain = slotIndex === 0;
+
+            slot.innerHTML = `
+                <div class="upload-placeholder text-center">
+                    <div class="bg-yellow-500 ${isMain ? 'w-20 h-20' : 'w-12 h-12'} rounded-full flex items-center justify-center mx-auto ${isMain ? 'mb-3' : 'mb-2'} group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fas fa-plus text-white ${isMain ? 'text-3xl' : 'text-xl'}"></i>
+                    </div>
+                    ${isMain ? '<p class="text-gray-600 font-semibold text-lg">Foto Principal</p>' : ''}
+                    <p class="text-gray-400 ${isMain ? 'text-sm mt-1' : 'text-xs'} font-medium">${labels[slotIndex]}</p>
+                    ${isMain ? '<p class="text-gray-500 text-xs mt-2">Click para agregar</p>' : ''}
+                </div>
+            `;
+            slot.onclick = () => triggerImageUpload(slotIndex);
+            slot.classList.add('cursor-pointer', 'border-dashed', 'hover:border-yellow-400');
+        }
+    },
+
+    renderAllSlots() {
+        for (let i = 0; i < 5; i++) {
+            this.renderSlot(i);
+        }
+    },
+
+    updatePendingIndicator() {
+        const indicator = document.getElementById('pending-images-indicator');
+        const count = document.getElementById('pending-count');
+
+        if (this.images.length > 0) {
+            count.textContent = this.images.length;
+            indicator.classList.remove('hidden');
+            this.updateFormInput();
+        } else {
+            indicator.classList.add('hidden');
+        }
+    },
+
+    updateFormInput() {
+        // Se ordena por slot (no por orden de carga) para que la tarjeta
+        // "Foto Principal" siempre viaje primero al servidor, sin importar
+        // en que orden el usuario haya ido clickeando los slots.
+        const input = document.getElementById('hidden-image-input');
+        const dt = new DataTransfer();
+
+        this.images
+            .slice()
+            .sort((a, b) => a.slot - b.slot)
+            .forEach(img => dt.items.add(img.file));
+
+        input.files = dt.files;
+    },
+
+    clearAll() {
+        if (confirm('¿Eliminar todas las imágenes seleccionadas?')) {
+            this.images = [];
+            this.renderAllSlots();
+            this.updatePendingIndicator();
+            this.showNotification('🗑️ Todas las imágenes eliminadas', 'info');
+        }
+    },
+
+    showNotification(message, type = 'info') {
+        const colors = {
+            success: 'bg-green-100 border-green-400 text-green-700',
+            error: 'bg-red-100 border-red-400 text-red-700',
+            warning: 'bg-yellow-100 border-yellow-400 text-yellow-700',
+            info: 'bg-blue-100 border-blue-400 text-blue-700'
         };
-        
-        reader.readAsDataURL(file);
+
+        const notification = document.createElement('div');
+        notification.className = `fixed top-20 right-4 ${colors[type]} border px-4 py-3 rounded-lg shadow-xl z-50 animate-slide-in`;
+        notification.innerHTML = `
+            <div class="flex items-center">
+                <span class="font-medium">${message}</span>
+                <button onclick="this.parentElement.parentElement.remove()" class="ml-4 font-bold">✕</button>
+            </div>
+        `;
+
+        document.body.appendChild(notification);
+        setTimeout(() => notification.remove(), 3000);
     }
-    
-    vistaPrevia.classList.remove('hidden');
+};
+
+let isOpeningFile = false;
+
+function triggerImageUpload(slotIndex) {
+    if (isOpeningFile) return;
+
+    ImageManager.currentSlot = slotIndex;
+    const input = document.getElementById('hidden-image-input');
+    if (!input) return;
+
+    isOpeningFile = true;
+    input.click();
+    setTimeout(() => { isOpeningFile = false; }, 500);
 }
+
+function clearAllPendingImages() {
+    ImageManager.clearAll();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    ImageManager.init();
+
+    document.getElementById('image-manager').addEventListener('click', function (e) {
+        const slot = e.target.closest('[data-slot]');
+        if (slot) {
+            e.preventDefault();
+            e.stopPropagation();
+            triggerImageUpload(parseInt(slot.getAttribute('data-slot')));
+        }
+    });
+});
 </script>
+
+<style>
+@keyframes slide-in {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+}
+</style>
 {% endblock %}

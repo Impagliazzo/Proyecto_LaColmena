@@ -79,7 +79,7 @@ function crearSelectorUbicacion(opciones) {
         }
     });
 
-    crearAutocomplete({
+    const autocompleteProvincia = crearAutocomplete({
         input: provinciaTexto,
         minChars: 0,
         debounceMs: 150,
@@ -98,4 +98,11 @@ function crearSelectorUbicacion(opciones) {
             if (!provinciaTexto.value) provinciaId.value = '';
         },
     });
+
+    // Se devuelve para poder autocompletar el selector desde otro lugar (ej.
+    // el mapa de "Usar el mapa" en crear.html/editar.html) sin reimplementar
+    // la validación de campo estricto - ver autocomplete.js::seleccionar.
+    return {
+        aplicarProvincia: (item) => autocompleteProvincia.seleccionar(item),
+    };
 }

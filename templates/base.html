@@ -18,10 +18,18 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+    {% comment %}
+    El "?v=" con la hora actual evita que el navegador sirva una copia
+    vieja en caché de estos .js mientras están en desarrollo activo (a
+    diferencia del HTML, que siempre se sirve fresco, los <script src>
+    externos el navegador los cachea agresivo por defecto).
+    {% endcomment %}
     <!-- Autocompletado único del sitio (motor compartido, ver static/js/autocomplete.js) -->
-    <script src="{% static 'js/autocomplete.js' %}"></script>
+    <script src="{% static 'js/autocomplete.js' %}?v={% now 'U' %}"></script>
     <!-- Selector de ubicación único (Provincia → Localidad → Distrito/Barrio, ver static/js/ubicacion.js) -->
-    <script src="{% static 'js/ubicacion.js' %}"></script>
+    <script src="{% static 'js/ubicacion.js' %}?v={% now 'U' %}"></script>
+    <!-- "Mi ubicación" del navbar: relevancia geográfica para destacadas/listado (ver static/js/mi_ubicacion.js) -->
+    <script src="{% static 'js/mi_ubicacion.js' %}?v={% now 'U' %}" defer></script>
 
     <style>
         /* REDUCCIÓN GLOBAL AL 80% - Aplicado a todo el sitio */
@@ -84,7 +92,16 @@
             font-size: 0.9rem !important;
             border-radius: 0.5rem !important;
         }
-        
+
+        /* La regla de arriba resetea el padding de TODO <input> con
+           !important, así que ninguna clase de Tailwind (pl-11, etc.) puede
+           ganarle - por eso el buscador del modal "Mi ubicación" necesita su
+           propia excepción, más específica, para que la lupa no tape el
+           texto/placeholder. */
+        input[data-ubicacion-modal-input] {
+            padding-left: 2.75rem !important;
+        }
+
         /* Cards reducidas */
         .bg-white:not(nav) {
             border-radius: 0.8rem !important;
@@ -364,11 +381,55 @@
                     <!-- Buscar Compañero -->
                     <a href="{% url 'propiedades:buscar_companero' %}" class="text-gray-700 hover:text-yellow-500 transition">Buscar Compañero</a>
 
-                    <!-- Inversiones -->
-                    <a href="{% url 'propiedades:inversiones' %}" class="text-gray-700 hover:text-yellow-500 transition">Inversiones</a>
-
                     <!-- Quiénes somos -->
                     <a href="{% url 'propiedades:quienes_somos' %}" class="text-gray-700 hover:text-yellow-500 transition">Quiénes somos</a>
+
+                    <!-- Mi ubicación: dropdown por click (no hover, tiene un input adentro),
+                         ver static/js/mi_ubicacion.js. Afecta el orden de destacadas/listado
+                         en el backend (propiedades/views.py) vía la cookie lc_ubicacion. -->
+                    <div class="relative" data-ubicacion-widget>
+                        <button type="button" data-ubicacion-boton
+                                class="flex items-center gap-2 bg-white border border-gray-200 hover:border-yellow-400 text-gray-800 text-sm font-medium pl-3 pr-2.5 py-1.5 rounded-full transition">
+                            <i class="fas fa-map-marker-alt text-yellow-500"></i>
+                            <span data-ubicacion-texto class="max-w-[140px] truncate">{{ ubicacion_actual.etiqueta|default:"Mi ubicación" }}</span>
+                            <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+                        </button>
+
+                        <div data-ubicacion-panel class="hidden absolute right-0 mt-2 w-[360px] bg-white rounded-xl shadow-lg border border-gray-100 z-50 py-2">
+                            {% if ubicacion_actual %}
+                            <div class="px-4 pb-2 mb-1 border-b border-gray-100">
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Ubicación actual</p>
+                                <div class="flex items-center gap-2 text-sm text-gray-800">
+                                    <i class="fas fa-map-marker-alt text-yellow-500"></i>
+                                    <span class="truncate flex-1">{{ ubicacion_actual.etiqueta }}</span>
+                                    <i class="fas fa-check text-yellow-500"></i>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <button type="button" data-ubicacion-detectar class="w-full flex items-start gap-3 px-4 py-2.5 hover:bg-gray-50 text-left transition">
+                                <i class="fas fa-location-crosshairs text-yellow-500 mt-0.5"></i>
+                                <span>
+                                    <span class="block text-sm font-medium text-gray-800">Usar mi ubicación actual</span>
+                                    <span class="block text-xs text-gray-500">Mostrar propiedades cerca de mí</span>
+                                </span>
+                            </button>
+                            <p data-ubicacion-detectar-estado class="hidden px-4 pb-2 -mt-1 text-xs text-gray-500"></p>
+
+                            <button type="button" data-ubicacion-abrir-mapa class="w-full flex items-start gap-3 px-4 py-2.5 hover:bg-gray-50 text-left transition">
+                                <i class="fas fa-search text-yellow-500 mt-0.5"></i>
+                                <span>
+                                    <span class="block text-sm font-medium text-gray-800">Buscar otra ubicación</span>
+                                    <span class="block text-xs text-gray-500">Elegí en un mapa o escribí una dirección</span>
+                                </span>
+                            </button>
+
+                            <hr class="my-2 border-gray-100">
+
+                            <p data-ubicacion-recientes-titulo class="hidden px-4 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wide">Ubicaciones recientes</p>
+                            <div data-ubicacion-recientes></div>
+                        </div>
+                    </div>
 
                     {% if user.is_authenticated %}
                         <!-- Dropdown Usuario Autenticado -->
@@ -488,9 +549,53 @@
                 <a href="{% url 'propiedades:buscar_companero' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded mt-2">Buscar Compañero</a>
                 
                 <!-- Otros enlaces -->
-                <a href="{% url 'propiedades:inversiones' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded mt-2">Inversiones</a>
-                <a href="{% url 'propiedades:quienes_somos' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Quiénes somos</a>
-                
+                <a href="{% url 'propiedades:quienes_somos' %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded mt-2">Quiénes somos</a>
+
+                <!-- Mi ubicación (mobile): mismo widget que en desktop, ver static/js/mi_ubicacion.js -->
+                <div class="relative mt-2" data-ubicacion-widget>
+                    <button type="button" data-ubicacion-boton
+                            class="w-full flex items-center gap-2 bg-white border border-gray-200 text-gray-800 text-sm font-medium px-3 py-2 rounded-lg">
+                        <i class="fas fa-map-marker-alt text-yellow-500"></i>
+                        <span data-ubicacion-texto class="flex-1 text-left truncate">{{ ubicacion_actual.etiqueta|default:"Mi ubicación" }}</span>
+                        <i class="fas fa-chevron-down text-xs text-gray-400"></i>
+                    </button>
+
+                    <div data-ubicacion-panel class="hidden mt-2 w-full bg-white rounded-lg border border-gray-100 py-2">
+                        {% if ubicacion_actual %}
+                        <div class="px-3 pb-2 mb-1 border-b border-gray-100">
+                            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Ubicación actual</p>
+                            <div class="flex items-center gap-2 text-sm text-gray-800">
+                                <i class="fas fa-map-marker-alt text-yellow-500"></i>
+                                <span class="truncate flex-1">{{ ubicacion_actual.etiqueta }}</span>
+                                <i class="fas fa-check text-yellow-500"></i>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <button type="button" data-ubicacion-detectar class="w-full flex items-start gap-3 px-3 py-2 hover:bg-gray-50 text-left">
+                            <i class="fas fa-location-crosshairs text-yellow-500 mt-0.5"></i>
+                            <span>
+                                <span class="block text-sm font-medium text-gray-800">Usar mi ubicación actual</span>
+                                <span class="block text-xs text-gray-500">Mostrar propiedades cerca de mí</span>
+                            </span>
+                        </button>
+                        <p data-ubicacion-detectar-estado class="hidden px-3 pb-2 -mt-1 text-xs text-gray-500"></p>
+
+                        <button type="button" data-ubicacion-abrir-mapa class="w-full flex items-start gap-3 px-3 py-2 hover:bg-gray-50 text-left">
+                            <i class="fas fa-search text-yellow-500 mt-0.5"></i>
+                            <span>
+                                <span class="block text-sm font-medium text-gray-800">Buscar otra ubicación</span>
+                                <span class="block text-xs text-gray-500">Elegí en un mapa o escribí una dirección</span>
+                            </span>
+                        </button>
+
+                        <hr class="my-2 border-gray-100">
+
+                        <p data-ubicacion-recientes-titulo class="hidden px-3 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wide">Ubicaciones recientes</p>
+                        <div data-ubicacion-recientes></div>
+                    </div>
+                </div>
+
                 {% if user.is_authenticated %}
                     <hr class="my-2">
                     <a href="{% url 'usuarios:perfil' user.username %}" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">
@@ -531,7 +636,68 @@
             </div>
         </div>
     </nav>
-    
+
+    <!-- Modal "Elegí tu ubicación": mapa interactivo (Leaflet + OpenStreetMap,
+         ver static/js/mi_ubicacion.js). Uno solo para todo el sitio - lo abren
+         los botones "Buscar otra ubicación" del navbar (desktop y mobile) Y
+         el selector de dirección de crear.html/editar.html (propiedades),
+         cada uno pasando su propio modo/callback a abrirModal(). -->
+    <div id="ubicacion-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-gray-900/40" data-ubicacion-modal-cerrar></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[66rem] h-[85vh] max-h-[820px] flex flex-col overflow-hidden">
+            <div class="px-6 pt-5 pb-4 border-b border-gray-100 flex-shrink-0">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <h3 data-ubicacion-modal-titulo class="text-lg font-bold text-gray-900">Elegí tu ubicación</h3>
+                        <p data-ubicacion-modal-descripcion class="text-sm text-gray-500 mt-1">Buscá una ciudad o seleccioná un punto en el mapa para ver propiedades en esa zona.</p>
+                    </div>
+                    <button type="button" data-ubicacion-modal-cerrar class="text-gray-400 hover:text-gray-600 flex-shrink-0" aria-label="Cerrar">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row flex-1 min-h-0">
+                <!-- Panel izquierdo -->
+                <div class="w-full md:w-72 flex-shrink-0 border-b md:border-b-0 md:border-r border-gray-100 p-4 flex flex-col overflow-y-auto">
+                    <div class="relative mb-2">
+                        <i class="fas fa-search text-gray-400 text-sm absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        <input type="text" data-ubicacion-modal-input
+                               data-url-provincias="{% url 'ubicaciones:provincias_sugerencias' %}"
+                               data-url-localidades="{% url 'ubicaciones:localidades_sugerencias' %}"
+                               placeholder="Buscar ciudad, dirección o localidad..."
+                               class="w-full border border-gray-200 rounded-lg pl-11 pr-3 py-2 text-sm text-gray-800 focus:outline-none focus:border-yellow-400">
+                    </div>
+
+                    <button type="button" data-ubicacion-modal-detectar
+                            class="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-50 text-left text-sm font-medium text-gray-800 transition">
+                        <i class="fas fa-location-crosshairs text-yellow-500"></i>
+                        Usar mi ubicación actual
+                    </button>
+                    <p data-ubicacion-modal-estado class="hidden px-2 text-xs text-gray-500"></p>
+
+                    <p data-ubicacion-modal-recientes-titulo class="hidden px-2 pt-3 pb-1 text-xs font-semibold text-gray-400 uppercase tracking-wide">Ubicaciones recientes</p>
+                    <div data-ubicacion-modal-recientes class="flex flex-col"></div>
+                </div>
+
+                <!-- Panel derecho: mapa -->
+                <div class="flex-1 relative min-h-[380px] md:min-h-0">
+                    <div id="ubicacion-mapa" class="absolute inset-0 bg-gray-100"></div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 flex-shrink-0">
+                <button type="button" data-ubicacion-modal-cerrar class="px-4 py-2 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-sm transition">
+                    Cancelar
+                </button>
+                <button type="button" data-ubicacion-modal-confirmar disabled
+                        class="px-5 py-2 rounded-lg bg-yellow-500 text-white font-semibold text-sm hover:bg-yellow-600 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                    Confirmar ubicación
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Mensajes Flash -->
     {% if messages %}
         <div class="fixed top-20 left-4 z-50 w-full max-w-lg" id="messages-container">

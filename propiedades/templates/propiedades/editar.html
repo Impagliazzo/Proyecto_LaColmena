@@ -78,7 +78,14 @@
                 
                 <!-- Ubicación -->
                 <div class="border-t border-gray-200 pt-6">
-                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Ubicación</h3>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Ubicación</h3>
+                        <button type="button" data-usar-mapa-direccion
+                                class="flex items-center gap-2 text-sm font-semibold text-yellow-600 hover:text-yellow-700 border border-yellow-300 hover:border-yellow-400 rounded-lg px-3 py-1.5 transition">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Usar el mapa
+                        </button>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="relative">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Provincia *</label>
@@ -439,7 +446,7 @@
      (static/js/ubicacion.js) — no reimplementar esta lógica acá. -->
 
 <script>
-crearSelectorUbicacion({
+const selectorUbicacion = crearSelectorUbicacion({
     provinciaTexto: document.getElementById('provincia-busqueda'),
     provinciaId: document.getElementById('id_provincia'),
     localidadInput: document.getElementById('id_ciudad'),
@@ -448,6 +455,65 @@ crearSelectorUbicacion({
     urlLocalidades: '{% url "ubicaciones:localidades_sugerencias" %}',
     urlDistritos: '{% url "ubicaciones:distritos_sugerencias" %}',
 });
+
+// "Usar el mapa": mismo modal/mapa de "Mi ubicación" del navbar (ver
+// static/js/mi_ubicacion.js), en modo "direccion" (busca calles puntuales
+// vía Nominatim) con un callback propio que completa estos campos en vez
+// de guardar la cookie de ubicación general del sitio.
+(function () {
+    const btnUsarMapa = document.querySelector('[data-usar-mapa-direccion]');
+    if (!btnUsarMapa) return;
+
+    async function resolverIdProvincia(nombre) {
+        const url = '{% url "ubicaciones:provincias_sugerencias" %}?q=' + encodeURIComponent(nombre);
+        const resp = await fetch(url);
+        const datos = await resp.json();
+        return (datos.resultados || [])[0] || null;
+    }
+
+    btnUsarMapa.addEventListener('click', async function () {
+        if (!window.LaColmenaUbicacion) {
+            // No debería pasar nunca (mi_ubicacion.js siempre define esto),
+            // salvo que el navegador esté sirviendo una copia vieja en
+            // caché de ese archivo - se avisa explícito en vez de fallar
+            // en silencio, que es mucho más difícil de diagnosticar.
+            alert('No se pudo cargar el selector de mapa. Recargá la página (Ctrl+Shift+R) e intentá de nuevo.');
+            return;
+        }
+        window.LaColmenaUbicacion.abrirModal({
+            modo: 'direccion',
+            titulo: 'Ubicá tu propiedad en el mapa',
+            descripcion: 'Buscá la dirección o hacé clic en el mapa para marcarla con precisión.',
+            onConfirmar: async function (loc) {
+                if (loc.provincia) {
+                    try {
+                        const provincia = await resolverIdProvincia(loc.provincia);
+                        // Pasa por el motor de autocompletado (no se escribe
+                        // el input a mano) para que el campo "estricto" no lo
+                        // termine revirtiendo la próxima vez que pierda el foco.
+                        if (provincia) selectorUbicacion.aplicarProvincia(provincia);
+                    } catch (e) {
+                        // Si esto falla (sin red, provincia sin match, etc.)
+                        // no debe impedir que se completen ciudad/distrito/
+                        // dirección de abajo - antes se cortaba todo acá.
+                        console.error('No se pudo autocompletar la provincia desde el mapa:', e);
+                    }
+                }
+                // Van DESPUÉS a propósito: seleccionar una provincia limpia
+                // ciudad/distrito como efecto secundario (ver
+                // static/js/ubicacion.js), así que estos valores tienen que
+                // pisar esa limpieza (y quedar completos aunque lo de arriba
+                // haya fallado), no al revés. Siempre se reemplaza (incluso
+                // con '' si el mapa no resolvió el dato) para no dejar un
+                // distrito/dirección viejo que ya no corresponde al punto
+                // nuevo del mapa.
+                document.getElementById('id_ciudad').value = loc.ciudad || '';
+                document.getElementById('id_distrito').value = loc.distrito || '';
+                document.getElementById('id_direccion').value = loc.direccion || '';
+            },
+        });
+    });
+})();
 
 // La etiqueta del precio depende de la operación: en alquiler el precio es
 // mensual, en venta es un monto único.

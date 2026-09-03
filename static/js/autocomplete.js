@@ -212,5 +212,11 @@ function crearAutocomplete(opciones) {
         }
     });
 
-    return { cerrar, buscar };
+    // `seleccionar` se expone (además de `cerrar`/`buscar`) para poder fijar
+    // una sugerencia programáticamente -ej. autocompletar un campo `estricto`
+    // desde el mapa de ubicación- pasando por el mismo camino que un click
+    // real (guarda `ultimaSeleccion`, dispara `onSeleccionar`), en vez de
+    // escribir el input a mano y arriesgarse a que `cerrarValidando` lo
+    // revierta después por no reconocerlo como una selección válida.
+    return { cerrar, buscar, seleccionar };
 }

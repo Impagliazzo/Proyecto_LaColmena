@@ -9,7 +9,34 @@ from django.views.decorators.http import require_http_methods
 from .models import Propiedad, Categoria, Favorito, Valoracion, ImagenPropiedad, ReporteValoracion, Destacado
 from .forms import PropiedadForm, BusquedaForm, ValoracionForm
 from .categorias import CATEGORIAS
+from .context_processors import obtener_ubicacion_cookie
 import json
+
+# Bono de relevancia geografica ("Mi ubicacion" del navbar, ver
+# context_processors.py): mayor que el bono de tipo premium/normal de
+# Destacado.calcular_prioridad (25/50) para que la cercania sea un criterio
+# real de desempate, pero sin llegar a tapar la brecha entre planes de
+# suscripcion (100/500/1000) - un Avanzado lejos sigue ganandole a un
+# Basico cerca. No reemplaza la prioridad comercial, se suma a ella.
+GEO_BONUS_CIUDAD = 600
+GEO_BONUS_PROVINCIA = 250
+
+
+def _bono_geografico(propiedad, ubicacion):
+    """
+    Bono de cercania de una propiedad respecto de la ubicacion elegida en
+    el navbar (o 0 si no hay ubicacion elegida, o si no coincide ni en
+    ciudad ni en provincia). Nunca resta ni descarta nada - solo suma.
+    """
+    if not ubicacion:
+        return 0
+    ciudad_pref = ubicacion.get('ciudad')
+    if ciudad_pref and propiedad.ciudad and propiedad.ciudad.strip().lower() == ciudad_pref.strip().lower():
+        return GEO_BONUS_CIUDAD
+    provincia_pref = ubicacion.get('provincia')
+    if provincia_pref and propiedad.provincia and provincia_pref.strip().lower() in propiedad.provincia.nombre.lower():
+        return GEO_BONUS_PROVINCIA
+    return 0
 
 @login_required
 def eliminar_imagen(request, imagen_id):
@@ -47,9 +74,12 @@ def inicio(request):
     from django.utils import timezone
     from django.db.models import Q, Prefetch
     
-    # Sistema de Slots Fijos para la página principal
-    # 6 destacados totales: 3 premium + 3 normales
-    
+    # Sistema de prioridad para la página principal: se agrupan primero los
+    # destacados premium y despues los normales (cada grupo ordenado por
+    # prioridad), sin cortar la lista a un maximo fijo -> el home los muestra
+    # TODOS en el carrusel de "Propiedades destacadas" (ver inicio.html),
+    # que visualmente solo despliega 3 tarjetas a la vez.
+
     # Obtener destacados activos y vigentes
     destacados_activos = Propiedad.objects.filter(
         estado='activa',
@@ -73,30 +103,51 @@ def inicio(request):
                 'prioridad': prioridad
             })
     
-    # Ordenar por prioridad descendente
+    # Relevancia geografica de "Mi ubicacion" (navbar): se suma a la
+    # prioridad SOLO para ordenar - la prioridad comercial de Destacado no
+    # se toca (calcular_prioridad sigue siendo la unica fuente de ese
+    # numero). Sin ubicacion elegida, el bono es 0 para todos y el orden
+    # queda identico al de siempre.
+    ubicacion_pref = obtener_ubicacion_cookie(request)
+    for item in propiedades_con_prioridad:
+        item['prioridad'] += _bono_geografico(item['propiedad'], ubicacion_pref)
+
+    # Ordenar por prioridad (+ bono geografico) descendente
     propiedades_con_prioridad.sort(key=lambda x: x['prioridad'], reverse=True)
-    
-    # Separar por tipo y aplicar slots
+
+    # Separar por tipo (premium primero) sin limitar la cantidad - el corte
+    # premium-antes-que-normal es la garantia comercial existente y no se
+    # modifica: la ubicacion solo reordena DENTRO de cada grupo.
     premium_destacadas = [
-        item['propiedad'] for item in propiedades_con_prioridad 
+        item['propiedad'] for item in propiedades_con_prioridad
         if item['destacado'].tipo == 'premium'
-    ][:3]  # Máximo 3 premium
-    
+    ]
+
     normal_destacadas = [
-        item['propiedad'] for item in propiedades_con_prioridad 
+        item['propiedad'] for item in propiedades_con_prioridad
         if item['destacado'].tipo == 'normal'
-    ][:3]  # Máximo 3 normales
-    
-    # Combinar destacadas (6 totales)
+    ]
+
+    # Combinar destacadas (todas las vigentes, sin tope)
     propiedades_destacadas = premium_destacadas + normal_destacadas
-    
+
     # NO rellenar con propiedades recientes - solo mostrar las que tienen prioridad activa
-    
-    # Propiedades especiales para estudiantes
-    propiedades_estudiantes = list(Propiedad.objects.filter(
+
+    # Propiedades especiales para estudiantes. Sin ubicacion elegida se
+    # mantiene el corte [:4] a nivel SQL (como antes); con ubicacion, hay
+    # que traer todas para poder reordenar por cercania antes de cortar.
+    query_estudiantes = Propiedad.objects.filter(
         estado='activa',
         especial_estudiantes=True
-    ).select_related('propietario').prefetch_related('imagenes')[:4])
+    ).select_related('propietario').prefetch_related('imagenes')
+    if ubicacion_pref:
+        propiedades_estudiantes = sorted(
+            query_estudiantes,
+            key=lambda p: _bono_geografico(p, ubicacion_pref),
+            reverse=True
+        )[:4]
+    else:
+        propiedades_estudiantes = list(query_estudiantes[:4])
     
     # Categorías (tarjetas de "Buscar por categoría"): una por cada tipo real de
     # propiedad, con conteo y foto de la publicación activa más reciente de ese
@@ -286,11 +337,29 @@ def listado_propiedades(request):
 
     # Orden
     orden = request.GET.get('orden', 'recientes')
-    if orden == 'antiguos':
-        propiedades = propiedades.order_by('fecha_publicacion')
-    else:
+    campo_fecha = 'fecha_publicacion' if orden == 'antiguos' else '-fecha_publicacion'
+    if orden not in ('antiguos', 'recientes'):
         orden = 'recientes'
-        propiedades = propiedades.order_by('-fecha_publicacion')
+
+    # Relevancia geografica de "Mi ubicacion" (navbar): si hay una ubicacion
+    # elegida, pasa a ser el criterio de orden PRIMARIO (mismo nivel para
+    # todos - no hay comisiones/prioridad comercial en este listado, a
+    # diferencia del home), y la fecha elegida por el usuario queda como
+    # desempate dentro de cada nivel. Sin ubicacion, cero cambios de
+    # comportamiento respecto de antes.
+    ubicacion_pref = obtener_ubicacion_cookie(request)
+    if ubicacion_pref:
+        from django.db.models import Case, When, Value, IntegerField
+        condiciones = []
+        if ubicacion_pref.get('ciudad'):
+            condiciones.append(When(ciudad__iexact=ubicacion_pref['ciudad'], then=Value(0)))
+        if ubicacion_pref.get('provincia'):
+            condiciones.append(When(provincia__nombre__icontains=ubicacion_pref['provincia'], then=Value(1)))
+        propiedades = propiedades.annotate(
+            _geo=Case(*condiciones, default=Value(2), output_field=IntegerField())
+        ).order_by('_geo', campo_fecha)
+    else:
+        propiedades = propiedades.order_by(campo_fecha)
 
     # Paginación
     paginator = Paginator(propiedades, 12)
@@ -1040,20 +1109,6 @@ def estudiantes(request):
     return render(request, 'propiedades/estudiantes.html', context)
 
 
-def inversiones(request):
-    """Página dedicada para inversiones"""
-    # Propiedades para venta
-    propiedades_venta = Propiedad.objects.filter(
-        estado='activa',
-        operacion='venta'
-    ).select_related('propietario', 'categoria').prefetch_related('imagenes')[:12]
-    
-    context = {
-        'propiedades_venta': propiedades_venta,
-    }
-    return render(request, 'propiedades/inversiones.html', context)
-
-
 def quienes_somos(request):
     """Página Quiénes somos"""
     return render(request, 'propiedades/quienes_somos.html')
@@ -1362,16 +1417,22 @@ def sugerencias_ubicacion(request):
             'texto_completo': provincia.nombre,
             'tipo': 'provincia',
             'count': provincia.count,
-            'icono': 'fa-map'
+            'icono': 'fa-map',
+            'ciudad': None,
+            'provincia': provincia.nombre,
         })
 
-    # Buscar ciudades con propiedades activas
+    # Buscar ciudades con propiedades activas. Se agrupa tambien por
+    # provincia (ademas de ciudad) para poder devolver el par
+    # {ciudad, provincia} completo - lo necesita el selector de "Mi
+    # ubicacion" del navbar para el ranking geografico, no solo el
+    # autocompletado del buscador del hero.
     ciudades = propiedades_activas.filter(
         ciudad__icontains=query
-    ).values('ciudad').annotate(
+    ).values('ciudad', 'provincia__nombre').annotate(
         count=Count('id')
     ).order_by('-count')[:10]
-    
+
     for ciudad in ciudades:
         if ciudad['ciudad'] and ciudad['ciudad'].strip():
             ciudad_lower = ciudad['ciudad'].lower()
@@ -1382,16 +1443,18 @@ def sugerencias_ubicacion(request):
                     'texto_completo': ciudad['ciudad'],
                     'tipo': 'ciudad',
                     'count': ciudad['count'],
-                    'icono': 'fa-city'
+                    'icono': 'fa-city',
+                    'ciudad': ciudad['ciudad'],
+                    'provincia': ciudad['provincia__nombre'],
                 })
-    
+
     # Buscar distritos/barrios con propiedades activas
     distritos = propiedades_activas.filter(
         distrito__icontains=query
-    ).values('distrito', 'ciudad').annotate(
+    ).values('distrito', 'ciudad', 'provincia__nombre').annotate(
         count=Count('id')
     ).order_by('-count')[:10]
-    
+
     for distrito in distritos:
         if distrito['distrito'] and distrito['distrito'].strip():
             distrito_lower = distrito['distrito'].lower()
@@ -1401,13 +1464,15 @@ def sugerencias_ubicacion(request):
                 texto_completo = texto
                 if distrito['ciudad'] and distrito['ciudad'].strip():
                     texto_completo += f", {distrito['ciudad']}"
-                
+
                 sugerencias.append({
                     'texto': texto,
                     'texto_completo': texto_completo,
                     'tipo': 'barrio',
                     'count': distrito['count'],
-                    'icono': 'fa-map-marker-alt'
+                    'icono': 'fa-map-marker-alt',
+                    'ciudad': distrito['ciudad'],
+                    'provincia': distrito['provincia__nombre'],
                 })
     
     # Ordenar por relevancia (count) y limitar a 10 resultados

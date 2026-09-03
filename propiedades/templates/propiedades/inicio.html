@@ -111,6 +111,17 @@
         .inicio-hero-esquina--bl { width: 170px; }
         .inicio-hero-esquina--tr { width: 121px; right: -8px; top: -8px; }
     }
+
+    /* Carrusel de "Propiedades destacadas": mismo track que un grid comun,
+       nada mas que con scroll horizontal + snap. Se oculta la scrollbar
+       nativa porque la navegacion la dan las flechas y el swipe, no la barra. */
+    .destacadas-track {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .destacadas-track::-webkit-scrollbar {
+        display: none;
+    }
 </style>
 {% endblock %}
 
@@ -218,38 +229,60 @@
     </svg>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="text-center mb-12">
-            <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
+            <h1 data-hero-titulo class="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6">
                 Te ayudamos a encontrar tu próximo lugar
             </h1>
-            <p class="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto">
+            <p data-hero-subtitulo class="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto">
                 Miles de propiedades disponibles para alquilar en toda la ciudad
             </p>
         </div>
-        
+
         <!-- Formulario de Búsqueda -->
         <div class="bg-white rounded-2xl shadow-xl p-6 max-w-6xl mx-auto">
             <form method="GET" action="{% url 'propiedades:listado' %}">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                    <!-- Zona/Búsqueda -->
-                    <div>
+                {% comment %}
+                Ciudad "de contexto" (la de "Mi ubicación" del navbar): se completa
+                por JS a partir de la misma cookie que usa el navbar (ver
+                static/js/mi_ubicacion.js) - no duplica esa lógica, solo la lee.
+                Viaja junto con lo que el usuario tipee en "busqueda" para acotar
+                la búsqueda a esa ciudad sin que el usuario tenga que escribirla.
+                {% endcomment %}
+                <input type="hidden" name="ciudad" data-busqueda-ciudad-contexto>
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+                    <!-- Zona/Búsqueda: el doble de ancho que el resto de los campos,
+                         para que nombres de ciudad largos ("Presidencia Roque Sáenz
+                         Peña") tengan lugar sin romper el layout. -->
+                    <div class="md:col-span-3">
                         <label class="block text-sm font-medium text-gray-700 mb-2">¿En qué zona buscás?</label>
-                        {{ form.busqueda }}
+                        <p data-busqueda-contexto class="hidden items-center gap-1.5 text-xs text-gray-500 mb-1.5 min-w-0">
+                            <i class="fas fa-map-marker-alt text-yellow-500 flex-shrink-0"></i>
+                            <span data-busqueda-contexto-texto class="truncate"></span>
+                        </p>
+                        <div class="flex items-center gap-2">
+                            <div class="flex-1 min-w-0">
+                                {{ form.busqueda }}
+                            </div>
+                            <button type="button" data-cambiar-ubicacion aria-label="Cambiar ubicación" title="Cambiar ubicación"
+                                    class="hidden flex-shrink-0 w-[42px] h-[42px] items-center justify-center bg-white border border-gray-300 rounded-lg text-yellow-500 hover:bg-yellow-50 hover:border-yellow-400 transition">
+                                <i class="fas fa-map-marker-alt text-lg"></i>
+                            </button>
+                        </div>
                     </div>
-                    
+
                     <!-- Tipo -->
-                    <div>
+                    <div class="md:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
                         {{ form.tipo }}
                     </div>
-                    
+
                     <!-- Operación -->
-                    <div>
+                    <div class="md:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Operación</label>
                         {{ form.operacion }}
                     </div>
-                    
+
                     <!-- Botón Buscar -->
-                    <div>
+                    <div class="md:col-span-1">
                         <button type="submit" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-2.5 px-6 rounded-lg transition flex items-center justify-center space-x-2">
                             <i class="fas fa-search"></i>
                             <span>Buscar</span>
@@ -303,6 +336,27 @@
             </a>
         </div>
         
+        {% if propiedades_destacadas|length > 3 %}
+        <div id="destacadas-carousel">
+            <div class="relative px-0 sm:px-14">
+                <button type="button" data-carousel-prev aria-label="Anterior"
+                        class="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white shadow-md items-center justify-center text-yellow-600 transition hover:text-yellow-700 hover:shadow-lg hover:scale-105">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div data-carousel-track class="destacadas-track flex overflow-x-auto snap-x snap-mandatory">
+                    {% for propiedad in propiedades_destacadas %}
+                    <div data-carousel-item class="shrink-0 basis-full md:basis-1/2 lg:basis-1/3 pr-6 last:pr-0 snap-start">
+                        {% include 'propiedades/_tarjeta_propiedad.html' with propiedad=propiedad %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <button type="button" data-carousel-next aria-label="Siguiente"
+                        class="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white shadow-md items-center justify-center text-yellow-600 transition hover:text-yellow-700 hover:shadow-lg hover:scale-105">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        {% else %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for propiedad in propiedades_destacadas %}
             {% include 'propiedades/_tarjeta_propiedad.html' with propiedad=propiedad %}
@@ -313,6 +367,7 @@
             </div>
             {% endfor %}
         </div>
+        {% endif %}
     </div>
 </div>
 
@@ -595,17 +650,145 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const inputBusqueda = document.getElementById('id_busqueda');
     if (!inputBusqueda) return;
 
+    const URL_SUGERENCIAS_UBICACION = '{% url "propiedades:sugerencias_ubicacion" %}';
+    const URL_DISTRITOS = '{% url "ubicaciones:distritos_sugerencias" %}';
+    const URL_LOCALIDADES = '{% url "ubicaciones:localidades_sugerencias" %}';
+
+    // "Mi ubicación" (navbar) es el contexto general de la página; este
+    // buscador solo lo LEE (window.LaColmenaUbicacion, ver
+    // static/js/mi_ubicacion.js) para no duplicar el parseo de la cookie.
+    const ubicacion = window.LaColmenaUbicacion ? window.LaColmenaUbicacion.obtenerActual() : null;
+
+    const heroTitulo = document.querySelector('[data-hero-titulo]');
+    const heroSubtitulo = document.querySelector('[data-hero-subtitulo]');
+    const contexto = document.querySelector('[data-busqueda-contexto]');
+    const contextoTexto = document.querySelector('[data-busqueda-contexto-texto]');
+    const btnCambiarUbicacion = document.querySelector('[data-cambiar-ubicacion]');
+    const inputCiudadContexto = document.querySelector('[data-busqueda-ciudad-contexto]');
+
+    if (ubicacion) {
+        // Nombre corto (solo ciudad, o provincia si no hay ciudad) para el
+        // hero y el placeholder - el botón "Mi ubicación" del navbar sí usa
+        // "ciudad, provincia" completo, pero acá alcanza con el nombre solo.
+        const nombreCorto = ubicacion.ciudad || ubicacion.provincia;
+        if (heroTitulo) heroTitulo.textContent = 'Encontrá tu próximo lugar en ' + nombreCorto;
+        if (heroSubtitulo) heroSubtitulo.textContent = 'Propiedades disponibles cerca de vos';
+        inputBusqueda.placeholder = 'Buscar en ' + nombreCorto + '...';
+        if (contexto && contextoTexto) {
+            contextoTexto.textContent = 'Buscando en ' + nombreCorto;
+            contexto.classList.remove('hidden');
+            contexto.classList.add('flex');
+        }
+        if (btnCambiarUbicacion) {
+            btnCambiarUbicacion.classList.remove('hidden');
+            btnCambiarUbicacion.classList.add('inline-flex');
+        }
+        // Viaja con el formulario para acotar la búsqueda a esa ciudad
+        // (mismo campo "ciudad" que ya filtra propiedades/views.py::listado_propiedades).
+        if (inputCiudadContexto && ubicacion.ciudad) inputCiudadContexto.value = ubicacion.ciudad;
+    } else {
+        inputBusqueda.placeholder = 'Buscar ciudad, localidad o zona...';
+    }
+
+    if (btnCambiarUbicacion) {
+        btnCambiarUbicacion.addEventListener('click', function () {
+            if (window.LaColmenaUbicacion) window.LaColmenaUbicacion.abrirModal();
+        });
+    }
+
+    if (ubicacion && ubicacion.ciudad) {
+        // Con ciudad elegida: sugerencias de barrios DENTRO de esa ciudad
+        // (mismo endpoint que ya usa el campo Distrito del formulario de
+        // propiedad - ver ubicaciones/views.py::distritos_sugerencias).
+        // minChars 0 para que aparezcan apenas se hace click, sin escribir.
+        crearAutocomplete({
+            input: inputBusqueda,
+            minChars: 0,
+            debounceMs: 200,
+            obtenerEtiqueta: (item) => item.distrito,
+            obtenerSugerencias: async (query) => {
+                const url = `${URL_DISTRITOS}?ciudad=${encodeURIComponent(ubicacion.ciudad)}&q=${encodeURIComponent(query)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                return data.resultados || [];
+            },
+            renderItem: (item) => `
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-map-marker-alt text-yellow-600 text-sm"></i>
+                    </div>
+                    <div class="text-gray-900 font-medium text-sm">${item.distrito}</div>
+                </div>
+            `,
+            textoVacio: () => `
+                <div class="px-1 py-1 text-xs text-gray-500">
+                    Escribí una zona o barrio de ${window.LaColmenaUbicacion.etiqueta(ubicacion)}.
+                </div>
+            `,
+        });
+        return;
+    }
+
+    if (ubicacion && ubicacion.provincia) {
+        // Ubicación solo a nivel provincia (ej. detección automática, que
+        // resuelve la provincia más cercana pero no una ciudad puntual - ver
+        // static/js/mi_ubicacion.js). Todavía no hay una ciudad para acotar
+        // distritos_sugerencias, así que se busca en el catálogo NACIONAL de
+        // localidades (ubicaciones/views.py::localidades_sugerencias, el
+        // mismo que usa el selector Provincia -> Localidad de los
+        // formularios) y se filtra a las de esta provincia. A diferencia de
+        // sugerencias_ubicacion, este catálogo no depende de que ya existan
+        // propiedades activas ahí - por eso "Sae" encuentra "Presidencia
+        // Roque Sáenz Peña" aunque todavía no haya ninguna publicación ahí.
+        const provinciaLower = ubicacion.provincia.toLowerCase();
+        crearAutocomplete({
+            input: inputBusqueda,
+            minChars: 2,
+            debounceMs: 300,
+            obtenerEtiqueta: (item) => item.nombre,
+            obtenerSugerencias: async (query) => {
+                const url = `${URL_LOCALIDADES}?q=${encodeURIComponent(query)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                return (data.resultados || []).filter((item) =>
+                    item.provincia && item.provincia.toLowerCase().indexOf(provinciaLower) !== -1
+                );
+            },
+            renderItem: (item) => `
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-map-marker-alt text-yellow-600 text-sm"></i>
+                    </div>
+                    <div class="text-gray-900 font-medium text-sm">${item.nombre}</div>
+                </div>
+            `,
+            onSeleccionar: (item) => {
+                // Ahora sí sabemos la ciudad puntual: viaja con el
+                // formulario igual que si ya hubiera estado en "Mi ubicación".
+                if (inputCiudadContexto) inputCiudadContexto.value = item.nombre;
+            },
+            textoVacio: () => `
+                <div class="px-1 py-1 text-xs text-gray-500">
+                    No encontramos esa localidad en ${ubicacion.provincia}.
+                </div>
+            `,
+        });
+        return;
+    }
+
+    // Sin ciudad elegida (o sin ubicación): el buscador nacional de
+    // siempre, sin cambios de comportamiento.
     crearAutocomplete({
         input: inputBusqueda,
         minChars: 1,
         debounceMs: 300,
         obtenerEtiqueta: (sugerencia) => sugerencia.texto_completo,
         obtenerSugerencias: async (query) => {
-            const response = await fetch(`{% url 'propiedades:sugerencias_ubicacion' %}?q=${encodeURIComponent(query)}`);
+            const response = await fetch(`${URL_SUGERENCIAS_UBICACION}?q=${encodeURIComponent(query)}`);
             const data = await response.json();
             // Se guarda el mensaje de "sin resultados" para que textoVacio lo use.
             inputBusqueda._mensajeSinResultados = data.mensaje || null;
@@ -644,6 +827,180 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         },
     });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Carrusel de "Propiedades destacadas": solo existe en el DOM cuando hay
+    // mas de 3 destacadas (ver inicio.html); con 3 o menos se usa el grid
+    // estatico de siempre y este bloque no tiene nada que inicializar.
+    const carrusel = document.getElementById('destacadas-carousel');
+    if (!carrusel) return;
+
+    const track = carrusel.querySelector('[data-carousel-track]');
+    const btnPrev = carrusel.querySelector('[data-carousel-prev]');
+    const btnNext = carrusel.querySelector('[data-carousel-next]');
+    const items = Array.from(track.querySelectorAll('[data-carousel-item]'));
+    const totalReal = items.length;
+    if (totalReal === 0) return;
+
+    // Loop infinito hacia la derecha: se clona toda la lista y se pega a
+    // continuacion de la real (1 2 3 4 5 | 1 2 3 4 5). Al llegar a la copia
+    // de la primera tarjeta, el salto de vuelta al original es instantaneo
+    // y sin animacion -> como es visualmente identica, no se nota, y el
+    // carrusel puede seguir avanzando hacia la derecha para siempre.
+    items.forEach(function (item) {
+        const clon = item.cloneNode(true);
+        clon.setAttribute('aria-hidden', 'true');
+        track.appendChild(clon);
+    });
+
+    const AUTOPLAY_MS = 5500;
+    const TRANSICION_MS = 900;
+    const PAUSA_TRAS_INTERACCION_MS = 6000;
+    let autoplayId = null;
+    let reanudarId = null;
+    let animacionId = null;
+    let indiceActual = 0;
+
+    function anchoPaso() {
+        return items[0].getBoundingClientRect().width;
+    }
+
+    // Scroll animado a mano (en vez de scrollTo behavior:"smooth", que en la
+    // mayoria de los navegadores dura ~300ms y se siente como un salto): una
+    // curva ease-in-out mas larga para que el cambio automatico de tarjeta
+    // se note como un deslizamiento, no como un tirón. `alTerminar` corre
+    // recien cuando el desplazamiento visual ya termino.
+    //
+    // Mientras dura la animacion se desactiva el scroll-snap del track: si
+    // no, el navegador interpreta cada asignacion de scrollLeft como un
+    // scroll que hay que "corregir" contra el punto de snap mas cercano, y
+    // esa correccion nativa a veces iba para atras, peleando con nuestra
+    // propia animacion (el bug de "a veces se mueve a la izquierda").
+    function scrollSuaveA(destino, alTerminar) {
+        if (animacionId) cancelAnimationFrame(animacionId);
+        track.style.scrollSnapType = 'none';
+        const inicio = track.scrollLeft;
+        const distancia = destino - inicio;
+        function terminar() {
+            track.style.scrollSnapType = '';
+            if (alTerminar) alTerminar();
+        }
+        if (distancia === 0) {
+            terminar();
+            return;
+        }
+        const t0 = performance.now();
+        function paso(ahora) {
+            const t = Math.min(1, (ahora - t0) / TRANSICION_MS);
+            const facilitado = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            track.scrollLeft = inicio + distancia * facilitado;
+            if (t < 1) {
+                animacionId = requestAnimationFrame(paso);
+            } else {
+                animacionId = null;
+                terminar();
+            }
+        }
+        animacionId = requestAnimationFrame(paso);
+    }
+
+    // Recalcula la posicion segun el breakpoint actual - se llama al iniciar
+    // y en cada resize (sin animacion, es un reacomodo instantaneo).
+    function recalcular() {
+        indiceActual = indiceActual % totalReal;
+        track.scrollLeft = indiceActual * anchoPaso();
+    }
+
+    function avanzar() {
+        const siguiente = indiceActual + 1;
+        scrollSuaveA(siguiente * anchoPaso(), function () {
+            if (siguiente >= totalReal) {
+                // Terminamos de deslizarnos sobre la copia de la primera
+                // tarjeta: volvemos al original sin animacion (es identica).
+                indiceActual = 0;
+                track.scrollLeft = 0;
+            } else {
+                indiceActual = siguiente;
+            }
+        });
+    }
+
+    function retroceder() {
+        // No hay copias antes de la primera tarjeta, asi que retroceder
+        // desde el principio es un salto directo (sin animar) al final.
+        if (indiceActual === 0) {
+            indiceActual = totalReal - 1;
+            track.scrollLeft = indiceActual * anchoPaso();
+            return;
+        }
+        indiceActual -= 1;
+        scrollSuaveA(indiceActual * anchoPaso());
+    }
+
+    function detenerAutoplay() {
+        if (autoplayId) {
+            clearInterval(autoplayId);
+            autoplayId = null;
+        }
+    }
+
+    function iniciarAutoplay() {
+        detenerAutoplay();
+        autoplayId = setInterval(avanzar, AUTOPLAY_MS);
+    }
+
+    // Pausa temporal ante interaccion manual (flechas o swipe/arrastre) y
+    // reanuda el autoplay pasado un rato de inactividad.
+    function pausarYReanudar() {
+        detenerAutoplay();
+        clearTimeout(reanudarId);
+        reanudarId = setTimeout(iniciarAutoplay, PAUSA_TRAS_INTERACCION_MS);
+    }
+
+    if (btnNext) {
+        btnNext.addEventListener('click', function () {
+            avanzar();
+            pausarYReanudar();
+        });
+    }
+    if (btnPrev) {
+        btnPrev.addEventListener('click', function () {
+            retroceder();
+            pausarYReanudar();
+        });
+    }
+
+    // El scroll nativo (overflow-x-auto + snap) ya resuelve el swipe táctil;
+    // ante un arrastre manual, pausamos el autoplay y, cuando el scroll se
+    // asienta, releemos la posicion real para que el proximo avance automatico
+    // o por flecha parta de donde el usuario dejó el carrusel.
+    let scrollTimeoutId = null;
+    track.addEventListener('touchstart', pausarYReanudar, { passive: true });
+    track.addEventListener('pointerdown', pausarYReanudar);
+    track.addEventListener('scroll', function () {
+        clearTimeout(scrollTimeoutId);
+        scrollTimeoutId = setTimeout(function () {
+            let indiceCrudo = Math.max(0, Math.round(track.scrollLeft / anchoPaso()));
+            if (indiceCrudo >= totalReal) {
+                // El usuario arrastro hasta meterse en la zona de copias:
+                // volvemos sin animar al equivalente real (misma tarjeta).
+                indiceCrudo -= totalReal;
+                track.scrollLeft = indiceCrudo * anchoPaso();
+            }
+            indiceActual = indiceCrudo;
+        }, 120);
+    }, { passive: true });
+
+    let resizeTimeoutId = null;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimeoutId);
+        resizeTimeoutId = setTimeout(recalcular, 150);
+    });
+
+    recalcular();
+    iniciarAutoplay();
 });
 </script>
 {% endblock %}

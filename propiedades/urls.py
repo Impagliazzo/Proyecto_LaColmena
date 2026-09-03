@@ -27,7 +27,6 @@ urlpatterns = [
     path('mis-destacados/', views.mis_destacados, name='mis_destacados'),
     # Páginas especiales
     path('estudiantes/', views.estudiantes, name='estudiantes'),
-    path('inversiones/', views.inversiones, name='inversiones'),
     path('quienes-somos/', views.quienes_somos, name='quienes_somos'),
     path('buscar-companero/', views.buscar_companero, name='buscar_companero'),
     path('companero/<int:pk>/', views.detalle_publicacion_companero, name='detalle_companero'),

@@ -260,35 +260,40 @@ def icono(nombre, clase='', color='#F2B705'):
     return mark_safe(svg)
 
 
+BADGE_CLIP_PATH = 'polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%)'
+BADGE_COLOR_OPERACION = '#FFC107'
+# Estilo compartido por ambas cintas: en linea (no clases de Tailwind) porque
+# este HTML se arma en Python y tailwind.config.js solo escanea *.html, asi
+# que clases nuevas usadas unicamente aca nunca terminarian en output.css.
+BADGE_CINTA_ESTILO = (
+    'color:#fff;font-weight:800;text-transform:uppercase;white-space:nowrap;'
+    'line-height:1;letter-spacing:.02em;clip-path:{clip};background-color:{color};'
+).format(clip=BADGE_CLIP_PATH, color='{color}')
+
+
 @register.simple_tag
 def badge_propiedad(propiedad):
     """
-    Etiqueta de categoria + operacion sobre la foto de una propiedad: pill de
-    categoria arriba (color propio del tipo, fuente unica en categorias.py) +
-    pill de operacion mas chico y superpuesto debajo (amarillo de LaColmena).
-    Un solo componente reutilizable en toda la web -> mismo color por tipo
-    en Buscar por categoria, listados, favoritos, etc.
+    Etiqueta de categoria + operacion sobre la foto de una propiedad: dos
+    cintas diagonales apiladas (tipo banner), con corte diagonal en el lado
+    derecho, sin iconos ni sombras ni bordes -> estilo "DEPARTAMENTO / EN
+    ALQUILER" de la referencia de diseno. La cinta superior usa el color
+    propio del tipo (fuente unica en categorias.py); la inferior siempre es
+    el amarillo de LaColmena. Un solo componente reutilizable en toda la web
+    -> mismo estilo y color por tipo en Buscar por categoria, listados,
+    favoritos, etc.
     """
     from ..categorias import info_categoria
 
     info = info_categoria(propiedad.tipo)
     html = (
-        '<div class="absolute top-2.5 left-2.5 z-10 inline-flex flex-col items-start">'
-        '<span class="antialiased inline-flex items-center gap-1 '
-        'h-7 sm:h-8 px-2 sm:px-2.5 rounded-lg shadow-sm text-white font-bold '
-        'text-xs sm:text-sm uppercase whitespace-nowrap" '
-        'style="background-color:{color};">'
-        '<i class="fas {icono_fa} text-sm sm:text-base"></i><span>{nombre}</span>'
-        '</span>'
-        '<span class="-mt-1 sm:-mt-1.5 inline-flex items-center justify-center '
-        'h-4 px-1.5 sm:px-2 rounded-md shadow-sm bg-yellow-500 text-gray-900 '
-        'font-bold text-[7px] sm:text-[8px] uppercase tracking-wide whitespace-nowrap">'
-        '{operacion}'
-        '</span>'
+        '<div class="absolute z-10" style="top:12px;left:0;display:flex;flex-direction:column;align-items:flex-start;">'
+        '<span style="{estilo_tipo}font-size:13px;padding:6px 20px 6px 12px;">{nombre}</span>'
+        '<span style="{estilo_operacion}font-size:11px;padding:5px 20px 5px 12px;margin-top:2px;">{operacion}</span>'
         '</div>'
     ).format(
-        color=info['color'],
-        icono_fa=info['icono'],
+        estilo_tipo=BADGE_CINTA_ESTILO.format(color=info['color']),
+        estilo_operacion=BADGE_CINTA_ESTILO.format(color=BADGE_COLOR_OPERACION),
         nombre=info['nombre'],
         operacion=f"En {propiedad.get_operacion_display()}",
     )
