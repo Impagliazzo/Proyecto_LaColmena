@@ -76,6 +76,7 @@ class Propiedad(models.Model):
         ('local', 'Local Comercial'),
         ('terreno', 'Terreno'),
         ('oficina', 'Oficina'),
+        ('galpon', 'Galpón'),
     ]
 
     OPERACION_CHOICES = [

@@ -6,9 +6,16 @@ Parámetros:
   favorito (opcional) — objeto Favorito; si se pasa, se muestra el footer con fecha + botones y el
                          corazón queda siempre activo (para la vista de Favoritos).
 {% endcomment %}
-<div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:shadow-xl transition">
-    <a href="{% url 'propiedades:detalle' propiedad.pk %}" class="block">
-    <div class="relative">
+{% comment %}
+Dos capas separadas a propósito: shadow-lg en la de afuera, overflow-hidden
+en la de adentro. Si van juntas en el mismo div, el navegador recorta mal
+la sombra (queda un borde gris duro en vez de un degradado suave) porque
+overflow-hidden corta también el área donde se pinta el box-shadow.
+{% endcomment %}
+<div class="h-full flex flex-col rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition">
+<div class="flex-1 flex flex-col bg-white rounded-2xl overflow-hidden">
+    <a href="{% url 'propiedades:detalle' propiedad.pk %}" class="flex flex-col flex-1">
+    <div class="relative shrink-0">
         {% if propiedad.imagen_principal %}
         <img src="{{ propiedad.imagen_principal.imagen.url }}"
              alt="{{ propiedad.titulo }}"
@@ -32,7 +39,7 @@ Parámetros:
         </a>
         {% endif %}
     </div>
-    <div class="p-4">
+    <div class="p-4 flex flex-col flex-1">
         <div class="flex items-baseline gap-2 mb-1">
             <span class="text-xl font-bold text-gray-900">{{ propiedad.get_moneda_simbolo }}{{ propiedad.precio|floatformat:0 }}</span>
             <span class="text-xs text-gray-400">{{ propiedad.moneda }}{% if propiedad.operacion == 'alquiler' %} / mes{% endif %}</span>
@@ -41,7 +48,15 @@ Parámetros:
             <i class="fas fa-map-marker-alt mr-1 text-gray-400 flex-shrink-0"></i>
             <span class="truncate">{{ propiedad.distrito }}, {{ propiedad.ciudad }}</span>
         </p>
-        <div class="flex flex-wrap gap-2 pt-3 border-t border-gray-100">
+        {% comment %}
+        Siempre 5 slots (mascotas/estacionamiento con "invisible" en vez de
+        no renderizarse) para que esta fila ocupe la misma altura sin
+        importar cuantas comodidades tenga la propiedad - si no, una
+        tarjeta con "Pet friendly" + "Cochera" queda mas alta que una sin
+        ninguna de las dos y la fila de tarjetas del carrusel/grilla queda
+        despareja.
+        {% endcomment %}
+        <div class="mt-auto flex flex-wrap gap-2 pt-3 border-t border-gray-100">
             <div class="flex-1 min-w-[56px] text-center">
                 {% icono "superficie" clase="text-sm mb-0.5" %}
                 <p class="font-semibold text-gray-900 text-xs">{{ propiedad.area }}m²</p>
@@ -57,20 +72,16 @@ Parámetros:
                 <p class="font-semibold text-gray-900 text-xs">{{ propiedad.banos }}</p>
                 <p class="text-[10px] text-gray-500">Baños</p>
             </div>
-            {% if propiedad.mascotas %}
-            <div class="flex-1 min-w-[56px] text-center">
+            <div class="flex-1 min-w-[56px] text-center {% if not propiedad.mascotas %}invisible{% endif %}">
                 {% icono "mascotas" clase="text-sm mb-0.5" %}
                 <p class="font-semibold text-gray-900 text-xs">Pet</p>
                 <p class="text-[10px] text-gray-500">friendly</p>
             </div>
-            {% endif %}
-            {% if propiedad.estacionamiento %}
-            <div class="flex-1 min-w-[56px] text-center">
+            <div class="flex-1 min-w-[56px] text-center {% if not propiedad.estacionamiento %}invisible{% endif %}">
                 {% icono "estacionamiento" clase="text-sm mb-0.5" %}
                 <p class="font-semibold text-gray-900 text-xs">Cochera</p>
                 <p class="text-[10px] text-gray-500">incluida</p>
             </div>
-            {% endif %}
         </div>
     </div>
     </a>
@@ -91,4 +102,5 @@ Parámetros:
         </p>
     </div>
     {% endif %}
+</div>
 </div>

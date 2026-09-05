@@ -73,8 +73,13 @@ class BusquedaForm(forms.Form):
     busqueda = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
-            'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
-            'placeholder': 'Casa en Palermo, Casa en Belgrano...'
+            'class': 'w-full pl-11 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500',
+            'placeholder': 'Barrio, localidad o dirección...',
+            # El reset global de <input> en base.html pisa el padding-left de
+            # Tailwind con !important - este atributo activa la excepción de
+            # ese mismo archivo (mismo patron que el input del modal "Mi
+            # ubicacion") para que el icono no tape el texto.
+            'data-busqueda-hero': 'true',
         })
     )
     tipo = forms.ChoiceField(

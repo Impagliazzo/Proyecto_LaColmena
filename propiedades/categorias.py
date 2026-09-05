@@ -13,6 +13,7 @@ CATEGORIAS = {
     'oficina': {'nombre': 'Oficina', 'nombre_plural': 'Oficinas', 'icono': 'fa-briefcase', 'color': '#EA580C'},
     'terreno': {'nombre': 'Terreno', 'nombre_plural': 'Terrenos', 'icono': 'fa-map', 'color': '#CA8A04'},
     'cuarto': {'nombre': 'Cuarto', 'nombre_plural': 'Cuartos', 'icono': 'fa-door-open', 'color': '#DB2777'},
+    'galpon': {'nombre': 'Galpón', 'nombre_plural': 'Galpones', 'icono': 'fa-warehouse', 'color': '#0D9488'},
 }
 
 CATEGORIA_DEFAULT = {'nombre': 'Propiedad', 'nombre_plural': 'Propiedades', 'icono': 'fa-building', 'color': '#6B7280'}

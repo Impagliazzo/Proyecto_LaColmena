@@ -112,14 +112,17 @@
         .inicio-hero-esquina--tr { width: 121px; right: -8px; top: -8px; }
     }
 
-    /* Carrusel de "Propiedades destacadas": mismo track que un grid comun,
-       nada mas que con scroll horizontal + snap. Se oculta la scrollbar
-       nativa porque la navegacion la dan las flechas y el swipe, no la barra. */
-    .destacadas-track {
+    /* Carruseles de "Propiedades destacadas" y "Buscar por categoría": mismo
+       track que un grid comun, nada mas que con scroll horizontal + snap.
+       Se oculta la scrollbar nativa porque la navegacion la dan las
+       flechas y el swipe, no la barra. */
+    .destacadas-track,
+    [data-categorias-track] {
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
-    .destacadas-track::-webkit-scrollbar {
+    .destacadas-track::-webkit-scrollbar,
+    [data-categorias-track]::-webkit-scrollbar {
         display: none;
     }
 </style>
@@ -249,26 +252,6 @@
                 {% endcomment %}
                 <input type="hidden" name="ciudad" data-busqueda-ciudad-contexto>
                 <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
-                    <!-- Zona/Búsqueda: el doble de ancho que el resto de los campos,
-                         para que nombres de ciudad largos ("Presidencia Roque Sáenz
-                         Peña") tengan lugar sin romper el layout. -->
-                    <div class="md:col-span-3">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">¿En qué zona buscás?</label>
-                        <p data-busqueda-contexto class="hidden items-center gap-1.5 text-xs text-gray-500 mb-1.5 min-w-0">
-                            <i class="fas fa-map-marker-alt text-yellow-500 flex-shrink-0"></i>
-                            <span data-busqueda-contexto-texto class="truncate"></span>
-                        </p>
-                        <div class="flex items-center gap-2">
-                            <div class="flex-1 min-w-0">
-                                {{ form.busqueda }}
-                            </div>
-                            <button type="button" data-cambiar-ubicacion aria-label="Cambiar ubicación" title="Cambiar ubicación"
-                                    class="hidden flex-shrink-0 w-[42px] h-[42px] items-center justify-center bg-white border border-gray-300 rounded-lg text-yellow-500 hover:bg-yellow-50 hover:border-yellow-400 transition">
-                                <i class="fas fa-map-marker-alt text-lg"></i>
-                            </button>
-                        </div>
-                    </div>
-
                     <!-- Tipo -->
                     <div class="md:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
@@ -279,6 +262,23 @@
                     <div class="md:col-span-1">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Operación</label>
                         {{ form.operacion }}
+                    </div>
+
+                    <!-- Zona/Búsqueda: el doble de ancho que el resto de los campos,
+                         para que nombres de ciudad largos ("Presidencia Roque Sáenz
+                         Peña") tengan lugar sin romper el layout. -->
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">¿En dónde buscás?</label>
+                        <div class="flex items-center gap-2">
+                            <div class="relative flex-1 min-w-0">
+                                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 pointer-events-none"></i>
+                                {{ form.busqueda }}
+                            </div>
+                            <button type="button" data-cambiar-ubicacion aria-label="Cambiar ubicación" title="Cambiar ubicación"
+                                    class="group flex-shrink-0 w-[42px] h-[42px] flex items-center justify-center bg-white border border-gray-100 hover:border-yellow-300 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.08)] hover:shadow-[0_6px_16px_rgba(245,158,11,0.25)] text-yellow-500 hover:-translate-y-0.5 hover:scale-105 transition-all duration-200 ease-out">
+                                <i class="fas fa-map-marker-alt text-lg group-hover:scale-110 transition-transform duration-200"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Botón Buscar -->
@@ -295,40 +295,100 @@
 </div>
 
 <!-- Buscar por categoría -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12">
+{% comment %}
+max-w-[1600px] (en vez de max-w-7xl) + 2xl:grid-cols-7: con 7 categorias
+(se agrego Galpones) el contenedor de 1280px dejaba las tarjetas mas
+angostas que antes al pasar a 7 columnas. Mismo truco que en
+"Propiedades destacadas": mas contenedor = mismo tamaño de tarjeta con
+una columna mas, en vez de achicarlas. No afecta pantallas mas chicas
+(2/3/6 columnas quedan igual que antes).
+{% endcomment %}
+<div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-12">
     <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Buscar por categoría</h2>
-    
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
-        {% for categoria in categorias %}
-        <a href="{% url 'propiedades:listado' %}?tipo={{ categoria.tipo }}"
-           class="group block bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden border-b-4"
-           style="border-color: {{ categoria.color }};">
-            <div class="relative h-28">
-                {% if categoria.imagen_url %}
-                <img src="{{ categoria.imagen_url }}" alt="{{ categoria.nombre }}" class="w-full h-full object-cover">
-                {% else %}
-                <div class="w-full h-full" style="background-color: {{ categoria.color }}1A;"></div>
-                {% endif %}
-                <div class="absolute left-1/2 -bottom-6 -translate-x-1/2 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md ring-4 ring-white"
-                     style="background-color: {{ categoria.color }};">
-                    <i class="fas {{ categoria.icono }}"></i>
-                </div>
+
+    {% comment %}
+    Mismas 2/3/6/7 columnas de antes, pero como flex+scroll en vez de grid:
+    en pantallas donde las 7 no entran en una fila, en vez de partir en una
+    segunda fila aparecen flechas para desplazarse (sin autoplay, es
+    navegacion manual nada mas). A partir de 2xl las 7 ya entran solas en
+    una fila, asi que ahi se ocultan las flechas (no hay nada para
+    desplazar).
+    {% endcomment %}
+    <div id="categorias-carousel">
+        <div class="relative px-0 sm:px-12 2xl:px-0">
+            <button type="button" data-categorias-prev aria-label="Categoría anterior"
+                    class="hidden sm:flex 2xl:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 items-center justify-center text-gray-500 transition hover:text-gray-700 hover:scale-105">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div data-categorias-track class="flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory">
+                {% for categoria in categorias %}
+                <a href="{% url 'propiedades:listado' %}?tipo={{ categoria.tipo }}"
+                   data-categoria-item
+                   class="group shrink-0 min-w-0 basis-[calc(50%-0.5rem)] sm:basis-[calc(33.333%-1rem)] lg:basis-[calc(16.666%-1.25rem)] 2xl:basis-[calc(14.2857%-1.286rem)] snap-start block bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden border-b-4"
+                   style="border-color: {{ categoria.color }};">
+                    <div class="relative h-28">
+                        {% if categoria.imagen_url %}
+                        <img src="{{ categoria.imagen_url }}" alt="{{ categoria.nombre }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <div class="w-full h-full" style="background-color: {{ categoria.color }}1A;"></div>
+                        {% endif %}
+                        <div class="absolute left-1/2 -bottom-6 -translate-x-1/2 w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md ring-4 ring-white"
+                             style="background-color: {{ categoria.color }};">
+                            <i class="fas {{ categoria.icono }}"></i>
+                        </div>
+                    </div>
+                    <div class="pt-9 pb-5 px-3 text-center">
+                        <p class="font-bold text-gray-900 text-sm sm:text-base">{{ categoria.nombre }}</p>
+                        <p class="text-xs font-semibold mt-1" style="color: {{ categoria.color }};">
+                            {{ categoria.count }} propiedad{{ categoria.count|pluralize:"es" }}
+                        </p>
+                        <i class="fas fa-arrow-right text-sm mt-3 inline-block transition group-hover:translate-x-1" style="color: {{ categoria.color }};"></i>
+                    </div>
+                </a>
+                {% endfor %}
             </div>
-            <div class="pt-9 pb-5 px-3 text-center">
-                <p class="font-bold text-gray-900 text-sm sm:text-base">{{ categoria.nombre }}</p>
-                <p class="text-xs font-semibold mt-1" style="color: {{ categoria.color }};">
-                    {{ categoria.count }} propiedad{{ categoria.count|pluralize:"es" }}
-                </p>
-                <i class="fas fa-arrow-right text-sm mt-3 inline-block transition group-hover:translate-x-1" style="color: {{ categoria.color }};"></i>
-            </div>
-        </a>
-        {% endfor %}
+            <button type="button" data-categorias-next aria-label="Categoría siguiente"
+                    class="hidden sm:flex 2xl:hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white border border-gray-200 items-center justify-center text-gray-500 transition hover:text-gray-700 hover:scale-105">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Carrusel de categorias: solo navegacion manual (flechas / swipe), sin
+    // autoplay ni loop infinito - a diferencia del de "Propiedades
+    // destacadas", este no se mueve solo.
+    var carrusel = document.getElementById('categorias-carousel');
+    if (!carrusel) return;
+    var track = carrusel.querySelector('[data-categorias-track]');
+    var btnPrev = carrusel.querySelector('[data-categorias-prev]');
+    var btnNext = carrusel.querySelector('[data-categorias-next]');
+
+    function pasoScroll() {
+        var item = track.querySelector('[data-categoria-item]');
+        var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        return item ? item.getBoundingClientRect().width + gap : track.clientWidth;
+    }
+
+    btnPrev.addEventListener('click', function () {
+        track.scrollBy({ left: -pasoScroll(), behavior: 'smooth' });
+    });
+    btnNext.addEventListener('click', function () {
+        track.scrollBy({ left: pasoScroll(), behavior: 'smooth' });
+    });
+});
+</script>
 
 <!-- Propiedades Destacadas -->
 <div class="py-12" style="background: transparent;">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    {% comment %}
+    max-w mas ancho que el resto de la home (max-w-7xl) a proposito: con 5
+    tarjetas por fila (2xl), un contenedor de 1280px las dejaba muy
+    angostas. Mas ancho de contenedor = mas ancho por tarjeta = se ve mas
+    de la foto, sin tocar la cantidad de columnas por breakpoint.
+    {% endcomment %}
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center mb-8">
             <h2 class="text-3xl font-bold text-gray-900">Propiedades destacadas</h2>
             <a href="{% url 'propiedades:listado' %}" class="text-yellow-600 hover:text-yellow-700 font-semibold">
@@ -336,32 +396,46 @@
             </a>
         </div>
         
-        {% if propiedades_destacadas|length > 3 %}
+        {% if propiedades_destacadas|length > 5 %}
         <div id="destacadas-carousel">
             <div class="relative px-0 sm:px-14">
                 <button type="button" data-carousel-prev aria-label="Anterior"
-                        class="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white shadow-md items-center justify-center text-yellow-600 transition hover:text-yellow-700 hover:shadow-lg hover:scale-105">
+                        class="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white border border-gray-200 items-center justify-center text-yellow-600 transition hover:text-yellow-700 hover:scale-105">
                     <i class="fas fa-chevron-left"></i>
                 </button>
-                <div data-carousel-track class="destacadas-track flex overflow-x-auto snap-x snap-mandatory">
+                {% comment %}
+                gap-6 (no padding por tarjeta): el espacio entre tarjetas es
+                un gap real de flexbox, no un padding "pegado" a cada
+                tarjeta. Con padding, la ultima tarjeta visible en cada
+                posicion de scroll terminaba con una franja vacia propia
+                (su padding-right) que quedaba DENTRO del overflow-x-auto
+                (no recortada) pero sin ninguna tarjeta al lado - ahi
+                flotaba la sombra de esa tarjeta como una mancha suelta.
+                Con gap real no existe ese colchon fantasma: el borde de
+                scroll queda pegado al borde de la tarjeta, sin sombra
+                flotando en el vacio. anchoPaso() suma el gap al ancho de
+                la tarjeta para que la matematica del autoplay siga
+                cuadrando (ver mas abajo).
+                {% endcomment %}
+                <div data-carousel-track class="destacadas-track flex gap-6 overflow-x-auto snap-x snap-mandatory">
                     {% for propiedad in propiedades_destacadas %}
-                    <div data-carousel-item class="shrink-0 basis-full md:basis-1/2 lg:basis-1/3 pr-6 last:pr-0 snap-start">
+                    <div data-carousel-item class="shrink-0 min-w-0 basis-full md:basis-[calc(50%-0.75rem)] lg:basis-[calc(33.333%-1rem)] xl:basis-[calc(25%-1.125rem)] 2xl:basis-[calc(20%-1.2rem)] snap-start">
                         {% include 'propiedades/_tarjeta_propiedad.html' with propiedad=propiedad %}
                     </div>
                     {% endfor %}
                 </div>
                 <button type="button" data-carousel-next aria-label="Siguiente"
-                        class="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white shadow-md items-center justify-center text-yellow-600 transition hover:text-yellow-700 hover:shadow-lg hover:scale-105">
+                        class="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full bg-white border border-gray-200 items-center justify-center text-yellow-600 transition hover:text-yellow-700 hover:scale-105">
                     <i class="fas fa-chevron-right"></i>
                 </button>
             </div>
         </div>
         {% else %}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
             {% for propiedad in propiedades_destacadas %}
             {% include 'propiedades/_tarjeta_propiedad.html' with propiedad=propiedad %}
             {% empty %}
-            <div class="col-span-3 text-center py-12">
+            <div class="col-span-5 text-center py-12">
                 <i class="fas fa-home text-gray-300 text-6xl mb-4"></i>
                 <p class="text-gray-500 text-lg">No hay propiedades destacadas en este momento</p>
             </div>
@@ -374,7 +448,7 @@
 <!-- Sección para Estudiantes -->
 <div class="py-12" style="background-color: #FFF7E6;">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6">
+        <div class="bg-white rounded-3xl shadow-sm border-2 border-yellow-500 p-4 sm:p-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div class="flex flex-col h-full">
                 <div>
@@ -665,33 +739,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const heroTitulo = document.querySelector('[data-hero-titulo]');
     const heroSubtitulo = document.querySelector('[data-hero-subtitulo]');
-    const contexto = document.querySelector('[data-busqueda-contexto]');
-    const contextoTexto = document.querySelector('[data-busqueda-contexto-texto]');
     const btnCambiarUbicacion = document.querySelector('[data-cambiar-ubicacion]');
     const inputCiudadContexto = document.querySelector('[data-busqueda-ciudad-contexto]');
 
     if (ubicacion) {
-        // Nombre corto (solo ciudad, o provincia si no hay ciudad) para el
-        // hero y el placeholder - el botón "Mi ubicación" del navbar sí usa
-        // "ciudad, provincia" completo, pero acá alcanza con el nombre solo.
+        // Nombre corto para el placeholder: ciudad (o provincia si no hay
+        // ciudad) - el botón "Mi ubicación" del navbar sí usa "ciudad,
+        // provincia" completo, pero acá alcanza con el nombre solo.
         const nombreCorto = ubicacion.ciudad || ubicacion.provincia;
-        if (heroTitulo) heroTitulo.textContent = 'Encontrá tu próximo lugar en ' + nombreCorto;
+        // El titulo del hero, en cambio, siempre muestra la provincia (no la
+        // localidad puntual), para que quede mas general.
+        const nombreHero = ubicacion.provincia || ubicacion.ciudad;
+        if (heroTitulo) {
+            // DOM en vez de innerHTML con el nombre interpolado: evita
+            // cualquier riesgo de inyectar HTML a traves del nombre guardado.
+            heroTitulo.textContent = '';
+            heroTitulo.appendChild(document.createTextNode('Encontrá tu próximo lugar en '));
+            const spanUbicacion = document.createElement('span');
+            spanUbicacion.className = 'text-yellow-500';
+            spanUbicacion.textContent = nombreHero;
+            heroTitulo.appendChild(spanUbicacion);
+        }
         if (heroSubtitulo) heroSubtitulo.textContent = 'Propiedades disponibles cerca de vos';
         inputBusqueda.placeholder = 'Buscar en ' + nombreCorto + '...';
-        if (contexto && contextoTexto) {
-            contextoTexto.textContent = 'Buscando en ' + nombreCorto;
-            contexto.classList.remove('hidden');
-            contexto.classList.add('flex');
-        }
-        if (btnCambiarUbicacion) {
-            btnCambiarUbicacion.classList.remove('hidden');
-            btnCambiarUbicacion.classList.add('inline-flex');
-        }
         // Viaja con el formulario para acotar la búsqueda a esa ciudad
         // (mismo campo "ciudad" que ya filtra propiedades/views.py::listado_propiedades).
         if (inputCiudadContexto && ubicacion.ciudad) inputCiudadContexto.value = ubicacion.ciudad;
     } else {
-        inputBusqueda.placeholder = 'Buscar ciudad, localidad o zona...';
+        inputBusqueda.placeholder = 'Barrio, localidad o dirección...';
     }
 
     if (btnCambiarUbicacion) {
@@ -864,7 +939,12 @@ document.addEventListener('DOMContentLoaded', function () {
     let indiceActual = 0;
 
     function anchoPaso() {
-        return items[0].getBoundingClientRect().width;
+        // Con gap-6 el espacio entre tarjetas ya no es parte del ancho de
+        // cada item (getBoundingClientRect solo mide la tarjeta en si) -
+        // hay que sumarle el gap real del track para que cada "paso" de
+        // scroll coincida exactamente con el siguiente punto de snap.
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        return items[0].getBoundingClientRect().width + gap;
     }
 
     // Scroll animado a mano (en vez de scrollTo behavior:"smooth", que en la
